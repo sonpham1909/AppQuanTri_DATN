@@ -15,6 +15,7 @@ const LoginScreen = ({ navigation }) => {
   const { isLoading, isError, message } = useSelector((state) => state.user);
 
   const handleLogin = () => {
+    navigation.replace("Home")
     if (!email || !password) {
       Alert.alert('Lỗi', 'Vui lòng nhập email và mật khẩu');
       return;
