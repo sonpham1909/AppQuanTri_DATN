@@ -22,7 +22,7 @@ const App = () => {
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName="CategoriesScreen"
+          initialRouteName="Home"
           screenOptions={{headerShown: false}}>
           <Stack.Screen name="Welcom" component={Welcom} />
           <Stack.Screen name="Login" component={LoginScreen} />
