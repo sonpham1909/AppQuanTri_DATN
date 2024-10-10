@@ -14,23 +14,65 @@ import ReviewsScreen from '../AppQuanTri_DATN/src/screens/ReviewsScreen/ReviewsS
 import store from '../AppQuanTri_DATN/src/redux/store/store'; // Đường dẫn tới store.js
 import {Provider} from 'react-redux'; // Thêm import Provider từ react-redux
 import AddProduct from '../AppQuanTri_DATN/src/screens/ProductsScreen/AddproductSrceen';
+import Cart from '../AppQuanTri_DATN/src/screens/Cart/Cart';
+import Checkout from '../AppQuanTri_DATN/src/screens/CheckOut/Checkout';
+import DetailedOrders from '../AppQuanTri_DATN/src/screens/DetailedOrders/DetailedOrders';
+
 
 const Stack = createStackNavigator();
 
 const App = () => {
   return (
-    <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName="Home"
+          initialRouteName="Welcom"
           screenOptions={{headerShown: false}}>
           <Stack.Screen name="Welcom" component={Welcom} />
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Registered" component={Registered} />
+          <Stack.Screen name="DetailedOrders" component={DetailedOrders}
+          options={{
+            headerShown: true,
+            title: 'DetailedOrders',
+            headerStyle: {
+              backgroundColor: '#00A65E', // Màu nền xanh
+            },
+            headerTintColor: '#fff', // Màu chữ trắng
+            headerTitleStyle: {
+              fontWeight: 'bold', // Kiểu chữ tiêu đề
+            },
+          }}
+          
+          />
 
 
-         
+          <Stack.Screen name="Cart" component={Cart}
+            options={{
+              headerShown: true,
+              title: 'Cart',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
 
+          <Stack.Screen name="Checkout" component={Checkout}
+          options={{
+            headerShown: true,
+            title: 'Checkout',
+            headerStyle: {
+              backgroundColor: '#00A65E', // Màu nền xanh
+            },
+            headerTintColor: '#fff', // Màu chữ trắng
+            headerTitleStyle: {
+              fontWeight: 'bold', // Kiểu chữ tiêu đề
+            },
+          }}
+        />
           <Stack.Screen name="Home" component={BottomTabNavigator} />
           <Stack.Screen
             name="ProductsScreen"
@@ -142,7 +184,6 @@ const App = () => {
         </Stack.Navigator>
         
       </NavigationContainer>
-    </Provider>
   );
 };
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TextInput, View, Image, StyleSheet } from 'react-native';
-import colors from '../constants/colors';
-import spacing from '../constants/spacing';
+import colors from '../../constants/colors';
+import spacing from '../../constants/spacing';
 
 const Input = ({ placeholder, secureTextEntry, icon, value, onChangeText }) => {
   const [isFocused, setIsFocused] = useState(false); // Trạng thái để theo dõi focus

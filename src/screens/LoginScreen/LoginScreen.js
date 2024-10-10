@@ -1,35 +1,35 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image, Alert } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../../redux/actions/actionUser';
-import Input from '../../components/Input';
-import Button from '../../components/ButtonLogin';
-import Container from '../../components/Container';
-import FormWrapper from '../../components/FormWrapper';
+// import { useDispatch, useSelector } from 'react-redux';
+// import { login } from '../../redux/actions/actionUser';
+import Input from '../../components/Account/Input';
+import Button from '../../components/Account/ButtonLogin';
+import Container from '../../components/Account/Container';
+import FormWrapper from '../../components/Account/FormWrapper';
 import globalStyles from '../../styles/globalStyles';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');  // Đổi lại thành 'email' thay vì 'email1'
   const [password, setPassword] = useState('');  // Đổi lại thành 'password' thay vì 'password1'
-  const dispatch = useDispatch();
-  const { isLoading, isError, message } = useSelector((state) => state.user);
+  // const dispatch = useDispatch();
+  // const { isLoading, isError, message } = useSelector((state) => state.user);
 
   const handleLogin = () => {
     navigation.replace("Home")
-    if (!email || !password) {
-      Alert.alert('Lỗi', 'Vui lòng nhập email và mật khẩu');
-      return;
-    }
+    // if (!email || !password) {
+    //   Alert.alert('Lỗi', 'Vui lòng nhập email và mật khẩu');
+    //   return;
+    // }
 
-    dispatch(login({ email, password }))  // Sửa lại tên biến
-      .unwrap()
-      .then(() => {
-        navigation.replace('Home');  // Điều hướng đến Home khi đăng nhập thành công
-      })
-      .catch((error) => {
-        const errorMessage = error.message || JSON.stringify(error); // Xử lý thông báo lỗi
-        Alert.alert('Lỗi đăng nhập', errorMessage ||  '');
-    });
+    // dispatch(login({ email, password }))  // Sửa lại tên biến
+    //   .unwrap()
+    //   .then(() => {
+    //     navigation.replace('Home');  // Điều hướng đến Home khi đăng nhập thành công
+    //   })
+    //   .catch((error) => {
+    //     const errorMessage = error.message || JSON.stringify(error); // Xử lý thông báo lỗi
+    //     Alert.alert('Lỗi đăng nhập', errorMessage ||  '');
+    // });
   }    
 
   return (

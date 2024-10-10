@@ -1,10 +1,7 @@
-// /constants/fonts.js
-
 const fonts = {
-    regular: 'Arial',         // Font chữ thông thường
-    bold: 'Arial-BoldMT',     // Font chữ đậm
-    italic: 'Arial-ItalicMT', // Font chữ nghiêng
-  };
-  
-  export default fonts;
-  
+  regular: 'Nunito Sans',         // Font chữ thông thường
+  bold: 'Arial-BoldMT',     // Font chữ đậm
+  semiBold: 'Arial-SemiBold', // Font chữ semi-bold
+};
+
+export default fonts;

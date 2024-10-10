@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, FlatList, Image, TouchableOpacity } from 'react-native';
-import Container from '../../components/Container'
+import Container from '../../components/Account/Container'
 const data = [
   { id: '1', title: 'Áo', image: require('../../assets/images/icon_add.png') },
   { id: '2', title: 'Quần', image: require('../../assets/images/icon_add.png') },

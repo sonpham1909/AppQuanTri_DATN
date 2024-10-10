@@ -5861,6 +5861,11 @@ react-native-gesture-handler@^2.20.0, "react-native-gesture-handler@>= 1.0.0":
     invariant "^2.2.4"
     prop-types "^15.7.2"
 
+react-native-pager-view@*, react-native-pager-view@^6.4.1:
+  version "6.4.1"
+  resolved "https://registry.npmjs.org/react-native-pager-view/-/react-native-pager-view-6.4.1.tgz"
+  integrity sha512-HnDxXTRHnR6WJ/vnOitv0C32KG9MJjxLnxswuQlBJmQ7RxF2GWOHSPIRAdZ9fLxdLstV38z9Oz1C95+t+yXkcg==
+
 react-native-reanimated@^3.15.4:
   version "3.15.4"
   resolved "https://registry.npmjs.org/react-native-reanimated/-/react-native-reanimated-3.15.4.tgz"
@@ -5890,6 +5895,13 @@ react-native-screens@^3.34.0, "react-native-screens@>= 3.0.0":
   dependencies:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
+
+react-native-tab-view@^3.5.2:
+  version "3.5.2"
+  resolved "https://registry.npmjs.org/react-native-tab-view/-/react-native-tab-view-3.5.2.tgz"
+  integrity sha512-nE5WqjbeEPsWQx4mtz81QGVvgHRhujTNIIZiMCx3Bj6CBFDafbk7XZp9ocmtzXUQaZ4bhtVS43R4FIiR4LboJw==
+  dependencies:
+    use-latest-callback "^0.1.5"
 
 react-native-vector-icons@^10.2.0:
   version "10.2.0"
@@ -6891,6 +6903,11 @@ uri-js@^4.2.2:
   integrity sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==
   dependencies:
     punycode "^2.1.0"
+
+use-latest-callback@^0.1.5:
+  version "0.1.11"
+  resolved "https://registry.npmjs.org/use-latest-callback/-/use-latest-callback-0.1.11.tgz"
+  integrity sha512-8nhb73STSD/z3GTHklvNjL8F9wMOo0bj0AFnulpIYuFTm6aQlT3ZcNbXF2YurKImIY8+kpSFSDHZZyQmurGrhw==
 
 use-latest-callback@^0.2.1:
   version "0.2.1"

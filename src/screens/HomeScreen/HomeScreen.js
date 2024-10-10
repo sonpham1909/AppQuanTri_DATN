@@ -2,8 +2,11 @@ import React from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 
 const categories = [
-  { id: '1', name: 'Áo', icon: require('../../assets/images/home_shirt.png') },
-  { id: '2', name: 'Quần', icon: require('../../assets/images/home_trouser.png') }
+  { id: '1', name: 'Áo', icon: require('../../assets/images/cat1.png') },
+  { id: '2', name: 'Quần', icon: require('../../assets/images/cat2.png') },
+  { id: '3', name: 'Quần', icon: require('../../assets/images/cat2.png') },
+  { id: '4', name: 'Quần', icon: require('../../assets/images/cat2.png') }
+
 ];
 
 const newProducts = [
@@ -32,7 +35,7 @@ const renderStars = (rating) => {
 const ProductList = ({ title, products, onProductPress }) => (
   <View style={styles.productSection}>
     <View style={styles.sectionHeader}>
-      <Text style={styles.sectionTitle}>{title}</Text>
+      <Text style={styles.sectionTitle1}>{title}</Text>
       <TouchableOpacity>
         <Text style={styles.viewAll}>Tất Cả</Text>
       </TouchableOpacity>
@@ -56,7 +59,7 @@ const ProductList = ({ title, products, onProductPress }) => (
           <Text style={styles.productName}>{item.name}</Text>
 
           {/* Giá sản phẩm */}
-          <Text style={styles.productPrice}>{item.price} đ</Text>
+          <Text style={styles.productPrice}>{"$"+item.price} đ</Text>
 
           {/* Số lượng đánh giá */}
           <View style={styles.reviewContainer}>
@@ -174,7 +177,7 @@ const styles = StyleSheet.create({
    productItem: {
     marginRight: 15,
     width: 173,
-    height:238,
+    height:280,
     backgroundColor: '#fff',
     borderRadius: 10,
     shadowColor: '#000',
@@ -186,7 +189,7 @@ const styles = StyleSheet.create({
   },
   productImage: {
     width: 173,
-    height: 150,
+    height: 190,
     resizeMode: 'stretch',
     borderRadius: 8,
   
@@ -204,9 +207,9 @@ const styles = StyleSheet.create({
     fontSize:13
   },
   productName: {
-    paddingTop:8,
+    paddingTop:5,
     paddingLeft:10,
-    paddingBottom:10,
+    paddingBottom:7,
     fontSize: 14,
     color: '#000',
   },
@@ -220,7 +223,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     position: 'absolute',
-    bottom: 10,
+    bottom: 17,
     right: 10,
   },
   reviewIcon: {

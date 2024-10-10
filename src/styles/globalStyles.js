@@ -78,6 +78,21 @@ const globalStyles = StyleSheet.create({
     height: 20,
     tintColor: '#000',
   },
+  text: {
+    fontWeight: 'bold',
+    fontSize: 23,
+    marginLeft: 25,
+    marginBottom: 10,
+    color: 'black',
+    marginTop: 25,
+  },
+  text1: {
+    fontWeight: 'bold',
+    fontSize: 23,
+    marginLeft: 30,
+    marginVertical: 20,
+    color: 'black',
+  },
 });
 
 export default globalStyles;
