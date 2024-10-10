@@ -14,6 +14,7 @@ import ReviewsScreen from '../AppQuanTri_DATN/src/screens/ReviewsScreen/ReviewsS
 import store from '../AppQuanTri_DATN/src/redux/store/store'; // Đường dẫn tới store.js
 import {Provider} from 'react-redux'; // Thêm import Provider từ react-redux
 import AddProduct from '../AppQuanTri_DATN/src/screens/ProductsScreen/AddproductSrceen';
+import CateClother from '../AppQuanTri_DATN/src/screens/CateClotherScreen/CateClotherScreen';
 
 const Stack = createStackNavigator();
 
@@ -22,7 +23,7 @@ const App = () => {
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName="Home"
+          initialRouteName="CateClother"
           screenOptions={{headerShown: false}}>
           <Stack.Screen name="Welcom" component={Welcom} />
           <Stack.Screen name="Login" component={LoginScreen} />
@@ -138,9 +139,25 @@ const App = () => {
             headerTitleStyle: {
               fontWeight: 'bold', // Kiểu chữ tiêu đề
             },
-          }} />
+          }} 
+              />
+        <Stack.Screen name="CateClother"
+        component={CateClother}
+        options={{
+          headerShown: true,
+          title: 'Clother',
+          headerStyle: {
+            backgroundColor: '#00A65E', // Màu nền xanh
+          },
+          headerTintColor: '#fff', // Màu chữ trắng
+          headerTitleStyle: {
+            fontWeight: 'bold', // Kiểu chữ tiêu đề
+          },
+        }} 
+          />
         </Stack.Navigator>
-        
+    
+
       </NavigationContainer>
     </Provider>
   );
