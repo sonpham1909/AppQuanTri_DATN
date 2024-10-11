@@ -3,12 +3,11 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const InvoiceCard = () => {
-  const navigation = useNavigation();  // Hook for navigation
+  const navigation = useNavigation();
 
   const handleDetailPress = () => {
-    navigation.navigate('DetailedOrders');  // Chuyển đến màn hình "DetailedOrders"
+    navigation.navigate('DetailedOrders');
   };
-
 
   return (
     <View style={styles.invoiceCard}>
@@ -33,7 +32,7 @@ const InvoiceCard = () => {
             <Text style={styles.buttonText}>Chi tiết</Text>
           </TouchableOpacity>
           <TouchableOpacity>
-            <Text style={styles.confirmText}>Xác nhận</Text>
+            <Text style={styles.confirmText}>Hủy đơn</Text>
           </TouchableOpacity>
         </View>
       </View>

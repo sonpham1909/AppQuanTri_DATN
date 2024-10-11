@@ -22,10 +22,11 @@ const shortProducts = [
     // Thêm sản phẩm khác nếu cần
 ];
 
-const AllPants = ({ selectedSize, setSelectedSize, selectedColor, setSelectedColor, selectedPrice, setSelectedPrice }) => (
+const AllPants = ({ navigation,selectedSize, setSelectedSize, selectedColor, setSelectedColor, selectedPrice, setSelectedPrice }) => (
     <View>
         {/* Filter Section */}
         <FilterSection 
+
             selectedSize={selectedSize}
             setSelectedSize={setSelectedSize}
             selectedColor={selectedColor}
@@ -34,17 +35,18 @@ const AllPants = ({ selectedSize, setSelectedSize, selectedColor, setSelectedCol
             setSelectedPrice={setSelectedPrice}
         />
         <View style={cateClotherStyles.productListContainer}>
-            <ProductList products={newProducts} onProductPress={handleProductPress} />
-            <ProductList products={newProducts} onProductPress={handleProductPress} />
+            <ProductList navigation={navigation }products={newProducts} onProductPress={handleProductPress} />
+            <ProductList navigation={navigation } products={newProducts} onProductPress={handleProductPress} />
 
         </View>
     </View>
 );
 
-const WideLegPants = ({ selectedSize, setSelectedSize, selectedColor, setSelectedColor, selectedPrice, setSelectedPrice }) => (
+const WideLegPants = ({ navigation,selectedSize, setSelectedSize, selectedColor, setSelectedColor, selectedPrice, setSelectedPrice }) => (
     <View>
         {/* Filter Section */}
         <FilterSection 
+
             selectedSize={selectedSize}
             setSelectedSize={setSelectedSize}
             selectedColor={selectedColor}
@@ -53,16 +55,17 @@ const WideLegPants = ({ selectedSize, setSelectedSize, selectedColor, setSelecte
             setSelectedPrice={setSelectedPrice}
         />
         <View style={cateClotherStyles.productListContainer}>
-            <ProductList products={wideLegProducts} onProductPress={handleProductPress} />
+            <ProductList navigation={navigation } products={wideLegProducts} onProductPress={handleProductPress} />
             
         </View>
     </View>
 );
 
-const Shorts = ({ selectedSize, setSelectedSize, selectedColor, setSelectedColor, selectedPrice, setSelectedPrice }) => (
+const Shorts = ({ navigation,selectedSize, setSelectedSize, selectedColor, setSelectedColor, selectedPrice, setSelectedPrice }) => (
     <View>
         {/* Filter Section */}
         <FilterSection 
+
             selectedSize={selectedSize}
             setSelectedSize={setSelectedSize}
             selectedColor={selectedColor}
@@ -71,12 +74,12 @@ const Shorts = ({ selectedSize, setSelectedSize, selectedColor, setSelectedColor
             setSelectedPrice={setSelectedPrice}
         />
         <View style={cateClotherStyles.productListContainer}>
-            <ProductList products={shortProducts} onProductPress={handleProductPress} />
+            <ProductList navigation={navigation } products={shortProducts} onProductPress={handleProductPress} />
         </View>
     </View>
 );
 
-const CateClotherScreen = () => {
+const CateClotherScreen = ({navigation}) => {
     const [index, setIndex] = useState(0);
     const [routes] = useState([
         { key: 'all', title: 'TẤT CẢ QUẦN' },
@@ -91,6 +94,7 @@ const CateClotherScreen = () => {
     const renderScene = SceneMap({
         all: () => (
             <AllPants 
+            navigation={navigation }
                 selectedSize={selectedSize}
                 setSelectedSize={setSelectedSize}
                 selectedColor={selectedColor}
@@ -101,6 +105,7 @@ const CateClotherScreen = () => {
         ),
         wideLeg: () => (
             <WideLegPants 
+            navigation={navigation }
                 selectedSize={selectedSize}
                 setSelectedSize={setSelectedSize}
                 selectedColor={selectedColor}
@@ -111,6 +116,7 @@ const CateClotherScreen = () => {
         ),
         shorts: () => (
             <Shorts 
+            navigation={navigation }
                 selectedSize={selectedSize}
                 setSelectedSize={setSelectedSize}
                 selectedColor={selectedColor}

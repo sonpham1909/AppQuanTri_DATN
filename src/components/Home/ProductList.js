@@ -9,7 +9,7 @@ const ProductList = ({ navigation,title, products }) => (
   <View style={homeStyles.productSection}>
     <View style={homeStyles.sectionHeader}>
       <Text style={homeStyles.sectionTitle}>{title}</Text>
-  <TouchableOpacity onPress={()=> navigation.navigate('CateClother', { category: products })}>
+  <TouchableOpacity onPress={()=> navigation.navigate('AllProductScreen', { category: products })}>
         <Text style={homeStyles.viewAll}>Tất Cả</Text>
       </TouchableOpacity>
     </View>

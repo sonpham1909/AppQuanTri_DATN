@@ -1,8 +1,10 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { StyleSheet } from "react-native";
 
 
-const cateClotherStyles = StyleSheet.create({
+
+const AllProductStyle = StyleSheet.create({
+
+
     container: {
       flex: 1,
       padding:10,
@@ -291,4 +293,4 @@ const cateClotherStyles = StyleSheet.create({
     marginRight: 5, // Khoảng cách giữa các ngôi sao
   },
   });
-  export default cateClotherStyles
+export default AllProductStyle

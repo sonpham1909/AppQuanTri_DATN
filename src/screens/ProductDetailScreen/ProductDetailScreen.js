@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
 import toggleProductImage from '../../components/DetailProduct/toggleProductImage'
 import DetailProduct from '../../components/DetailProduct/toggleProductImage';
-const ProductDetailScreen = () => {
+const ProductDetailScreen = ({navigation}) => {
   const [selectedColor, setSelectedColor] = useState('gray');
   const [selectedSize, setSelectedSize] = useState('M');
   const [quantity, setQuantity] = useState(1);
@@ -201,7 +201,7 @@ const ReviewsSection = () => {
             />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.addToCartButton}>
+          <TouchableOpacity style={styles.addToCartButton}onPress={()=>navigation.navigate('Cart')}>
             <Text style={styles.addToCartText}>Thêm Giỏ Hàng</Text>
           </TouchableOpacity>
         </View>

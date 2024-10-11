@@ -5,7 +5,7 @@ import { View, TextInput, TouchableOpacity, Image, StyleSheet, Text, Alert } fro
 import HomeScreen from '../screens/HomeScreen/HomeScreen';
 import colors from '../constants/colors';
 import Nofication from '../screens/Nofication/Nofication';
-import Customer from '../screens/Customer/Customer';
+import Favotires from '../screens/Favotires/Favotires';
 import Personal from '../screens/Personal/Personal';
 import { useNavigation } from '@react-navigation/native';
 
@@ -53,8 +53,8 @@ const BottomTabNavigator = () => {
 
           if (route.name === 'Trang chủ') {
             iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === 'Khách hàng') {
-            iconName = focused ? 'account' : 'account-outline';
+          } else if (route.name === 'Yêu thích') {
+            iconName = focused ? 'heart' : 'heart-outline';
           } else if (route.name === 'Thông báo') {
             iconName = focused ? 'bell' : 'bell-outline';
           } else if (route.name === 'Cá nhân') {
@@ -88,19 +88,20 @@ const BottomTabNavigator = () => {
         }} 
       />
       <Tab.Screen 
-        name="Khách hàng" 
-        component={Customer} 
-        options={{ title: 'Khách hàng' }} 
+        name="Yêu thích" 
+        component={Favotires} 
+
+        options={{ title: 'Yêu thích' , headerTitleAlign: 'center',}} 
       />
       <Tab.Screen 
         name="Thông báo" 
         component={Nofication} 
-        options={{ title: 'Thông báo' }} 
+        options={{ title: 'Thông báo', headerTitleAlign: 'center', }} 
       />
       <Tab.Screen 
         name="Cá nhân" 
         component={Personal} 
-        options={{ title: 'Cá nhân' }} 
+        options={{ title: 'Cá nhân', headerTitleAlign: 'center', }} 
       />
     </Tab.Navigator>
   );
