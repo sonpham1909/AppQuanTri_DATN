@@ -28,10 +28,10 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   title: {
-    fontSize: 24,
+    fontSize: 36,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#333',
+    color: '#303030',
   },
 
 
@@ -41,8 +41,9 @@ const styles = StyleSheet.create({
   },
   message: {
     textAlign: 'center',
-    fontSize: 16,
-    color: '#666',
+    fontSize: 18,
+    
+    color: '#303030',
   },
 });
 

@@ -41,6 +41,8 @@ const App = () => {
             headerTitleStyle: {
               fontWeight: 'bold', // Kiểu chữ tiêu đề
             },
+            headerTitleAlign: 'center', // Center the title in all screens
+
           }}
         />
         <Stack.Screen
@@ -56,6 +58,8 @@ const App = () => {
             headerTitleStyle: {
               fontWeight: 'bold', // Kiểu chữ tiêu đề
             },
+            headerTitleAlign: 'center', // Center the title in all screens
+
           }}
         />
 
@@ -72,6 +76,8 @@ const App = () => {
             headerTitleStyle: {
               fontWeight: 'bold', // Kiểu chữ tiêu đề
             },
+            headerTitleAlign: 'center', // Center the title in all screens
+
           }}
         />
 
@@ -88,6 +94,8 @@ const App = () => {
             headerTitleStyle: {
               fontWeight: 'bold', // Kiểu chữ tiêu đề
             },
+            headerTitleAlign: 'center', // Center the title in all screens
+
           }}
         />
         <Stack.Screen name="Home" component={BottomTabNavigator} />
@@ -105,6 +113,8 @@ const App = () => {
             headerTitleStyle: {
               fontWeight: 'bold', // Kiểu chữ tiêu đề
             },
+            headerTitleAlign: 'center', // Center the title in all screens
+
           }}
         />
 
@@ -121,6 +131,8 @@ const App = () => {
             headerTitleStyle: {
               fontWeight: 'bold', // Kiểu chữ tiêu đề
             },
+            headerTitleAlign: 'center', // Center the title in all screens
+
           }}
         />
 
@@ -137,6 +149,8 @@ const App = () => {
             headerTitleStyle: {
               fontWeight: 'bold', // Kiểu chữ tiêu đề
             },
+            headerTitleAlign: 'center', // Center the title in all screens
+
           }}
         />
 
@@ -153,6 +167,8 @@ const App = () => {
             headerTitleStyle: {
               fontWeight: 'bold', // Kiểu chữ tiêu đề
             },
+            headerTitleAlign: 'center', // Center the title in all screens
+
           }}
         />
 
@@ -169,6 +185,8 @@ const App = () => {
             headerTitleStyle: {
               fontWeight: 'bold', // Kiểu chữ tiêu đề
             },
+            headerTitleAlign: 'center', // Center the title in all screens
+
           }}
         />
       
