@@ -5,6 +5,7 @@ import React from 'react'
 const cateClotherStyles = StyleSheet.create({
     container: {
       flex: 1,
+      padding:10,
       backgroundColor: '#fff',
     },
    
@@ -76,5 +77,105 @@ const cateClotherStyles = StyleSheet.create({
       height: 13,
       marginRight: 5, // Khoảng cách giữa các ngôi sao
     },
+    
+
+  tabContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      marginBottom: 20,
+  },
+  tab: {
+      flex: 1,
+      alignItems: 'center',
+  },
+  tabContent: {
+      padding: 10,
+  },
+  activeTab: {
+      position: 'absolute',
+      bottom: 0,
+      height: 4,
+      width: '40%',
+      backgroundColor: '#242424',
+      alignSelf: 'center',
+  },
+  tabText: {
+      fontSize: 18,
+      color: '#999999',
+  },
+  activeTabText: {
+      fontSize: 18,
+      color: '#242424',
+      fontWeight: '500',
+  },
+  filterHeader: {
+    marginTop:20,
+      alignItems: 'flex-end',
+      marginBottom: 20,
+  },
+  filterLabel: {
+      top: 10,
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: '#00A65E',
+  },
+  sortButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+  },
+  sortIcon: {
+      width: 18,
+      height: 18,
+      marginRight: 5,
+  },
+  sortText: {
+      fontSize: 14,
+      color: '#000',
+  },
+  filterContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 10,
+  },
+  pickerWrapper: {
+      flex: 1,
+      borderWidth: 1,
+      borderColor: '#ccc',
+      borderRadius: 20,
+      marginHorizontal: 5,
+      overflow: 'hidden',
+      justifyContent: 'center',
+  },
+  picker: {
+      height: 40,
+      width: '100%',
+  },
+  pickerItem: {
+      fontSize: 14,  // Smaller font size for picker items
+      textAlign: 'left',  // Align the text to the left
+  },
+  productListContainer: {
+      flexDirection:'row',
+      marginTop:20,
+  },
+  productSection:{
+    paddingTop:10
+  },
+  scene: {
+    flex: 1,
+    backgroundColor: '#fff',
+    padding: 10,
+  },
+  tabBar: {
+    backgroundColor: '#FFF',
+  },
+  indicator: {
+    backgroundColor: '#00A65E',
+    height: 3,
+  },
+  label: {
+    fontWeight: 'bold',
+  }
+
   });
   export default cateClotherStyles

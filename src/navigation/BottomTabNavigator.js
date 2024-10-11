@@ -7,10 +7,12 @@ import colors from '../constants/colors';
 import Nofication from '../screens/Nofication/Nofication';
 import Customer from '../screens/Customer/Customer';
 import Personal from '../screens/Personal/Personal';
+import { useNavigation } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 
 const CustomHomeHeader = () => {
+  const navigation = useNavigation();
   const [searchText, setSearchText] = useState('');
 
   const handleTextChange = (text) => {
@@ -33,9 +35,9 @@ const CustomHomeHeader = () => {
           maxLength={40} // Giới hạn số ký tự
         />
       </View>
-      <TouchableOpacity style={styles.notificationButton}>
+      <TouchableOpacity style={styles.notificationButton} onPress={()=>navigation.navigate('Cart')}>
         <View style={styles.notificationIconContainer}> 
-          <Image source={require('../assets/images/home_notification.png')} style={styles.icon1} />
+          <Image source={require('../assets/images/home_cart.png')} style={styles.icon1} />
         </View>
       </TouchableOpacity>
     </View>
@@ -130,6 +132,11 @@ const styles = StyleSheet.create({
     width: 15,
     height: 15,
     marginRight: 10, // Khoảng cách giữa biểu tượng và ô input
+  },
+  icon1: {
+    width: 30,
+    height: 30,
+    resizeMode: 'stretch'
   },
   notificationIconContainer: {
     width: 35, // Đặt chiều rộng cho hình tròn

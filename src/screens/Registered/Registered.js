@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, Image, Alert} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
-import {register} from '../../redux/actions/actionUser'; // Import action register
-import Input from '../../components/Input';
-import Button from '../../components/ButtonLogin';
-import Container from '../../components/Container';
-import FormWrapper from '../../components/FormWrapper';
+// import {useDispatch, useSelector} from 'react-redux';
+// import {register} from '../../redux/actions/actionUser'; // Import action register
+import Input from '../../components/Account/Input';
+import Button from '../../components/Account/ButtonLogin';
+import Container from '../../components/Account/Container';
+import FormWrapper from '../../components/Account/FormWrapper';
 import globalStyles from '../../styles/globalStyles';
 
 const Registered = ({navigation}) => {
@@ -14,24 +14,24 @@ const Registered = ({navigation}) => {
   const [password, setPassword] = useState('');
   const [rePassword, setRePassword] = useState('');
 
-  const dispatch = useDispatch();
-  const {error, isLoading, userInfo} = useSelector(state => state.user);
+  // const dispatch = useDispatch();
+  // const {error, isLoading, userInfo} = useSelector(state => state.user);
 
   const handleRegister = () => {
-    if (!username || !email || !password || password !== rePassword) {
-      Alert.alert('Lỗi', 'Vui lòng điền đầy đủ thông tin và kiểm tra lại mật khẩu');
-      return;
-    }
+    // if (!username || !email || !password || password !== rePassword) {
+    //   Alert.alert('Lỗi', 'Vui lòng điền đầy đủ thông tin và kiểm tra lại mật khẩu');
+    //   return;
+    // }
   
-    dispatch(register({ username, email, password }))
-      .unwrap()
-      .then(() => {
-        Alert.alert('Thành công', 'Đăng ký thành công');
+    // dispatch(register({ username, email, password }))
+    //   .unwrap()
+    //   .then(() => {
+    //     Alert.alert('Thành công', 'Đăng ký thành công');
         navigation.replace('Login');
-      })
-      .catch(() => {
-        Alert.alert('Lỗi', error || 'Đăng ký không thành công');
-      });
+      // })
+      // .catch(() => {
+      //   Alert.alert('Lỗi', error || 'Đăng ký không thành công');
+      // });
   };
   
 

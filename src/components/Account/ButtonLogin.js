@@ -1,8 +1,8 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
-import colors from '../../src/constants/colors';
-import fonts from '../../src/constants/fonts';
-import spacing from '../../src/constants/spacing';
+import colors from '../../constants/colors';
+import fonts from '../../constants/fonts';
+import spacing from '../../constants/spacing';
 
 const Button = ({ title, onPress, isPrimary = true }) => {
   return (

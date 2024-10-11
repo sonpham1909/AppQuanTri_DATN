@@ -15,7 +15,12 @@ import store from '../AppQuanTri_DATN/src/redux/store/store'; // Đường dẫn
 import {Provider} from 'react-redux'; // Thêm import Provider từ react-redux
 import AddProduct from '../AppQuanTri_DATN/src/screens/ProductsScreen/AddproductSrceen';
 import CateClother from '../AppQuanTri_DATN/src/screens/CateClotherScreen/CateClotherScreen';
-
+import Cart from '../AppQuanTri_DATN/src/screens/Cart/Cart';
+import Checkout from '../AppQuanTri_DATN/src/screens/CheckOut/Checkout';
+import Favorites from '../AppQuanTri_DATN/src/screens/Favotires/Favotires';
+import Notification from '../AppQuanTri_DATN/src/screens/Nofication/Nofication';
+import DetailedOrders from '../AppQuanTri_DATN/src/screens/DetailedOrders/DetailedOrders';
+import ProductDetailScreen from '../AppQuanTri_DATN/src/screens/ProductDetailScreen/ProductDetailScreen'
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -23,7 +28,7 @@ const App = () => {
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName="CateClother"
+          initialRouteName="Home"
           screenOptions={{headerShown: false}}>
           <Stack.Screen name="Welcom" component={Welcom} />
           <Stack.Screen name="Login" component={LoginScreen} />
@@ -155,6 +160,87 @@ const App = () => {
           },
         }} 
           />
+           <Stack.Screen name="Cart" component={Cart}
+            options={{
+              headerShown: true,
+              title: 'Cart',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
+                 <Stack.Screen name="Checkout" component={Checkout}
+          options={{
+            headerShown: true,
+            title: 'Checkout',
+            headerStyle: {
+              backgroundColor: '#00A65E', // Màu nền xanh
+            },
+            headerTintColor: '#fff', // Màu chữ trắng
+            headerTitleStyle: {
+              fontWeight: 'bold', // Kiểu chữ tiêu đề
+            },
+          }}
+        />
+        
+        <Stack.Screen name="Favorites" component={Favorites}
+          options={{
+            headerShown: true,
+            title: 'Favorites',
+            headerStyle: {
+              backgroundColor: '#00A65E', // Màu nền xanh
+            },
+            headerTintColor: '#fff', // Màu chữ trắng
+            headerTitleStyle: {
+              fontWeight: 'bold', // Kiểu chữ tiêu đề
+            },
+          }}
+        />
+        
+        <Stack.Screen name="Notification" component={Notification}
+          options={{
+            headerShown: true,
+            title: 'Notification',
+            headerStyle: {
+              backgroundColor: '#00A65E', // Màu nền xanh
+            },
+            headerTintColor: '#fff', // Màu chữ trắng
+            headerTitleStyle: {
+              fontWeight: 'bold', // Kiểu chữ tiêu đề
+            },
+          }}
+        />
+                <Stack.Screen name="DetailedOrders" component={DetailedOrders}
+          options={{
+            headerShown: true,
+            title: 'DetailedOrders',
+            headerStyle: {
+              backgroundColor: '#00A65E', // Màu nền xanh
+            },
+            headerTintColor: '#fff', // Màu chữ trắng
+            headerTitleStyle: {
+              fontWeight: 'bold', // Kiểu chữ tiêu đề
+            },
+          }}
+        />
+        
+        <Stack.Screen name="ProductDetailScreen" component={ProductDetailScreen}
+          options={{
+            headerShown: true,
+            title: 'ProductDetailScreen',
+            headerStyle: {
+              backgroundColor: '#00A65E', // Màu nền xanh
+            },
+            headerTintColor: '#fff', // Màu chữ trắng
+            headerTitleStyle: {
+              fontWeight: 'bold', // Kiểu chữ tiêu đề
+            },
+          }}
+        />
         </Stack.Navigator>
     
 

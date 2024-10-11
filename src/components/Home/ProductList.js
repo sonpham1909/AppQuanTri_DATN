@@ -1,13 +1,15 @@
 import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
 import homeStyles from '../../styles/homeStyles';
 import renderStars from '../Home/renderStars';
+import { useNavigation } from '@react-navigation/native';
 
 // Hàm để hiển thị danh sách sản phẩm
-const ProductList = ({ title, products, onProductPress }) => (
+const ProductList = ({ navigation,title, products }) => (
+
   <View style={homeStyles.productSection}>
     <View style={homeStyles.sectionHeader}>
       <Text style={homeStyles.sectionTitle}>{title}</Text>
-      <TouchableOpacity>
+  <TouchableOpacity onPress={()=> navigation.navigate('CateClother', { category: products })}>
         <Text style={homeStyles.viewAll}>Tất Cả</Text>
       </TouchableOpacity>
     </View>
@@ -16,7 +18,7 @@ const ProductList = ({ title, products, onProductPress }) => (
       data={products}
       keyExtractor={(item) => item.id.toString()} // Đảm bảo ID là chuỗi
       renderItem={({ item }) => (
-        <TouchableOpacity onPress={() => onProductPress(item)} style={homeStyles.productItem}>
+        <TouchableOpacity onPress={()=>navigation.navigate('ProductDetailScreen',{item:item})} style={homeStyles.productItem}>
           {/* Hình ảnh sản phẩm */}
           <Image source={item.image} style={homeStyles.productImage} />
 
