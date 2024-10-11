@@ -12,7 +12,7 @@ const CheckoutScreen = () => {
   const navigation = useNavigation();  // Hook for navigation
 
   const handleOrderPress = () => {
-    navigation.navigate('InvoicesScreen');  // Chuyển màn hình tới InvoicesScreen khi nhấn nút
+    navigation.navigate('Congrats');  // Chuyển màn hình tới InvoicesScreen khi nhấn nút
   };
 
   return (
