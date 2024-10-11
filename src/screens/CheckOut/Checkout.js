@@ -22,7 +22,7 @@ const CheckoutScreen = () => {
         { name: 'ZaloPay', icon: require('../../assets/images/icon_zalopay.png') },
         { name: 'Thanh toán khi nhận hàng', icon: require('../../assets/images/icon_shipcod.png') }
       ]} />   
-      <ShippingMethod method="Fast (2-3 days)" icon={require('../../assets/images/icon_ghtk.png')} />
+      <ShippingMethod method="Giao hàng tiết kiệm (2-3 days)" icon={require('../../assets/images/icon_ghtk.png')} />
       <PriceDetails price={95.00} shippingFee={5.00} total={100.00} />
       
       {/* Nút chuyển màn */}

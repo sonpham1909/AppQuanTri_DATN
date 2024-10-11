@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, Picker } from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'; // Import the MaterialCommunityIcons
 
 const DetailedOrders = () => {
   const [status, setStatus] = useState("Chờ xác nhận");
@@ -14,47 +15,58 @@ const DetailedOrders = () => {
 
       {/* Hàng hóa */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Hàng hóa</Text>
-        <View style={styles.productItem}>
-          <Image source={require('../../assets/images/item_1.png')} style={styles.productImage} />
-          <View style={styles.productInfo}>
-            <Text style={styles.productName}>1. Quần dài</Text>
-            <Text style={styles.productPrice}>1 x 20,000 Đ</Text>
-          </View>
+        <View style={styles.sectionHeader}>
+          <MaterialCommunityIcons name="package-variant-closed" size={20} color="#00A65E" />
+          <Text style={styles.sectionTitle}>Hàng hóa</Text>
         </View>
-        <View style={styles.totalInfo}>
-          <Text style={styles.totalLabel}>Số lượng sản phẩm</Text>
-          <Text style={styles.totalValue}>3</Text>
-        </View>
-        <View style={styles.totalInfo}>
-          <Text style={styles.totalLabel}>Tổng tiền</Text>
-          <Text style={styles.totalValue}>60,000 Đ</Text>
+
+        {/* Group of three items */}
+        <View style={styles.groupedProducts}>
+          {[1, 2, 3].map((item, index) => (
+            <View style={styles.productItem} key={index}>
+              <Image source={require('../../assets/images/item_1.png')} style={styles.productImage} />
+              <View style={styles.productInfo}>
+                <Text style={styles.productName}>{item}. Quần dài</Text>
+                <Text style={styles.productPrice}>1 x 20,000 Đ</Text>
+              </View>
+            </View>
+          ))}
         </View>
       </View>
 
       {/* Khách hàng */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Khách hàng</Text>
+        <View style={styles.sectionHeader}>
+          <MaterialCommunityIcons name="account-outline" size={20} color="#00A65E" />
+          <Text style={styles.sectionTitle}>Khách hàng</Text>
+        </View>
         <View style={styles.customerInfo}>
-          <Text style={styles.customerText}>📞 0984907397</Text>
-          <Text style={styles.customerText}>📍 Phúc Thọ - Hà Nội</Text>
-          <Text style={styles.customerText}>Tên</Text>
+          <View style={styles.customerRow}>
+            <MaterialCommunityIcons name="account-outline" size={20} color="#00A65E" />
+            <Text style={styles.customerText}>Nguyễn Như Hiếu</Text>
+          </View>
+          <View style={styles.customerRow}>
+            <MaterialCommunityIcons name="phone" size={20} color="#00A65E" />
+            <Text style={styles.customerText}> 0984907397</Text>
+          </View>
+          <View style={styles.customerRow}>
+            <MaterialCommunityIcons name="map-marker" size={20} color="#00A65E" />
+            <Text style={styles.customerText}> Phúc Thọ - Hà Nội</Text>
+          </View>
         </View>
       </View>
 
       {/* Thanh toán */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Thanh toán</Text>
+        <View style={styles.sectionHeader}>
+          <MaterialCommunityIcons name="credit-card-outline" size={20} color="#00A65E" />
+          <Text style={styles.sectionTitle}>Thanh toán</Text>
+        </View>
         <View style={styles.paymentInfo}>
           <Text style={styles.paymentText}>Date: 4h30</Text>
           <Text style={styles.paymentText}>Method: Shipcode</Text>
         </View>
       </View>
-
-      {/* Button */}
-      <TouchableOpacity style={styles.saveButton}>
-        <Text style={styles.saveButtonText}>Lưu</Text>
-      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -63,13 +75,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingHorizontal: 20, // Tăng padding hai bên để tạo khoảng cách
+    paddingHorizontal: 20,
     paddingVertical: 15,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 20, // Tăng khoảng cách phía dưới
+    alignItems: 'center',
+    marginBottom: 20,
+    paddingVertical: 15,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 1, // For Android shadow
   },
   headerTitle: {
     fontSize: 18,
@@ -80,24 +104,52 @@ const styles = StyleSheet.create({
     color: '#999',
   },
   section: {
-    marginBottom: 25, // Tăng khoảng cách giữa các section
+    marginBottom: 25,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 15, // Tăng khoảng cách phía dưới tiêu đề
+    marginLeft: 5,
   },
+
+  /* Grouped Products inside One Border */
+  groupedProducts: {
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 1, // For Android shadow
+  },
+
   productItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 15, // Tăng chiều cao mỗi mục
-    borderBottomWidth: 1,
+    paddingVertical: 15,
+    borderBottomWidth: 1, // Line between grouped items
     borderBottomColor: '#E0E0E0',
   },
+
+  productItemLast: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 15,
+  },
+
   productImage: {
-    width: 60, // Tăng kích thước ảnh
+    width: 60,
     height: 60,
     marginRight: 15,
+    borderRadius: 5, // Rounded corners for the image
   },
   productInfo: {
     flex: 1,
@@ -111,43 +163,43 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  totalInfo: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 10, // Tăng khoảng cách giữa các thông tin tổng
-  },
-  totalLabel: {
-    fontSize: 16,
-    color: '#888',
-  },
-  totalValue: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
+
   customerInfo: {
-    backgroundColor: '#F9F9F9',
-    padding: 15, // Tăng padding bên trong hộp khách hàng
+    padding: 15,
     borderRadius: 8,
+    borderWidth: 1, // Changed from background to border
+    borderColor: '#E0E0E0',
+  },
+  customerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
   },
   customerText: {
     fontSize: 16,
-    marginBottom: 5,
+    marginLeft: 5, // Added spacing after the icon
   },
+
   paymentInfo: {
-    backgroundColor: '#F9F9F9',
-    padding: 15, // Tăng padding bên trong hộp thanh toán
+    padding: 15,
     borderRadius: 8,
+    borderWidth: 1, // Changed from background to border
+    borderColor: '#E0E0E0',
   },
   paymentText: {
     fontSize: 16,
     marginBottom: 5,
   },
+  picker: {
+    height: 50,
+    width: '100%',
+  },
   saveButton: {
     backgroundColor: '#00A65E',
-    paddingVertical: 20, // Tăng chiều cao của nút Lưu
+    paddingVertical: 20,
     borderRadius: 10,
     alignItems: 'center',
-    marginTop: 20, // Tăng khoảng cách phía trên nút
+    marginTop: 20,
   },
   saveButtonText: {
     color: '#fff',

@@ -37,28 +37,30 @@ const InvoicesScreen = () => {
     processing: Processing,
     canceled: Canceled,
   });
-
+  const CustomTabBar = (props) => {
+    const { key, ...otherProps } = props;
+    return <TabBar {...otherProps} />;
+  };
   return (
     <TabView
-      navigationState={{ index, routes }}
-      renderScene={renderScene}
-      onIndexChange={setIndex}
-      initialLayout={initialLayout}
-      renderTabBar={(props) => {
-        // Loại bỏ `key` khỏi props trước khi truyền vào TabBar
-        const { key, ...rest } = props;
-        return (
-          <TabBar
-            {...rest}  // Sử dụng các props còn lại không chứa `key`
-            indicatorStyle={styles.indicator}
-            style={styles.tabBar}
-            labelStyle={styles.label}
-            activeColor="#00A65E"
-            inactiveColor="#999"
-          />
-        );
-      }}
-    />
+    navigationState={{ index, routes }}
+    renderScene={renderScene}
+    onIndexChange={setIndex}
+    initialLayout={initialLayout}
+    renderTabBar={(props) => (
+      <CustomTabBar
+        {...props} 
+        indicatorStyle={styles.indicator}
+        style={styles.tabBar}
+        labelStyle={styles.label}
+        activeColor="#00A65E"
+        inactiveColor="#999"
+      />
+    )}
+
+/>
+
+    
   );
 };
 

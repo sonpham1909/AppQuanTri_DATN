@@ -34,8 +34,9 @@ const CustomHomeHeader = () => {
         />
       </View>
       <TouchableOpacity style={styles.notificationButton}>
-        <View style={styles.notificationIconContainer}> 
-          <Image source={require('../assets/images/home_notification.png')} style={styles.icon1} />
+        <View style={styles.notificationIconContainer}>
+          {/* Use cart icon */}
+          <MaterialCommunityIcons name="cart" size={24} color="#000" /> 
         </View>
       </TouchableOpacity>
     </View>

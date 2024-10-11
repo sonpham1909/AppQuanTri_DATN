@@ -29,10 +29,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   title: {
-    fontSize: 18,
-    fontWeight: 'bold',
     fontFamily:'Nunito Sans',
+    fontSize: 18,
     color: '#242424',
+    fontWeight: 'bold',
     marginBottom:15,
     
   },

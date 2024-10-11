@@ -14,7 +14,7 @@ const PriceDetails = ({ price, shippingFee, total }) => {
       </View>
       <View style={styles.row}>
         <Text style={styles.labelBold}>Tổng:</Text>
-        <Text style={styles.valueBold}>${total}</Text>
+        <Text style={styles.value}>${total}</Text>
       </View>
     </View>
   );
@@ -35,10 +35,12 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 18,
     color: '#888',
+    fontWeight:'bold'
   },
   value: {
     fontSize: 18,
-    color: '#000',
+    color: '#242424',
+    fontWeight:'bold'
   },
   labelBold: {
     fontSize: 18,

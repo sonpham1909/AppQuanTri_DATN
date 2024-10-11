@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Text,
   StyleSheet,
+  Image
 } from 'react-native';
 
 const DiscountCodeInput = ({discountCode, onChangeCode}) => {
@@ -17,9 +18,12 @@ const DiscountCodeInput = ({discountCode, onChangeCode}) => {
           value={discountCode}
           onChangeText={onChangeCode}
         />
-        <TouchableOpacity style={styles.discountButton}>
-          <Text style={styles.discountButtonText}>→</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.discountButton}>
+        <Image
+          source={require('../../assets/images/icon_arow.png')} // Path to your arrow image
+          style={styles.discountButtonImage} // Apply styling to your image
+        />
+      </TouchableOpacity>
       </View>
     </View>
   );
@@ -48,7 +52,7 @@ const styles = StyleSheet.create({
   discountButton: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#00C853',
+    backgroundColor: '#00A65E',
     paddingHorizontal: 15,
     marginLeft: 10,
     borderRadius: 5,
