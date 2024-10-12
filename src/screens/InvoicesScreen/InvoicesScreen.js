@@ -4,7 +4,9 @@ import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import InvoiceCard from '../../components/Invoices/InvoiceCard';
 
 const Delivered = () => (
+  
   <View style={styles.scene}>
+    
     <InvoiceCard />
     <InvoiceCard />
   </View>

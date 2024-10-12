@@ -1,12 +1,18 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; // Import navigation
 
 const ShippingInfo = ({ name, address }) => {
+  const navigation = useNavigation(); // Get navigation object
+
   return (
+    
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Địa chỉ giao hàng</Text>
-        <TouchableOpacity>
+        <TouchableOpacity
+                onPress={() => navigation.navigate('ShippingAddressScreen')} // Replace 'TargetScreen' with the name of the screen you want to navigate to
+        >
           <Text style={styles.editText}>✎</Text>
         </TouchableOpacity>
       </View>

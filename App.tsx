@@ -16,7 +16,9 @@ import Cart from '../AppQuanTri_DATN/src/screens/Cart/Cart';
 import Checkout from '../AppQuanTri_DATN/src/screens/CheckOut/Checkout';
 import DetailedOrders from '../AppQuanTri_DATN/src/screens/DetailedOrders/DetailedOrders';
 import Congrats from '../AppQuanTri_DATN/src/screens/Congrats/Congrats';
-
+import AddAddress from './src/screens/ShippingAddressScreen/AddAddressScreen';
+import SettingScreen from './src/screens/SettingScreen/SettingScreen';
+import ShippingAddressScreen from './src/screens/ShippingAddressScreen/ShippingAddressScreen';
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -189,6 +191,10 @@ const App = () => {
 
           }}
         />
+
+        <Stack.Screen name="ShippingAddressScreen" component={ShippingAddressScreen} />
+        <Stack.Screen name="AddAddress" component={AddAddress} />
+        <Stack.Screen name="SettingScreen" component={SettingScreen} />
       
       </Stack.Navigator>
     </NavigationContainer>

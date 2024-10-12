@@ -9,7 +9,7 @@ const Notification = () => {
       image: require('../../assets/images/item_1.png'),
       title: 'Your order #123456789 has been confirmed',
       description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Turpis pretium et in arcu adipiscing nec.',
-      status: 'New',
+      status: '',
     },
     {
       id: 2,
@@ -30,7 +30,7 @@ const Notification = () => {
       image: require('../../assets/images/item_1.png'),
       title: 'Your order #123456789 has been confirmed',
       description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Turpis pretium et in arcu adipiscing nec.',
-      status: 'New',
+      status: '',
     },
   ];
 
