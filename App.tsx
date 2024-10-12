@@ -192,9 +192,49 @@ const App = () => {
           }}
         />
 
-        <Stack.Screen name="ShippingAddressScreen" component={ShippingAddressScreen} />
-        <Stack.Screen name="AddAddress" component={AddAddress} />
-        <Stack.Screen name="SettingScreen" component={SettingScreen} />
+        <Stack.Screen name="ShippingAddressScreen" component={ShippingAddressScreen} 
+        options={{
+          headerShown: true,
+          title: 'Nhận xét',
+          headerStyle: {
+            backgroundColor: '#00A65E', // Màu nền xanh
+          },
+          headerTintColor: '#fff', // Màu chữ trắng
+          headerTitleStyle: {
+            fontWeight: 'bold', // Kiểu chữ tiêu đề
+          },
+          headerTitleAlign: 'center', // Center the title in all screens
+
+        }}
+        />
+        <Stack.Screen name="AddAddress" component={AddAddress}
+        options={{
+          headerShown: true,
+          title: 'AddAddress',
+          headerStyle: {
+            backgroundColor: '#00A65E', // Màu nền xanh
+          },
+          headerTintColor: '#fff', // Màu chữ trắng
+          headerTitleStyle: {
+            fontWeight: 'bold', // Kiểu chữ tiêu đề
+          },
+          headerTitleAlign: 'center', // Center the title in all screens
+
+        }} />
+        <Stack.Screen name="SettingScreen" component={SettingScreen} 
+        options={{
+          headerShown: true,
+          title: 'SettingScreen',
+          headerStyle: {
+            backgroundColor: '#00A65E', // Màu nền xanh
+          },
+          headerTintColor: '#fff', // Màu chữ trắng
+          headerTitleStyle: {
+            fontWeight: 'bold', // Kiểu chữ tiêu đề
+          },
+          headerTitleAlign: 'center', // Center the title in all screens
+
+        }}/>
       
       </Stack.Navigator>
     </NavigationContainer>

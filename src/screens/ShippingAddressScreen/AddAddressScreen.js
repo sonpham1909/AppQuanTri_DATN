@@ -31,7 +31,6 @@ const AddAddress = () => {
   return (
     <View>
       {/* sử dụng component header */}
-      <Header onpress={() => navigation.goBack()} title="Add Address" />
 
       <ScrollView contentContainerStyle={globalStyles.containerAddress}>
         {/* họ và tên */}

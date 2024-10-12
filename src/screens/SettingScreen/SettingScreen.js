@@ -18,7 +18,6 @@ const SettingScreen = () => {
 
   return (
     <View>
-      <Header onpress={() => navigation.goBack()} title="Setting" />
     <View style={globalStyles.containerSetting}>
       {/* Thông tin cá nhân */}
       <View style={globalStyles.sectionSetting}>
