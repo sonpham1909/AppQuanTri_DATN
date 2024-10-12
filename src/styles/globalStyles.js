@@ -185,7 +185,7 @@ const globalStyles = StyleSheet.create({
     backgroundColor: '#f8f8f8',
   },
   sectionSetting:{
-    marginBottom: 20,
+    marginBottom: 10,
     backgroundColor: '#fff',
     padding: 15,
     borderRadius: 10,
@@ -222,7 +222,6 @@ const globalStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 15,
   },
   containerAddress:{
     flexGrow: 1,

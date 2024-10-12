@@ -64,9 +64,7 @@ const ShippingAddressScreen = () => {
 
   return (
     <View style={globalStyles.ShippingAddressContainer}>
-      <View>
-        <Header title="Địa chỉ" onpress={() => navigation.goBack()} />
-      </View>
+      
       <View style={globalStyles.ShippingAddressContent}>
         <FlatList
           data={addresses}

@@ -155,7 +155,7 @@ const AllProductStyle = StyleSheet.create({
   },
   productListContainer: {
       flexDirection:'row',
-      marginTop:20,
+      margin:5,
   },
   productSection:{
   },

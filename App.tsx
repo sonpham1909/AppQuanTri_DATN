@@ -245,9 +245,48 @@ const App = () => {
         />
 
 
-        <Stack.Screen name="ShippingAddressScreen" component={ShippingAddressScreen} />
-        <Stack.Screen name="AddAddress" component={AddAddress} />
-        <Stack.Screen name="SettingScreen" component={SettingScreen} />
+        <Stack.Screen name="ShippingAddressScreen" component={ShippingAddressScreen}
+        options={{
+          headerShown: true,
+          title: 'Địa chỉ',
+          headerTitleAlign: 'center',
+          headerStyle: {
+            backgroundColor: '#00A65E', // Màu nền xanh
+          },
+          headerTintColor: '#fff', // Màu chữ trắng
+          headerTitleStyle: {
+            fontWeight: 'bold', // Kiểu chữ tiêu đề
+          },
+        }}
+        />
+        <Stack.Screen name="AddAddress" component={AddAddress}
+        options={{
+          headerShown: true,
+          title: 'Thêm Địa chỉ',
+          headerTitleAlign: 'center',
+          headerStyle: {
+            backgroundColor: '#00A65E', // Màu nền xanh
+          },
+          headerTintColor: '#fff', // Màu chữ trắng
+          headerTitleStyle: {
+            fontWeight: 'bold', // Kiểu chữ tiêu đề
+          },
+        }}
+        />
+        <Stack.Screen name="SettingScreen" component={SettingScreen}
+        options={{
+          headerShown: true,
+          title: 'Cài đặt',
+          headerTitleAlign: 'center',
+          headerStyle: {
+            backgroundColor: '#00A65E', // Màu nền xanh
+          },
+          headerTintColor: '#fff', // Màu chữ trắng
+          headerTitleStyle: {
+            fontWeight: 'bold', // Kiểu chữ tiêu đề
+          },
+        }}
+        />
       
         </Stack.Navigator>
     

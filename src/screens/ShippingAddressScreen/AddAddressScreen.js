@@ -31,14 +31,13 @@ const AddAddress = () => {
   return (
     <View>
       {/* sử dụng component header */}
-      <Header onpress={() => navigation.goBack()} title="Add Address" />
 
       <ScrollView contentContainerStyle={globalStyles.containerAddress}>
         {/* họ và tên */}
         <View style={globalStyles.inputContainerAddress}>
           <Text style={globalStyles.labelAddress}>Họ và tên</Text>
           <TextInput
-            placeholder="Ex: Bruno Pham"
+            placeholder="Hieu"
             mode="outlined" /*Thêm border cho textInput*/
             value={fullName}
             onChangeText={text => setFullName(text)}
@@ -50,7 +49,7 @@ const AddAddress = () => {
         <View style={globalStyles.inputContainerAddress}>
           <Text style={globalStyles.labelAddress}>Mã ZIP (mã bưu chính)</Text>
           <TextInput
-            placeholder="Ex: 123456"
+            placeholder="010023120"
             mode="outlined"
             value={zipCode}
             onChangeText={text => setZipCode(text)}
@@ -60,14 +59,14 @@ const AddAddress = () => {
 
         {/* sử dụng thư viện picker để chọn quốc gia */}
         <View style={globalStyles.pickerContainerAddress}>
-          <Text style={globalStyles.labelAddress}>Country</Text>
+          <Text style={globalStyles.labelAddress}>Thành Phố</Text>
           <Picker
             selectedValue={country}
             onValueChange={itemValue =>
               setCountry(itemValue)
             } /*set quốc gia vào useState*/
             style={globalStyles.pickerAddress}>
-            <Picker.Item label="Chọn Quốc gia" value="" />
+            <Picker.Item label="Chọn Thành phố" value="" />
             <Picker.Item label="Việt Nam" value="Vietnam" />
             <Picker.Item label="Lào" value="Laos" />
             <Picker.Item label="Campuchia" value="Cambodia" />
@@ -76,14 +75,14 @@ const AddAddress = () => {
 
         {/* sử dụng thư viện picker để chọn thành phố */}
         <View style={globalStyles.pickerContainerAddress}>
-          <Text style={globalStyles.labelAddress}>Country</Text>
+          <Text style={globalStyles.labelAddress}>Huyện</Text>
           <Picker
             selectedValue={city}
             onValueChange={itemValue =>
               setCity(itemValue)
             } /*set thành phố vào useState*/
             style={globalStyles.pickerAddress}>
-            <Picker.Item label="Chọn Thành phố" value="" />
+            <Picker.Item label="Chọn Quận huyện " value="" />
             <Picker.Item label="Hà Nội" value="Hà Nội" />
             <Picker.Item label="Hồ Chí Minh" value="Hồ Chí Minh" />
             <Picker.Item label="Đà Nẵng" value="Đà nẵng" />
@@ -92,14 +91,14 @@ const AddAddress = () => {
 
         {/* sử dụng thư viện picker để chọn quận huyện */}
         <View style={globalStyles.pickerContainerAddress}>
-          <Text style={globalStyles.labelAddress}>District</Text>
+          <Text style={globalStyles.labelAddress}>Xã</Text>
           <Picker
             selectedValue={district}
             onValueChange={itemValue =>
               setDistrict(itemValue)
             } /*set quận huyện vào useState*/
             style={globalStyles.pickerAddress}>
-            <Picker.Item label="Chọn Quận huyện" value="" />
+            <Picker.Item label="Hoàn kiếm" value="" />
             <Picker.Item label="Ba Vì" value="Ba Vì" />
             <Picker.Item label="Thủ Đức" value="Thủ Đức" />
             <Picker.Item label="Ngân Bình" value="Ngân Bình" />

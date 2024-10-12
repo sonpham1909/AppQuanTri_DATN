@@ -1,79 +1,152 @@
-import {StyleSheet, Text, View, TextInput, Switch} from 'react-native';
-import React, {useState} from 'react';
-import Header from '../../components/ShippingAddress/Header';
+import { StyleSheet, Text, View, TextInput, Switch } from 'react-native';
+import React, { useState } from 'react';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'; // For pencil icon
 import globalStyles from '../../styles/globalStyles';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+
 const SettingScreen = () => {
-  //hàm chuyển hướng
-  const navigation = useNavigation();
-  // State cho Switch
-  const [isSalesEnabled, setIsSalesEnabled] = useState(false);
+  const navigation = useNavigation(); // For navigation if needed
+  const [isSalesEnabled, setIsSalesEnabled] = useState(true); // Default value true to match screenshot
   const [isBackgroundEnabled, setIsBackgroundEnabled] = useState(false);
 
-  // Hàm thay đổi trạng thái của Switch
-  const toggleSalesSwitch = () =>
-    setIsSalesEnabled(previousState => !previousState);//đổi giá trị bằng !
-  const toggleBackgroundSwitch = () =>
-    setIsBackgroundEnabled(previousState => !previousState);
+  // Handlers for switches
+  const toggleSalesSwitch = () => setIsSalesEnabled(previousState => !previousState);
+  const toggleBackgroundSwitch = () => setIsBackgroundEnabled(previousState => !previousState);
 
   return (
-    <View>
-      <Header onpress={() => navigation.goBack()} title="Setting" />
     <View style={globalStyles.containerSetting}>
-      {/* Thông tin cá nhân */}
-      <View style={globalStyles.sectionSetting}>
-        <Text style={globalStyles.sectionTitleSetting}>Thông Tin Cá Nhân</Text>
-        {/* họ tên */}
-        <View style={globalStyles.infoContainerSetting}>
-          <Text style={globalStyles.labelSetting}>Họ Tên</Text>
-          <TextInput style={globalStyles.inputSetting} value="Việt Vũ" editable={false} />
-        </View>
-        {/* email */}
-        <View style={globalStyles.infoContainerSetting}>
-          <Text style={globalStyles.labelSetting}>Email</Text>
-          <TextInput
-            style={globalStyles.inputSetting}
-            value="vvv@gmail.com"
-            editable={false}
-          />
-        </View>
+      {/* Header with pencil icon */}
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Thông Tin Cá Nhân</Text>
+        <MaterialCommunityIcons name="pencil" size={24} color="#C4C4C4" />
       </View>
 
-      {/* Mật khẩu */}
-      <View style={globalStyles.sectionSetting}>
-        <Text style={globalStyles.sectionTitleSetting}>Mật Khẩu</Text>
-        <TextInput
-          style={globalStyles.inputSetting}
-          value="********"
-          editable={false} // Không cho phép người dùng chỉnh sửa
+      {/* Name Section */}
+      <View style={styles.section}>
+        <Text style={styles.label}>Họ Tên</Text>
+        <Text style={styles.label1}>Viet gio tai</Text>
+
+      </View>
+
+      {/* Email Section */}
+      <View style={styles.section}>
+        <Text style={styles.label}>Email</Text>
+        <Text style={styles.label1}>vvv@gmail.com</Text>
+
+      
+      </View>
+
+      <View style={styles.header}>
+        <Text style={styles.headerText1}>Password</Text>
+        <MaterialCommunityIcons name="pencil" size={24} color="#C4C4C4" />
+      </View>
+      {/* Password Section */}
+      <View style={styles.section}>
+      <Text style={styles.label}>name</Text>
+        <Text style={styles.label1}>*************</Text>
+      </View>
+
+      {/* Notification Settings */}
+      <Text style={styles.notificationHeader}>Thông Báo</Text>
+
+      {/* Sales Switch */}
+      <View style={styles.switchContainer}>
+        <Text style={styles.switchLabel}>Sales</Text>
+        <Switch
+          trackColor={{ false: '#767577', true: '#81b0ff' }}
+          thumbColor={isSalesEnabled ? '#4CAF50' : '#f4f3f4'}
+          onValueChange={toggleSalesSwitch}
+          value={isSalesEnabled}
         />
       </View>
 
-      {/* Thông báo */}
-      <View style={globalStyles.sectionSetting}>
-        <Text style={globalStyles.sectionTitleSetting}>Thông Báo</Text>
-        <View style={globalStyles.switchSetting}>
-          <Text style={globalStyles.labelSetting}>Sales</Text>
-          <Switch
-            trackColor={{false: '#767577', true: '#81b0ff'}}
-            thumbColor={isSalesEnabled ? '#f5dd4b' : '#f4f3f4'}
-            onValueChange={toggleSalesSwitch}
-            value={isSalesEnabled}
-          />
-        </View>
-        <View style={globalStyles.switchSetting}>
-          <Text style={globalStyles.labelSetting}>Màu nền</Text>
-          <Switch
-            trackColor={{false: '#767577', true: '#81b0ff'}}
-            thumbColor={isBackgroundEnabled ? '#f5dd4b' : '#f4f3f4'}
-            onValueChange={toggleBackgroundSwitch}
-            value={isBackgroundEnabled}
-          />
-        </View>
+      {/* Background Switch */}
+      <View style={styles.switchContainer}>
+        <Text style={styles.switchLabel}>Màu nền</Text>
+        <Switch
+          trackColor={{ false: '#767577', true: '#81b0ff' }}
+          thumbColor={isBackgroundEnabled ? '#4CAF50' : '#f4f3f4'}
+          onValueChange={toggleBackgroundSwitch}
+          value={isBackgroundEnabled}
+        />
       </View>
-    </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  headerText: {
+    color:' #909191',
+    fontSize: 16,
+    fontWeight: 'bold',
+    fontFamily:'Nunito Sans'
+  },
+  headerText1: {
+    color:' #909191',
+    fontSize: 16,
+    fontWeight: 'bold',
+    fontFamily:'Nunito Sans',
+    paddingTop:20
+  },
+  section: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 20,
+    elevation: 2, // Shadow for Android
+    shadowColor: '#000', // Shadow for iOS
+    shadowOffset: { width: 0, height: 2 }, // Shadow for iOS
+    shadowOpacity: 0.1, // Shadow for iOS
+    shadowRadius: 8, // Shadow for iOS
+  },
+  label: {
+    fontSize: 12,
+    color: ' #808080',
+    marginBottom: 5,
+  },
+  label1: {
+    fontSize: 14,
+    color: '#242424',
+    marginBottom: 5,
+  },
+  input: {
+    height: 45,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    backgroundColor: '#f5f5f5',
+    color: '#333',
+  },
+  notificationHeader: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginVertical: 20,
+  },
+  switchContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    elevation: 2, // Shadow for Android
+    shadowColor: '#000', // Shadow for iOS
+    shadowOffset: { width: 0, height: 2 }, // Shadow for iOS
+    shadowOpacity: 0.1, // Shadow for iOS
+    shadowRadius: 8, // Shadow for iOS
+  },
+  switchLabel: {
+    fontSize: 14,
+    color: '#333',
+  },
+});
 
 export default SettingScreen;
