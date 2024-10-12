@@ -8,7 +8,6 @@ import BottomTabNavigator from '../AppQuanTri_DATN/src/navigation/BottomTabNavig
 import AccountScreen from '../AppQuanTri_DATN/src/screens/AccountScreen/AccountScreen';
 import CategoriesScreen from '../AppQuanTri_DATN/src/screens/CategoriesScreen/CategoriesScreen';
 import InvoicesScreen from '../AppQuanTri_DATN/src/screens/InvoicesScreen/InvoicesScreen';
-import StatisticsScreen from '../AppQuanTri_DATN/src/screens/StatisticsScreen/StatisticsScreen';
 import ReviewsScreen from '../AppQuanTri_DATN/src/screens/ReviewsScreen/ReviewsScreen';
 import store from '../AppQuanTri_DATN/src/redux/store/store'; // Đường dẫn tới store.js
 import {Provider} from 'react-redux'; // Thêm import Provider từ react-redux
@@ -21,6 +20,10 @@ import DetailedOrders from '../AppQuanTri_DATN/src/screens/DetailedOrders/Detail
 import ProductDetailScreen from '../AppQuanTri_DATN/src/screens/ProductDetailScreen/ProductDetailScreen'
 import Congrats from '../AppQuanTri_DATN/src/screens/Congrats/Congrats'
 import AllProductScreen from '../AppQuanTri_DATN/src/screens/AllProductScreen/AllProductScreen'
+import SettingScreen from './src/screens/SettingScreen/SettingScreen';
+import ShippingAddressScreen from './src/screens/ShippingAddressScreen/ShippingAddressScreen';
+import AddAddress from './src/screens/ShippingAddressScreen/AddAddressScreen';
+
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -90,22 +93,7 @@ const App = () => {
             }}
           />
 
-          <Stack.Screen
-            name="StatisticsScreen"
-            component={StatisticsScreen}
-            options={{
-              headerShown: true,
-              title: 'Thống kê',
-              headerTitleAlign: 'center',
-              headerStyle: {
-                backgroundColor: '#00A65E', // Màu nền xanh
-              },
-              headerTintColor: '#fff', // Màu chữ trắng
-              headerTitleStyle: {
-                fontWeight: 'bold', // Kiểu chữ tiêu đề
-              },
-            }}
-          />
+         
 
           <Stack.Screen
             name="ReviewsScreen"
@@ -255,6 +243,12 @@ const App = () => {
             },
           }}
         />
+
+
+        <Stack.Screen name="ShippingAddressScreen" component={ShippingAddressScreen} />
+        <Stack.Screen name="AddAddress" component={AddAddress} />
+        <Stack.Screen name="SettingScreen" component={SettingScreen} />
+      
         </Stack.Navigator>
     
 
