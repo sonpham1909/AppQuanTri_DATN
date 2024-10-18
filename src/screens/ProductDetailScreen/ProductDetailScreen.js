@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
   colorCircle: {
     width: 30,
     height: 30,
-    borderRadius: 15,
+    borderRadius: 3,
     marginHorizontal: 5,
   },
   selectedColor: {
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
     justifyContent:'center',
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 15,
+    borderRadius: 5,
     marginHorizontal: 5,
     width: 30,
     height: 30,
@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
   },
   quantityButton: {
     backgroundColor: '#00A65E',
-    borderRadius: 12,
+    borderRadius: 5,
     marginHorizontal: 10,
     width: 25,
     height: 25,
