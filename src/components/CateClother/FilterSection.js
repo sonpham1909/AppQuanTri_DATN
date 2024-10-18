@@ -138,13 +138,15 @@ const FilterSection = () => {
 
 const styles = StyleSheet.create({
     container: {
-        paddingHorizontal: 5,
+        paddingBottom:10,
+        paddingHorizontal:10
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         marginTop:15,
+    
     },
     productCount: {
         fontSize: 14,
@@ -163,7 +165,6 @@ const styles = StyleSheet.create({
         color: '#00A65E',
         fontSize: 14,
         fontWeight: 'bold',
-        marginVertical: 5,
     },
     filterContainer: {
         flexDirection: 'row',
@@ -173,7 +174,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems:'center',
-        marginLeft:25,
+        marginLeft:20,
         marginTop:20,
     },
     selectBox: {

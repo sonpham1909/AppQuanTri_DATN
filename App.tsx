@@ -232,7 +232,7 @@ const App = () => {
         <Stack.Screen name="AllProductScreen" component={AllProductScreen}
           options={{
             headerShown: true,
-            title: 'AllProductScreen',
+            title: 'Tất cả sản phẩm',
             headerTitleAlign: 'center',
             headerStyle: {
               backgroundColor: '#00A65E', // Màu nền xanh

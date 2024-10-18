@@ -1,13 +1,21 @@
-import React, { useState } from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import React, {useState} from 'react';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { View, TextInput, TouchableOpacity, Image, StyleSheet, Text, Alert } from 'react-native';
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  Text,
+  Alert,
+} from 'react-native';
 import HomeScreen from '../screens/HomeScreen/HomeScreen';
 import colors from '../constants/colors';
 import Nofication from '../screens/Nofication/Nofication';
 import Favotires from '../screens/Favotires/Favotires';
 import Personal from '../screens/Personal/Personal';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 
@@ -15,7 +23,7 @@ const CustomHomeHeader = () => {
   const navigation = useNavigation();
   const [searchText, setSearchText] = useState('');
 
-  const handleTextChange = (text) => {
+  const handleTextChange = text => {
     if (text.length <= 39) {
       setSearchText(text);
     } else {
@@ -26,18 +34,27 @@ const CustomHomeHeader = () => {
   return (
     <View style={styles.header}>
       <View style={styles.searchContainer}>
-        <Image source={require('../assets/images/home_search.png')} style={styles.icon} />
-        <TextInput 
-          placeholder="Tìm Kiếm..." 
-          style={styles.searchInput} 
+        <Image
+          source={require('../assets/images/home_search.png')}
+          style={styles.icon}
+        />
+        <TextInput
+          placeholder="Tìm Kiếm..."
+          style={styles.searchInput}
           value={searchText}
           onChangeText={handleTextChange} // Cập nhật text khi người dùng nhập
           maxLength={40} // Giới hạn số ký tự
         />
       </View>
-      <TouchableOpacity style={styles.notificationButton} onPress={()=>navigation.navigate('Cart')}>
-        <View style={styles.notificationIconContainer}> 
-          <Image source={require('../assets/images/home_cart.png')} style={styles.icon1} />
+      <TouchableOpacity
+        style={styles.notificationButton}
+        onPress={() => navigation.navigate('Cart')}>
+        <View style={styles.notificationIconContainer}>
+          <MaterialCommunityIcons
+            name="cart-outline" // Icon giỏ hàng
+            size={24} // Kích thước của icon
+            color="#00A65E" // Màu sắc của icon
+          />
         </View>
       </TouchableOpacity>
     </View>
@@ -47,8 +64,8 @@ const CustomHomeHeader = () => {
 const BottomTabNavigator = () => {
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ color, size, focused }) => {
+      screenOptions={({route}) => ({
+        tabBarIcon: ({color, size, focused}) => {
           let iconName;
 
           if (route.name === 'Trang chủ') {
@@ -61,7 +78,9 @@ const BottomTabNavigator = () => {
             iconName = focused ? 'account-circle' : 'account-circle-outline';
           }
 
-          return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
+          return (
+            <MaterialCommunityIcons name={iconName} size={size} color={color} />
+          );
         },
         tabBarActiveTintColor: 'white',
         tabBarInactiveTintColor: 'white',
@@ -77,31 +96,29 @@ const BottomTabNavigator = () => {
         headerTitleStyle: {
           fontWeight: 'bold',
         },
-      })}
-    >
-      <Tab.Screen 
-        name="Trang chủ" 
-        component={HomeScreen} 
-        options={{ 
+      })}>
+      <Tab.Screen
+        name="Trang chủ"
+        component={HomeScreen}
+        options={{
           title: 'Trang chủ',
-          headerTitle: (props) => <CustomHomeHeader {...props} />,  // Set custom header
-        }} 
+          headerTitle: props => <CustomHomeHeader {...props} />, // Set custom header
+        }}
       />
-      <Tab.Screen 
-        name="Yêu thích" 
-        component={Favotires} 
-
-        options={{ title: 'Yêu thích' , headerTitleAlign: 'center',}} 
+      <Tab.Screen
+        name="Yêu thích"
+        component={Favotires}
+        options={{title: 'Yêu thích', headerTitleAlign: 'center'}}
       />
-      <Tab.Screen 
-        name="Thông báo" 
-        component={Nofication} 
-        options={{ title: 'Thông báo', headerTitleAlign: 'center', }} 
+      <Tab.Screen
+        name="Thông báo"
+        component={Nofication}
+        options={{title: 'Thông báo', headerTitleAlign: 'center'}}
       />
-      <Tab.Screen 
-        name="Cá nhân" 
-        component={Personal} 
-        options={{ title: 'Cá nhân', headerTitleAlign: 'center', }} 
+      <Tab.Screen
+        name="Cá nhân"
+        component={Personal}
+        options={{title: 'Cá nhân', headerTitleAlign: 'center'}}
       />
     </Tab.Navigator>
   );
@@ -137,7 +154,7 @@ const styles = StyleSheet.create({
   icon1: {
     width: 30,
     height: 30,
-    resizeMode: 'stretch'
+    resizeMode: 'stretch',
   },
   notificationIconContainer: {
     width: 35, // Đặt chiều rộng cho hình tròn
