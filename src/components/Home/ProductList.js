@@ -52,7 +52,7 @@ const ProductList = ({ navigation, title, products }) => (
 
           {/* Kích cỡ và giới tính */}
           <View style={styles.sizeGenderContainer}>
-            <Text style={styles.productGender}>{item.size}-</Text>
+            <Text style={styles.productGender}>XS - </Text>
             <Text style={styles.productSize}>{item.size}</Text>
           </View>
 

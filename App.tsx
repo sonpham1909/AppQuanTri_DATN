@@ -130,7 +130,7 @@ const App = () => {
            <Stack.Screen name="Cart" component={Cart}
             options={{
               headerShown: true,
-              title: 'Cart',
+              title: 'Giỏ hàng',
               headerTitleAlign: 'center',
               headerStyle: {
                 backgroundColor: '#00A65E', // Màu nền xanh
@@ -144,7 +144,7 @@ const App = () => {
                  <Stack.Screen name="Checkout" component={Checkout}
           options={{
             headerShown: true,
-            title: 'Checkout',
+            title: 'Thanh toán',
             headerTitleAlign: 'center',
             headerStyle: {
               backgroundColor: '#00A65E', // Màu nền xanh
@@ -189,7 +189,7 @@ const App = () => {
           options={{
             headerShown: true,
             headerTitleAlign: 'center',
-            title: 'DetailedOrders',
+            title: 'Chi tiết đơn hàng',
             headerStyle: {
               backgroundColor: '#00A65E', // Màu nền xanh
             },
@@ -203,7 +203,7 @@ const App = () => {
         <Stack.Screen name="ProductDetailScreen" component={ProductDetailScreen}
           options={{
             headerShown: true,
-            title: 'ProductDetailScreen',
+            title: 'Chi tiết sản phẩm',
             headerTitleAlign: 'center',
             headerStyle: {
               backgroundColor: '#00A65E', // Màu nền xanh
@@ -216,7 +216,7 @@ const App = () => {
         />
         <Stack.Screen name="Congrats" component={Congrats}
           options={{
-            headerShown: true,
+            headerShown: false,
             title: 'Congrats',
             headerTitleAlign: 'center',
             headerStyle: {

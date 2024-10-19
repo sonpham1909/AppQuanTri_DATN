@@ -15,6 +15,7 @@ import Header from '../../components/ShippingAddress/Header';
 import globalStyles from '../../styles/globalStyles';
 import {useNavigation} from '@react-navigation/native';
 import {Picker} from '@react-native-picker/picker';
+import AddButon from '../../components/ShippingAddress/ButtonAdd';
 
 const AddAddress = () => {
   const [fullName, setFullName] = useState('');
@@ -123,6 +124,8 @@ const AddAddress = () => {
           <Switch value={isDefault} onValueChange={setIsDefault} />
         </View>
       </ScrollView>
+      <AddButon title="Thêm địa chỉ " />
+
     </View>
   );
 };

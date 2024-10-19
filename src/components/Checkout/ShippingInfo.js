@@ -1,12 +1,19 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {useNavigation} from '@react-navigation/native'; // Để điều hướng
 
-const ShippingInfo = ({ name, address }) => {
+const ShippingInfo = ({name, address}) => {
+  const navigation = useNavigation();
+
+  const handleEditPress = () => {
+    // Điều hướng sang màn hình chỉnh sửa địa chỉ
+    navigation.navigate('ShippingAddressScreen'); // Tên màn hình đích, tùy vào cấu hình navigation
+  };
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Địa chỉ giao hàng</Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleEditPress}>
           <Text style={styles.editText}>✎</Text>
         </TouchableOpacity>
       </View>
@@ -29,25 +36,23 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   title: {
-    fontFamily:'Nunito Sans',
+    fontFamily: 'Nunito Sans',
     fontSize: 18,
     color: '#242424',
     fontWeight: 'bold',
-    marginBottom:15,
-    
+    marginBottom: 15,
   },
   editText: {
     fontSize: 18,
     color: '#888',
-    
   },
   infoBox: {
     backgroundColor: '#F9F9F9',
     borderRadius: 8,
-    height:100,
+    height: 100,
   },
   name: {
-    padding:10,
+    padding: 10,
     fontWeight: 'bold',
     color: '#000000',
     fontSize: 16,
@@ -58,7 +63,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E0E0E0',
   },
   address: {
-    padding:10,
+    padding: 10,
     color: '#888',
     fontSize: 14,
   },

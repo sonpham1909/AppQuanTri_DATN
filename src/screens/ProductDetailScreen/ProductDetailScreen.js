@@ -54,35 +54,40 @@ const ReviewItem = ({ user, rating, comment, size, fit ,date}) => {
     </View>
   );
 };
-
 const Image1 = () => {
-  // Mảng chứa các hình ảnh
   const images = [
     require('../../assets/images/item_1.png'),
     require('../../assets/images/item_2.png'),
     require('../../assets/images/item_3.png'),
   ];
-  
+
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  
-  // Hàm để tự động thay đổi ảnh sau 3 giây
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 3000); // 3000ms = 3 giây
-  
-    // Dọn dẹp interval khi component unmount
+    }, 3000);
+
     return () => clearInterval(interval);
   }, []);
+
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.imageCarouselContainer}>
       <View style={styles.imageContainer}>
         <Image source={images[currentImageIndex]} style={styles.productImage} />
       </View>
-      {/* Các thành phần khác */}
-    </ScrollView>
+
+      {/* Hiển thị số thứ tự ảnh */}
+      <View style={styles.imageIndexContainer}>
+        <Text style={styles.imageIndexText}>
+          {currentImageIndex + 1}/{images.length}
+        </Text>
+      </View>
+    </View>
   );
-  };
+};
+
+
 const ReviewsSection = () => {
   const reviews = [
     {
@@ -255,18 +260,30 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  
-  imageContainer: {
-    alignItems: 'center',
-    marginVertical: 20,
-  },
-  productImage: {
-    width: 200,
-    height: 200,
-    borderRadius: 10,
-  },
+
   detailsContainer: {
     paddingHorizontal: 20,
+  },
+ 
+  imageIndexContainer: {
+    position: 'absolute',
+    bottom: 5, // Vị trí cách phía dưới của hình ảnh
+    alignSelf: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Nền đen trong suốt
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 20,
+  },
+  imageIndexText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+
+  imageContainer: {
+    borderRadius: 10, // Góc bo cho container ảnh
+    justifyContent: 'center',
+    backgroundColor:'#e0e0e0'
   },
   productTitle: {
     paddingTop:30,
@@ -466,10 +483,13 @@ const styles = StyleSheet.create({
   starsContainer: {
     flexDirection: 'row',
     marginRight: 10,
+    marginBottom:5
   },
   ratingText: {
     fontSize: 18,
     color: '#777',
+    marginBottom:5
+
   },
   dateText: {
     fontSize: 13,
