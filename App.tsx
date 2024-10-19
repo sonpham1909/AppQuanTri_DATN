@@ -116,7 +116,7 @@ const App = () => {
         component={CateClother}
         options={{
           headerShown: true,
-          title: 'Clother',
+          title: 'Quần',
           headerTitleAlign: 'center',
           headerStyle: {
             backgroundColor: '#00A65E', // Màu nền xanh
