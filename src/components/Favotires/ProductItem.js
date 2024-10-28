@@ -1,38 +1,59 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet,Image } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'; // Import icon
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useDispatch, useSelector } from 'react-redux';
 
-const FavoriteItem = ({ product, onRemove, onCartAdd }) => {
+const FavoriteItem = ({ product, onToggleFavorite, navigation }) => {
+  const favoriteList = useSelector(state => state.favorites.favoriteList);
+
+  const isFavorite = productId =>
+    favoriteList.some(fav => fav._id === productId);
+  const formatPrice = price =>
+    price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+
   return (
-    <View style={styles.container}>
-    
-      <Image source={product.image} style={styles.image} />
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() => navigation.navigate('ProductDetailScreen', { product })}
+    >
+      {product.imageUrls && product.imageUrls.length > 0 && (
+        <Image source={{ uri: product.imageUrls[0] }} style={styles.image} />
+      )}
       <View style={styles.infoContainer}>
-        <Text style={styles.productName} numberOfLines={1}>{product.name}</Text>
-        <Text style={styles.productPrice}>{product.price} VND</Text>
+        <Text style={styles.productName} numberOfLines={1}>
+          {product.name || 'Tên sản phẩm'}
+        </Text>
+        <Text style={styles.productPrice}>
+          {product.variants && product.variants.length > 0
+            ? formatPrice(product.variants[0].price)
+            : 'Chưa có giá'}
+        </Text>
       </View>
 
       <View style={styles.buttonsContainer}>
-      <TouchableOpacity onPress={onRemove} style={styles.loveIconContainer}>
-        <MaterialCommunityIcons 
-          name="heart" 
-          size={24} 
-          color="red" // Màu đỏ cho icon love
-        />
-      </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => onToggleFavorite(product._id)}
+          style={styles.loveIconContainer}>
+          <MaterialCommunityIcons
+            name={isFavorite(product._id) ? 'heart' : 'heart-outline'}
+            size={24}
+            color={isFavorite(product._id) ? 'red' : 'gray'}
+          />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.separator}></View>
-    </View>
+    </TouchableOpacity>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     padding: 10,
     marginVertical: 5,
-    borderRadius: 10,  
+    borderRadius: 10,
   },
   loveIconContainer: {
     justifyContent: 'center',
@@ -62,19 +83,18 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   buttonsContainer: {
-    flexDirection: 'column',  // Stack buttons vertically
+    flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  
   separator: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
     marginHorizontal: 10,
-    height: 1,  // Adjust the thickness of the line
-    backgroundColor: '#E0E0E0',  // Light grey color to resemble the white line in the image
+    height: 1,
+    backgroundColor: '#E0E0E0',
   },
 });
 

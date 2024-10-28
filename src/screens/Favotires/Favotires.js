@@ -1,41 +1,44 @@
-import React from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
-import ProductItem from '../../components/Favotires/ProductItem'; // Import ProductItem component
-import Button_Add from '../../components/Favotires/Button_Add'; // Import Footer component
+// screens/Favorites.js
+import React, { useEffect } from 'react';
+import { View, FlatList, StyleSheet, Text } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchFavoriteList, toggleFavorite } from '../../redux/actions/favoriteActions';
+import FavoriteItem from '../../components/Favotires/ProductItem';
 
-const products = [
-  { id: '1', name: 'Áo Phông Blue', price: '200.000', image: require('../../assets/images/item_1.png') },
-  { id: '2', name: 'Bộ quần áo in hình núi', price: '350.000', image: require('../../assets/images/item_2.png') },
-  { id: '3', name: 'Áo dài tay Rhodi', price: '150.000', image: require('../../assets/images/item_3.png') },
-  { id: '4', name: 'Áo phông Rhodi', price: '200.000', image: require('../../assets/images/item_4_1.png') },
-  { id: '5', name: 'Áo dài tay mùa đông', price: '239.000', image: require('../../assets/images/item_4_2.png') },
-];
+const Favorites = ({ navigation }) => {
+  const dispatch = useDispatch();
+  const favoriteList = useSelector(state => state.favorites.favoriteList);
 
-const Favorites = () => {
-  const handleRemoveProduct = (id) => {
-    console.log('Remove product with id:', id);
-    // Xử lý logic xóa sản phẩm khỏi danh sách yêu thích
+  useEffect(() => {
+    dispatch(fetchFavoriteList());
+  }, [dispatch]);
+
+  const handleToggleFavorite = (productId) => {
+    dispatch(toggleFavorite(productId));
   };
+
+  if (!favoriteList || favoriteList.length === 0) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text>Không có sản phẩm yêu thích nào</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-
-      {/* Danh sách sản phẩm */}
       <FlatList
-        data={products}
-        keyExtractor={(item) => item.id}
+        data={favoriteList}
+        keyExtractor={item => item._id}
         renderItem={({ item }) => (
-          <ProductItem
+          <FavoriteItem
             product={item}
-            onRemove={() => handleRemoveProduct(item.id)}
+            onToggleFavorite={() => handleToggleFavorite(item._id)}
+            navigation={navigation} // Truyền navigation vào FavoriteItem
           />
         )}
         style={styles.list}
       />
-
-      {/* Footer */}
-      <Button_Add />
     </View>
   );
 };
@@ -49,5 +52,10 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingHorizontal: 10,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

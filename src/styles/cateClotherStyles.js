@@ -170,6 +170,9 @@ const cateClotherStyles = StyleSheet.create({
   },
   label: {
     fontWeight: 'bold',
+    textTransform: 'uppercase', // Giữ chữ không bị độn
+    fontWeight: 'bold',
+
   },
   header: {
     flexDirection: 'row',

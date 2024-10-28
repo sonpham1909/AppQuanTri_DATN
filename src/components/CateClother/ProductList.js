@@ -1,125 +1,161 @@
-import React from 'react';
-import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
+import React, {useEffect} from 'react';
+import {FlatList, Image, Text, TouchableOpacity, View} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useDispatch, useSelector} from 'react-redux';
 import renderStars from '../Home/renderStars';
+import {fetchProductReviews} from '../../redux/actions/actionProduct';
 
-const ProductList = ({ navigation, products, numColumns = 2 }) => (
-  <View style={styles.productSection}>
-    {/* Hiển thị tiêu đề danh mục sản phẩm */}
-  
+const ProductList = ({navigation, products}) => {
+  const dispatch = useDispatch();
+  const reviews = useSelector(state => state.products.reviews);
 
-    <FlatList
-      key={numColumns} // Thay đổi key khi số cột thay đổi
-      data={products}
-      keyExtractor={item => item.id.toString()}
-      renderItem={({ item }) => (
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('ProductDetailScreen', { item: item })
-          }
-          style={styles.productItem}>
-          {/* Hình ảnh sản phẩm */}
-          <View style={styles.imageContainer}>
-            <Image source={item.image} style={styles.productImage} />
+  useEffect(() => {
+    products.forEach(product => {
+      dispatch(fetchProductReviews(product._id));  // Gọi action lấy reviews
+    });
+  }, [dispatch, products]);
 
-            {/* Icon yêu thích */}
-            <TouchableOpacity style={styles.favoriteIcon}>
-              <MaterialCommunityIcons
-                name="heart-outline"
-                size={22}
-                color="gray"
-              />
+  const formatPrice = price => {
+    return price.toLocaleString('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+    });
+  };
+
+  return (
+    <View style={styles.productSection}>
+      
+
+      <FlatList
+        data={products}
+        keyExtractor={item => item._id} 
+        renderItem={({item}) => {
+          const productReviews = reviews[item._id] || {};
+          const totalReviews = productReviews.totalReviews || 0;
+          const averageRating = productReviews.averageRating || 0;
+
+          const sizes = Array.isArray(item.variants)
+            ? item.variants.map(variant => variant.size)
+            : [];
+            const colors = Array.isArray(item.variants)
+            ? [...new Set(item.variants.map(variant => variant.color))] // Loại bỏ các màu trùng lặp
+            : [];
+          const firstPrice =
+            Array.isArray(item.variants) && item.variants.length > 0
+              ? item.variants[0].price
+              : null; 
+          const imageUrl =
+            Array.isArray(item.imageUrls) && item.imageUrls.length > 0
+              ? item.imageUrls[0]
+              : null;
+
+          return (
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('ProductDetailScreen', {item: item})
+              }
+              style={styles.productItem}>
+              <View style={styles.imageContainer}>
+                <Image source={{uri: imageUrl}} style={styles.productImage} />
+                <TouchableOpacity style={styles.favoriteIcon}>
+                  <MaterialCommunityIcons
+                    name="heart-outline"
+                    size={22}
+                    color="gray"
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.sizeColorContainer}>
+                <Text style={styles.productSize}>
+                  {sizes[0]} - {sizes[sizes.length - 1]}
+                </Text>
+              </View>
+
+              <View style={styles.colorOptions}>
+                {colors.map((color, index) => (
+                  <View
+                    key={index}
+                    style={[styles.colorSquare, {backgroundColor: color}]}
+                  />
+                ))}
+              </View>
+
+              <Text style={styles.productName}>{item.name}</Text>
+
+              <Text style={styles.productPrice}>{formatPrice(firstPrice)}</Text>
+
+              {totalReviews > 0 && (
+                <View style={styles.reviewSection}>
+                  {renderStars(averageRating)}
+                  <Text style={styles.reviewCount}>({totalReviews})</Text>
+                </View>
+              )}
             </TouchableOpacity>
-          </View>
-
-          {/* Màu sắc */}
-          <View style={styles.colorOptions}>
-            {item.colors && item.colors.length > 0 ? (
-              item.colors.map((color, index) => (
-                <View
-                  key={index}
-                  style={[styles.colorSquare, { backgroundColor: color }]}
-                />
-              ))
-            ) : (
-              <Text></Text>
-            )}
-          </View>
-
-          {/* Kích cỡ và giới tính */}
-          <View style={styles.sizeGenderContainer}>
-            <Text style={styles.productGender}>{item.size}-</Text>
-            <Text style={styles.productSize}>{item.size}</Text>
-          </View>
-
-          {/* Tên sản phẩm */}
-          <Text style={styles.productName}>{item.name}</Text>
-
-          {/* Giá sản phẩm */}
-          <Text style={styles.productPrice}>
-            {item.price.toLocaleString('vi-VN')} VND
-          </Text>
-
-          {/* Đánh giá sao */}
-          <View style={styles.ratingContainer}>
-            {renderStars(item.rating)}
-            <Text style={styles.ratingCount}>({item.ratingCount})</Text>
-          </View>
-
-        </TouchableOpacity>
-      )}
-      numColumns={numColumns} // Hiển thị số cột động
-      showsVerticalScrollIndicator={false}
-    />
-  </View>
-);
+          );
+        }}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+      />
+    </View>
+  );
+};
 
 export default ProductList;
 
 const styles = {
   productSection: {
     marginBottom: 20,
-    flex:1
+  },
+  reviewSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 10,
+    marginBottom: 5,
+  },
+ 
+  
+  viewAll: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#00A65E',
   },
   productItem: {
     backgroundColor: '#fff',
     borderRadius: 8,
-    margin: 10, // Căn lề giữa các sản phẩm
-    width: '45%', // Chiều rộng của mỗi sản phẩm (chiếm 45% màn hình để vừa 2 cột)
+    marginHorizontal: 15,
+    width:160,
+    height: 300,
     borderWidth: 1,
-    marginVercal: 10,
-
+    marginTop:20,
     borderColor: '#e0e0e0',
   },
   imageContainer: {
     position: 'relative',
     alignItems: 'center',
     marginBottom: 10,
-    backgroundColor: '#e0e0e0', // Đảm bảo nền trắng cho container
+    backgroundColor: '#e0e0e0',
   },
   productImage: {
-    width: 160,
+    width: 130,
     height: 150,
     borderRadius: 8,
-    resizeMode: 'contain', // Đảm bảo ảnh hiển thị đúng kích thước mà không bị kéo dài
+    resizeMode: 'contain',
   },
   favoriteIcon: {
     position: 'absolute',
     top: 5,
     right: 5,
   },
-  sizeGenderContainer: {
+  sizeColorContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 5,
-  },
-  productGender: {
-    fontSize: 12,
-    color: '#999',
-    marginLeft: 10,
   },
   productSize: {
     fontSize: 12,
     color: '#999',
+    marginLeft: 10,
   },
   productName: {
     marginLeft: 10,
@@ -134,17 +170,6 @@ const styles = {
     color: 'red',
     fontWeight: 'bold',
     marginBottom: 5,
-  },
-  ratingContainer: {
-    marginLeft: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 5,
-  },
-  ratingCount: {
-    fontSize: 12,
-    color: '#999',
-    marginLeft: 5,
   },
   colorOptions: {
     marginLeft: 10,

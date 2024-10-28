@@ -3,24 +3,33 @@ import { Image, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import cateStyles from '../../styles/cateStyles';
 
-// Component cho mỗi loại quần
-const CategoryItem = ({ item }) => {
-  const navigation = useNavigation();  
+const CategoryItem = ({ item, subCategories,categoryName }) => {
+  const navigation = useNavigation();
 
   const handlePressCategory = () => {
-    console.log(`Bạn đã chọn: ${item.name}`);
-    navigation.navigate('CateClother', { category: item });  // Điều hướng và truyền dữ liệu
+    if (!item || !item.name || !item.image) {
+      console.error("Danh mục không hợp lệ hoặc thiếu thông tin");
+      return;
+    }
+
+    // Điều hướng đến CateClotherScreen và truyền danh sách các danh mục con cùng với danh mục con được chọn
+    navigation.navigate('CateClother', {
+      subCategories,     // Truyền danh sách các danh mục con
+      selectedTabIndex: subCategories.findIndex(sub => sub._id === item._id),
+      categoryName // Truyền danh mục cha
+    });
   };
 
   return (
     <TouchableOpacity style={cateStyles.categoryItem} onPress={handlePressCategory}>
-      <Image source={require('../../assets/images/item_1.png')} style={cateStyles.categoryImage} />
+      {item.image ? (
+        <Image source={{ uri: item.image }} style={cateStyles.categoryImage} />
+      ) : (
+        <Text>No Image</Text>
+      )}
       <Text style={cateStyles.categoryName}>{item.name}</Text>
     </TouchableOpacity>
   );
 };
 
-// Hàm render cho FlatList
-const renderCategory = ({ item }) => <CategoryItem item={item} />;
-
-export default renderCategory;
+export default CategoryItem;
