@@ -1,183 +1,98 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView } from 'react-native';
-import toggleProductImage from '../../components/DetailProduct/toggleProductImage'
-import DetailProduct from '../../components/DetailProduct/toggleProductImage';
-const ProductDetailScreen = ({navigation}) => {
-  const [selectedColor, setSelectedColor] = useState('gray');
-  const [selectedSize, setSelectedSize] = useState('M');
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  ActivityIndicator
+} from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchProductReviews } from '../../redux/actions/actionProduct';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { toggleFavorite } from '../../redux/actions/favoriteActions';
+import { fetchProductReviewResponses } from '../../redux/actions/actionsReview';
+
+const ProductDetailScreen = ({ route, navigation }) => {
+  const { product } = route.params;
+  const dispatch = useDispatch();
+
+  const reviews = useSelector(state => state.products.reviews);
+  const { reviewResponses, isLoading, error } = useSelector(state => state.reviewResponses);
+  const favoriteList = useSelector(state => state.favorites.favoriteList);
+
+  const productReviews = reviewResponses[product._id] || [];
+  const totalReview = reviews[product._id] || {};
+  const totalReviews = totalReview.totalReviews || 0;
+  const averageRating = totalReview.averageRating || 0;
+
+  const [selectedColor, setSelectedColor] = useState(product.variants[0]?.color || null);
+  const [selectedSize, setSelectedSize] = useState(product.variants[0]?.size || null);
+  const [availableSizes, setAvailableSizes] = useState([]);
   const [quantity, setQuantity] = useState(1);
+  const [maxQuantity, setMaxQuantity] = useState(product.variants[0]?.quantity || 0);
   const [isCollapsedMaterial, setIsCollapsedMaterial] = useState(true);
   const [isCollapsedDetails, setIsCollapsedDetails] = useState(true);
-  const colors = ['gray', 'orange', 'blue', 'navy'];
-  const sizes = ['S', 'M', 'L', 'XL'];
-  // Hàm để thay đổi trạng thái mở/đóng
-  const toggleCollapse = () => {
-    setIsCollapsedMaterial(!isCollapsedMaterial);
-  };
-  const toggleCollapse2 = () => {
-    setIsCollapsedDetails(!isCollapsedDetails);
-  };
 
-// Hàm để hiển thị các ngôi sao đánh giá
-const renderStars = (rating) => {
-  const stars = [];
-  for (let i = 0; i < rating; i++) {
-    stars.push(
-      <Image
-        key={i}
-        source={require('../../assets/images/home_start.png')} // Đường dẫn đến ảnh ngôi sao của bạn
-        style={styles.starIcon}
-      />
-    );
-  }
-  return stars;
-};
-
-const ReviewItem = ({ user, rating, comment, size, fit ,date}) => {
-  return (
-    <View style={styles.reviewContainer}>
-      {/* Thông tin người dùng */}
-      <Text style={styles.userName}>{user}</Text>
-      <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-      {/* Dòng ngôi sao và đánh giá */}
-      <View style={styles.ratingRow}>
-        <View style={styles.starsContainer}>{renderStars(rating)}</View>
-      </View>
-      <Text style={styles.dateText}>{date}</Text>
-</View>
-      {/* Kích cỡ và thông tin phù hợp */}
-      <Text style={styles.sizeText}>Kích cỡ đã mua: {size}</Text>
-      <Text style={styles.fitText}>Quần áo có vừa không: {fit}</Text>
-
-      {/* Bình luận */}
-      <Text style={styles.commentText}>{comment}</Text>
-    </View>
-  );
-};
-
-const Image1 = () => {
-  // Mảng chứa các hình ảnh
-  const images = [
-    require('../../assets/images/item_1.png'),
-    require('../../assets/images/item_2.png'),
-    require('../../assets/images/item_3.png'),
-  ];
-  
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  
-  // Hàm để tự động thay đổi ảnh sau 3 giây
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 3000); // 3000ms = 3 giây
-  
-    // Dọn dẹp interval khi component unmount
-    return () => clearInterval(interval);
-  }, []);
-  return (
-    <ScrollView style={styles.container}>
-      <View style={styles.imageContainer}>
-        <Image source={images[currentImageIndex]} style={styles.productImage} />
-      </View>
-      {/* Các thành phần khác */}
-    </ScrollView>
-  );
-  };
-const ReviewsSection = () => {
-  const reviews = [
-    {
-      user: 'Việt Vũ',
-      rating: 5,
-      size: 'S',
-      fit: 'Đúng với kích thước',
-      comment: 'Áo đẹp quá đà',
-      date:'09/09/2024'
-    },
-    {
-      user: 'Việt Vũ',
-      rating: 5,
-      size: 'S',
-      fit: 'Đúng với kích thước',
-      comment: 'Áo đẹp quá đà',
-      date:'09/09/2024'
+    dispatch(fetchProductReviews(product._id));
+    dispatch(fetchProductReviewResponses(product._id));
+  }, [dispatch, product._id]);
 
-    },
-    // Thêm các đánh giá khác tại đây nếu cần
-  ];
-  return (
-    <View style={styles.reviewsSection}>
-      <Text style={styles.sectionTitle}>Đánh Giá</Text>
-      <View style={styles.ratingRow}>
-        <View style={styles.starsContainer}>{renderStars(5)}</View>
-        <Text style={styles.ratingText}>5.0</Text>
-        
-      </View>
-      <View style={{height:10}}></View>
+  useEffect(() => {
+    if (selectedColor) {
+      const sizesForColor = product.variants.filter(v => v.color === selectedColor).map(v => v.size);
+      setAvailableSizes(sizesForColor);
+      const selectedVariant = product.variants.find(v => v.color === selectedColor && v.size === sizesForColor[0]);
+      setMaxQuantity(selectedVariant ? selectedVariant.quantity : 0);
+      setQuantity(1);
+      setSelectedSize(sizesForColor[0]);
+    }
+  }, [selectedColor]);
 
-      <View  style={styles.collapsibleHeader}></View>
-      <View style={{height:10}}></View>
-      {reviews.map((review, index) => (
-        <ReviewItem key={index} {...review} />
-      ))}
-    </View>
-  );
-};
+  const handleToggleFavorite = () => dispatch(toggleFavorite(product._id));
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.detailsContainer}>
-        <Text style={styles.productTitle}>Áo Dài Tay</Text>
+        <Text style={styles.productTitle}>{product.name}</Text>
         <View style={styles.ratingRow}>
-        <View style={styles.starsContainer}>{renderStars(5)}</View>
-        <Text style={styles.ratingText}>5.0</Text>
-        
-      </View>
-        
-        <View style={styles.imageContainer}>
-        <Image1></Image1>
+          {totalReviews > 0 && (
+            <View style={styles.starsContainer}>
+              {Array.from({ length: averageRating }, (_, i) => (
+                <Image key={i} source={require('../../assets/images/home_start.png')} style={styles.starIcon} />
+              ))}
+              <Text style={styles.text1}>({totalReviews})</Text>
+            </View>
+          )}
         </View>
 
-        {/* Color Selection */}
+        <Image source={{ uri: product.imageUrls[0] || 'fallback-image-url' }} style={styles.productImage} />
+
         <View style={styles.row}>
           <Text style={styles.label}>Màu Sắc: </Text>
           <View style={styles.colorContainer}>
-            {colors.map((color) => (
-              <TouchableOpacity
-                key={color}
-                style={[
-                  styles.colorCircle,
-                  { backgroundColor: color },
-                  selectedColor === color && styles.selectedColor,
-                ]}
-                onPress={() => setSelectedColor(color)}
-              />
+            {[...new Set(product.variants.map(v => v.color))].map((color, i) => (
+              <TouchableOpacity key={i} style={[styles.colorCircle, { backgroundColor: color }, selectedColor === color && styles.selectedColor]} onPress={() => setSelectedColor(color)} />
             ))}
           </View>
         </View>
 
-        {/* Size Selection */}
         <View style={styles.row}>
           <Text style={styles.label}>Kích Cỡ: </Text>
           <View style={styles.sizeContainer}>
-            {sizes.map((size) => (
-              <TouchableOpacity
-                key={size}
-                style={[
-                  styles.sizeButton,
-                  selectedSize === size && styles.selectedSize,
-                ]}
-                onPress={() => setSelectedSize(size)}
-              >
-                <Text style={styles.sizeText1}>{size}</Text>
+            {availableSizes.map((size, i) => (
+              <TouchableOpacity key={i} style={[styles.sizeButton, selectedSize === size && styles.selectedSize]} onPress={() => setSelectedSize(size)}>
+                <Text style={styles.sizeText}>{size}</Text>
               </TouchableOpacity>
             ))}
           </View>
         </View>
 
-        {/* Price */}
-        <Text style={styles.price}>199.000 </Text>
+        <Text style={styles.price}>{`${product.variants[0]?.price.toLocaleString()} VND`}</Text>
 
-        {/* Quantity and Add to Cart */}
+        {/* Điều chỉnh số lượng và thêm vào giỏ */}
         <View style={styles.quantityRow}>
           <Text style={styles.label}>Số Lượng: </Text>
           <View style={styles.quantityControls}>
@@ -185,313 +100,101 @@ const ReviewsSection = () => {
               <Text style={styles.quantityButtonText}>-</Text>
             </TouchableOpacity>
             <Text style={styles.quantityText}>{quantity}</Text>
-            <TouchableOpacity onPress={() => setQuantity(quantity + 1)} style={styles.quantityButton}>
+            <TouchableOpacity onPress={() => setQuantity(Math.min(maxQuantity, quantity + 1))} style={styles.quantityButton}>
               <Text style={styles.quantityButtonText}>+</Text>
             </TouchableOpacity>
           </View>
         </View>
-
-        <Text style={styles.stockText}>Còn 24 sản phẩm</Text>
+        <Text style={styles.stockText}>Còn {maxQuantity} sản phẩm</Text>
 
         <View style={styles.buttonsRow}>
-          <TouchableOpacity style={styles.favoriteButton}>
-          <Image
-              source={require('../../assets/images/detail_favorite.png')} 
-              style={styles.buttonIcon}
-            />
+          <TouchableOpacity onPress={handleToggleFavorite}>
+            <MaterialCommunityIcons name={favoriteList.some(fav => fav._id === product._id) ? 'heart' : 'heart-outline'} size={26} color="red" />
           </TouchableOpacity>
-
-          <TouchableOpacity style={styles.addToCartButton}onPress={()=>navigation.navigate('Cart')}>
+          <TouchableOpacity style={styles.addToCartButton} onPress={() => navigation.navigate('Cart')}>
             <Text style={styles.addToCartText}>Thêm Giỏ Hàng</Text>
           </TouchableOpacity>
         </View>
-        <View style={{height:15}}></View>
 
-        <Text style={styles.label}>Mô tả </Text>
-          <View style={{height:15}}></View>
-        <View  style={styles.collapsibleHeader}></View>
+        <View style={styles.section}>
+          <Text style={styles.sectionLabel}>Mô tả</Text>
+          <TouchableOpacity onPress={() => setIsCollapsedMaterial(!isCollapsedMaterial)}>
+            <Text style={styles.sectionToggle}>Chất liệu {isCollapsedMaterial ? '+' : '-'}</Text>
+          </TouchableOpacity>
 
-        {/* Collapsible Section: Material */}
-        <View style={styles.collapsibleRow}>
-       
-          <Text style={styles.collapsibleHeaderText}>Chất liệu</Text>
-          
-        <View>
-        <DetailProduct toggleCollapse={toggleCollapse} />
+          {!isCollapsedMaterial && <Text style={styles.sectionContent}>{product.material || 'Không có thông tin chất liệu'}</Text>}
+
+          <TouchableOpacity onPress={() => setIsCollapsedDetails(!isCollapsedDetails)}>
+            <Text style={styles.sectionToggle}>Chi tiết {isCollapsedDetails ? '+' : '-'}</Text>
+          </TouchableOpacity>
+          {!isCollapsedDetails && <Text style={styles.sectionContent}>{product.description || 'Không có thông tin chi tiết'}</Text>}
         </View>
-        </View>
-        {!isCollapsedMaterial && (
-          <View style={styles.collapsibleContent}>
-            <Text>Vải mịn co giãn 4 chiều xịn xò nhé</Text>
-          </View>
+
+        <Text style={styles.sectionLabel}>Đánh giá</Text>
+        {isLoading ? (
+          <ActivityIndicator size="large" />
+        ) : error ? (
+          <Text>{error}</Text>
+        ) : (
+          productReviews.map(review => (
+            <View key={review._id} style={styles.reviewContainer}>
+              <Text style={styles.reviewComment}>{review.comment}</Text>
+              <Text style={styles.reviewRating}>Đánh giá: {review.rating}</Text>
+              {review.responses?.map(response => (
+                <Text key={response._id} style={styles.responseText}>Phản hồi từ người bán: {response.comment}</Text>
+              ))}
+            </View>
+          ))
         )}
-          <View  style={styles.collapsibleHeader}></View>
-        {/* Collapsible Section: Details */}
-        <View style={styles.collapsibleRow}>
-    
-          <Text style={styles.collapsibleHeaderText}>Chi tiết</Text>
-          <View>
-        <DetailProduct toggleCollapse={toggleCollapse2} />
-        </View>
-        </View>
-        {!isCollapsedDetails && (
-          <View style={styles.collapsibleContent}>
-            <Text>Chi tiết sản phẩm...</Text>
-          </View>
-        )}
-          <View  style={styles.collapsibleHeader}></View>
-
-        {/* Reviews Section */}
-   <ReviewsSection></ReviewsSection>
-   </View>
+      </View>
     </ScrollView>
   );
 };
 
 export default ProductDetailScreen;
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
+  container: { flex: 1, backgroundColor: '#fff' },
+  detailsContainer: { padding: 16 },
+  productTitle: { fontSize: 22, fontWeight: 'bold', marginBottom: 8, color: '#000' },
+  ratingRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
+  starsContainer: { flexDirection: 'row', alignItems: 'center', marginRight: 5 },
+  text1: { fontSize: 16, marginLeft: 5 },
+  productImage: { width: '100%', height: 250, resizeMode: 'contain', borderRadius: 8, marginBottom: 16 },
+  row: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
+  colorContainer: { flexDirection: 'row', marginLeft: 8 },
+  colorCircle: { width: 30, height: 30, borderRadius: 15, marginHorizontal: 5, borderWidth: 1, borderColor: '#ddd' },
+  selectedColor: { borderWidth: 2, borderColor: '#000' },
+  sizeContainer: { flexDirection: 'row', marginLeft: 8 },
+  sizeButton: { paddingVertical: 6, paddingHorizontal: 12, borderRadius: 4, borderWidth: 1, borderColor: '#ccc', marginHorizontal: 5 },
+  selectedSize: { backgroundColor: '#ddd' },
+  price: { fontSize: 18, fontWeight: 'bold', color: 'green', marginBottom: 8 },
+  quantityRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
+  quantityControls: { flexDirection: 'row', alignItems: 'center', marginRight: 8 },
+  quantityButton: { padding: 6, borderWidth: 1, borderColor: '#ddd', borderRadius: 4 },
+  quantityButtonText: { fontSize: 18, color: '#333' },
+  quantityText: { marginHorizontal: 10, fontSize: 16, color: '#333' },
+  stockText: { color: '#27ae60', fontSize: 14 },
+  buttonsRow: { flexDirection: 'row', alignItems: 'center', marginTop: 16 },
+  addToCartButton: { backgroundColor: '#27ae60', padding: 12, borderRadius: 8, alignItems: 'center', flex: 1, marginLeft: 10 },
+  addToCartText: { color: '#fff', fontWeight: 'bold' },
   
-  imageContainer: {
-    alignItems: 'center',
-    marginVertical: 20,
-  },
-  productImage: {
-    width: 200,
-    height: 200,
-    borderRadius: 10,
-  },
-  detailsContainer: {
-    paddingHorizontal: 20,
-  },
-  productTitle: {
-    paddingTop:30,
-    fontSize: 24,
-    fontWeight: 'bold',
-    color:'#303030'
-  },
-  rating: {
-    fontSize: 16,
-    color: '#777',
-    marginVertical: 10,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 10,
-  },
-  label: {
-    color:'#303030',
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  colorContainer: {
-    flexDirection: 'row',
-    marginLeft: 10,
-  },
-  colorCircle: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    marginHorizontal: 5,
-  },
-  selectedColor: {
-    borderWidth: 2,
-    borderColor: '#000',
-  },
-  sizeContainer: {
-    flexDirection: 'row',
-    marginLeft: 10,
-  },
-  sizeButton: {
-    alignItems:'center',
-    justifyContent:'center',
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 15,
-    marginHorizontal: 5,
-    width: 30,
-    height: 30,
-  },
-  selectedSize: {
-    borderColor: '#000',
-    backgroundColor: '#00A65E',
-  },
+  section: { marginVertical: 12 },
+  sectionLabel: { fontSize: 18, fontWeight: 'bold', color: '#333', marginBottom: 8 },
+  sectionToggle: { fontSize: 16, color: '#3498db', marginVertical: 6 },
+  sectionContent: { fontSize: 14, color: '#666', paddingVertical: 4 },
 
-  price: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginVertical: 10,
-    color: '#00A65E',
-  },
-  quantityRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 10,
-  },
-  quantityControls: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 10,
-  },
-  quantityButton: {
-    backgroundColor: '#00A65E',
-    borderRadius: 12,
-    marginHorizontal: 10,
-    width: 25,
-    height: 25,
-    alignItems:'center',
-    justifyContent:'center'
-  },
-  quantityButtonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-       alignItems:'center',
-    justifyContent:'center'
-  },
-  quantityText: {
-    fontSize: 18,
-    fontWeight:'600'
-  },
-  stockText: {
-    fontSize: 16,
-    color: '#007B00',
-    marginVertical: 10,
-  },
-  buttonsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: 20,
-  },
-  favoriteButton: {
-    width: 60,
-    height: 60,
-    backgroundColor: '#F0F0F0',
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  addToCartButton: {
-    backgroundColor: '#00A65E',
-    padding: 15,
-    borderRadius: 5,
-    alignItems: 'center',
-    flex: 1,
-    marginLeft: 10,
-  },
-  addToCartText: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  buttonIcon: {
-    width: 30,
-    height: 30,
-  },
-  collapsibleHeader: {
-    flex:1,
-    borderBottomWidth: 1,
-    borderColor: '#ddd',
-  },
-  collapsibleHeaderText: {
-    fontSize: 16,
-    fontWeight: '400',
-    color:'#303030'
-  },
-  collapsibleContent: {
-    paddingVertical: 10,
-  },
-  reviewsContainer: {
-    marginVertical: 20,
-  },
- 
-  reviewItem: {
-    marginVertical: 5,
-  },
-  reviewText: {
-    fontSize: 14,
-  },
-  containercollap:{
-    flex:1
-  },
-  collapsibleRow: {
-    flexDirection: 'row', // Sắp xếp theo hàng ngang
-    justifyContent: 'space-between', // Đưa "DetailProduct" sang phải
-    alignItems: 'center', // Căn giữa theo trục dọc
-    marginVertical: 10,
-  },
-  reviewsSection: {
-    paddingTop:30,
-    backgroundColor: '#fff',
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 10,
-    color:'#303030'
-
-  },
   reviewContainer: {
-    flex:1,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-    paddingBottom: 10,
+    backgroundColor: '#f9f9f9',
+    padding: 10,
+    borderRadius: 8,
     marginBottom: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
   },
-  userName: {
-    fontSize: 15,
-    fontWeight: '500',
-    marginBottom: 5,
-    color:'#303030'
-
-  },
-  ratingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 5,
-  },
-  starsContainer: {
-    flexDirection: 'row',
-    marginRight: 10,
-  },
-  starIcon: {
-    width: 18,
-    height: 18,
-    marginRight: 2,
-  },
-  starsContainer: {
-    flexDirection: 'row',
-    marginRight: 10,
-  },
-  ratingText: {
-    fontSize: 18,
-    color: '#777',
-  },
-  dateText: {
-    fontSize: 13,
-    color: '#777',
-  },
-  sizeText: {
-    fontSize: 12,
-    color: '#555',
-    marginBottom: 3,
-  },
-  sizeText1: {
-    fontSize: 13,
-    color: 'black',
-  },
-  fitText: {
-    fontSize: 12,
-    color: '#555',
-    marginBottom: 5,
-  },
-  commentText: {
-    fontSize: 18,
-    color:'#303030'
-
-  },
+  reviewComment: { fontSize: 16, fontWeight: 'bold', color: '#333', marginBottom: 5 },
+  reviewRating: { fontSize: 14, color: '#555' },
+  responseText: { fontSize: 14, color: '#888', marginLeft: 10, marginTop: 2, paddingLeft: 10, borderLeftWidth: 1, borderColor: '#ddd' },
 });
+

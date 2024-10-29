@@ -6,7 +6,7 @@ const AllProductStyle = StyleSheet.create({
 
 
     container: {
-      flex: 1,
+      flex:1.5,
       padding:10,
       backgroundColor: '#fff',
     },
@@ -153,10 +153,7 @@ const AllProductStyle = StyleSheet.create({
       fontSize: 14,  // Smaller font size for picker items
       textAlign: 'left',  // Align the text to the left
   },
-  productListContainer: {
-      flexDirection:'row',
-      margin:5,
-  },
+  
   productSection:{
   },
   scene: {

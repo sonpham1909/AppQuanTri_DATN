@@ -3,6 +3,7 @@ import { register, login } from '../actions/actionUser';
 
 const initialState = {
   user: null,
+  token: null,
   isLoading: false,
   isError: false,
   isSuccess: false,
@@ -41,7 +42,7 @@ const userSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.token = action.payload.token;
+        state.token = action.payload.accessToken;
         state.user = action.payload.user;
       })
       .addCase(login.rejected, (state, action) => {

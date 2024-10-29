@@ -5,7 +5,7 @@ import React from 'react'
 const cateClotherStyles = StyleSheet.create({
     container: {
       flex: 1,
-      padding:10,
+      padding:5,
       backgroundColor: '#fff',
     },
    
@@ -153,7 +153,6 @@ const cateClotherStyles = StyleSheet.create({
   },
   productListContainer: {
       flexDirection:'row',
-      marginTop:20,
   },
   productSection:{
   },
@@ -171,6 +170,9 @@ const cateClotherStyles = StyleSheet.create({
   },
   label: {
     fontWeight: 'bold',
+    textTransform: 'uppercase', // Giữ chữ không bị độn
+    fontWeight: 'bold',
+
   },
   header: {
     flexDirection: 'row',

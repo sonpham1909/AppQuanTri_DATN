@@ -1,15 +1,30 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
 import homeStyles from '../../styles/homeStyles';
 import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCategories } from '../../redux/actions/actionCategory';
 
-const CategorySection = ({ categories }) => {
-  const navigation = useNavigation();  // Sử dụng hook điều hướng
+const CategorySection = () => {
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const { categories, isLoading, error } = useSelector(state => state.categories);
 
-  const handlePress = (item) => {
-    // Chuyển sang CategoriesScreen, truyền dữ liệu danh mục
-    navigation.navigate('CategoriesScreen', { category: item });
+  useEffect(() => {
+    dispatch(fetchCategories()); // Lấy danh mục cha khi component được render
+  }, [dispatch]);
+
+  const handlePress = item => {
+    navigation.navigate('CategoriesScreen', { category: item }); // Chuyển đến màn hình danh mục con
   };
+
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
+ 
+  // if (error) {
+  //   return <Text>Error: {error}</Text>;
+  // }
 
   return (
     <View style={homeStyles.categorySection}>
@@ -17,13 +32,13 @@ const CategorySection = ({ categories }) => {
       <FlatList
         horizontal
         data={categories}
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item._id}
         renderItem={({ item }) => (
           <TouchableOpacity style={homeStyles.categoryItem} onPress={() => handlePress(item)}>
             <View style={homeStyles.notificationIconContainer}>
-              <Image source={item.icon} style={homeStyles.categoryIcon} />
+              <Image source={{ uri: item.imgcategory }} style={{ width: 30, height: 30 }} />
             </View>
-            <Text style={homeStyles.clother}>{item.name}</Text>
+            <Text style={homeStyles.clother}>{item.namecategory}</Text>
           </TouchableOpacity>
         )}
       />

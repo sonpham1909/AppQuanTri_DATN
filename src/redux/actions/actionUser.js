@@ -1,38 +1,29 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-// URL API của bạn
-// URL API của bạn
-const API_URL = 'http://10.0.3.2:5000/api/auth';
+import authService from '../../services/authService';
+import tokenService from '../../services/tokenService';
 
 // Action đăng ký
-export const register = createAsyncThunk('auth/register', async (userData, thunkAPI) => {
+export const register = createAsyncThunk('v1/auth/register', async (userData, thunkAPI) => {
   try {
-    console.log("Sending user data to server:", userData);  // Log dữ liệu gửi lên server
-    const response = await axios.post(`${API_URL}/register`, userData);
-    return response.data;
+    const response = await authService.register(userData);
+    return response;
   } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data);
+    return thunkAPI.rejectWithValue(error.response?.data || 'Đã xảy ra lỗi trong quá trình đăng ký');
   }
 });
-// Action đăng nhập
 
-// Action đăng nhập
-export const login = createAsyncThunk('auth/login', async (userData, thunkAPI) => {
-    try {
-        const response = await axios.post(`${API_URL}/login`, userData);
-        const { accessToken } = response.data;
+export const login = createAsyncThunk('v1/auth/login', async (userData, thunkAPI) => {
+  try {
+    const response = await authService.login(userData);
 
-        // Lưu token vào AsyncStorage
-        await AsyncStorage.setItem('accessToken', accessToken);
+    // Lưu token vào AsyncStorage
+    await tokenService.setToken(response.accessToken);
 
-        return response.data;
-    } catch (error) {
-        return thunkAPI.rejectWithValue(error.response.data);
-    }
+    return response;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data || 'Đã xảy ra lỗi trong quá trình đăng nhập');
+  }
 });
-
 
 
 

@@ -1,22 +1,105 @@
-import React from 'react';
-import { FlatList, View, Text } from 'react-native';
+import React, {useEffect} from 'react';
+import {
+  FlatList,
+  View,
+  Text,
+  ActivityIndicator,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+} from 'react-native';
 import cateStyles from '../../styles/cateStyles';
-import renderCategory from '../../components/Categories/renderCategory';
-import pantsCategories from '../../components/Categories/data';
+import CategoryItem from '../../components/Categories/renderCategory'; // Đổi tên renderCategory thành CategoryItem
+import {useDispatch, useSelector} from 'react-redux';
+import {fetchSubCategoriesByParent} from '../../redux/actions/actionCategory';
+import {useNavigation} from '@react-navigation/native'; // Import hook điều hướng
 
-const CategoriesScreen = ({ route }) => {
-  const { category } = route.params; // Nhận dữ liệu danh mục từ route.params
+const CategoriesScreen = ({route}) => {
+  const {category} = route.params; // Nhận dữ liệu danh mục cha từ route.params
+  const dispatch = useDispatch();
+  const {subCategories, isLoading} = useSelector(state => state.categories);
+  const navigation = useNavigation(); // Hook điều hướng
+
+  useEffect(() => {
+    dispatch(fetchSubCategoriesByParent(category._id)); // Lấy danh mục con khi có category cha
+  }, [category._id, dispatch]);
+
+  if (isLoading) {
+    return <ActivityIndicator size="large" color="#00ff00" />;
+  }
+
+  if (!subCategories || subCategories.length === 0) {
+    return <Text>Không có danh mục con</Text>;
+  }
 
   return (
     <View style={cateStyles.container}>
-      <Text style={cateStyles.categoryTitle}>Danh mục: {category.name}</Text>
+      <View style={styles.header}>
+  <TouchableOpacity
+    style={styles.backButton}
+    onPress={() => navigation.navigate('Trang chủ')} // Điều hướng về màn hình Home
+  >
+    <Image
+      source={require('../../assets/images/icon_back.png')} // Đường dẫn tới icon quay lại
+      style={styles.backIcon} // Style cho icon
+    />
+  </TouchableOpacity>
+
+  {/* Hiển thị tên danh mục cha ở giữa */}
+  <Text style={styles.categoryNameText}>{category.namecategory}</Text>
+</View>
+
       <FlatList
-        data={pantsCategories}  // Bạn có thể lọc danh sách này dựa trên danh mục
-        renderItem={renderCategory}
-        keyExtractor={item => item.id}
+        data={subCategories}
+        renderItem={({item}) => (
+          <CategoryItem
+            item={item}
+            subCategories={subCategories}
+            categoryName={category.namecategory} // Truyền đúng tên danh mục cha
+          /> // Truyền danh sách danh mục con vào CategoryItem
+        )}
+        keyExtractor={item => item._id}
       />
     </View>
   );
 };
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backButton: {
+    width: 30, // Đặt kích thước chiều rộng và chiều cao cho nút
+    height: 30,
+    borderRadius: 20, // Nút hình tròn
+    backgroundColor: '#00A65E', // Màu nền đậm giống với ảnh
+    justifyContent: 'center', // Canh giữa icon
+    alignItems: 'center',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.8,
+    shadowRadius: 5,
+    marginLeft: 10,
+    elevation: 5, // Hiệu ứng đổ bóng cho Android
+  },
+  header: {
+    marginVertical: 15,
+    flexDirection: 'row',
+    
+    alignItems: 'center',
+    justifyContent: 'center', // Căn giữa nội dung trong hàng ngang
+  },
+  backIcon: {
+    width: 20, // Kích thước icon phù hợp
+    height: 20,
+    tintColor: '#fff', // Màu icon
+  },
+  categoryNameText: {
+    flex: 1, // Cần cho Text để nó chiếm toàn bộ không gian giữa
+    textAlign: 'center', // Căn giữa text
+    fontSize: 16, // Điều chỉnh kích thước chữ
+    fontWeight: 'bold', // Đậm chữ để nổi bật hơn
+  },
+});
 
 export default CategoriesScreen;
