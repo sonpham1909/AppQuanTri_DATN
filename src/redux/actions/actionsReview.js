@@ -4,7 +4,10 @@ import axios from 'axios';
 import tokenService from '../../services/tokenService';
 
 // URL API
-const API_URL = 'http://10.0.3.2:3000/v1';
+import {API_URL} from '@env'
+
+
+
 
 
 

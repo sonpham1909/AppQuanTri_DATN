@@ -3,7 +3,10 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import tokenService from '../../services/tokenService';
 
-const API_URL = 'http://10.0.3.2:3000/v1/products'; // Đặt URL cơ bản tại đây
+import {API_URL} from '@env'
+
+
+
 
 // Action để lấy đánh giá và điểm trung bình cho một sản phẩm
 export const fetchProductReviews = createAsyncThunk(
@@ -34,7 +37,7 @@ export const fetchLatestProducts = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const token = await tokenService.getToken();
-      const response = await axios.get(`${API_URL}/latest`, {
+      const response = await axios.get(`${API_URL}/products`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

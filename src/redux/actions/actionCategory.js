@@ -3,14 +3,15 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'; 
 import axios from 'axios';
 import tokenService from '../../services/tokenService';
+import {API_URL} from '@env'
 
-const API_URL = 'http://10.0.3.2:3000/v1/categorys';
+
 
 // Action để lấy danh sách danh mục cha từ API
 export const fetchCategories = createAsyncThunk('/', async (_, thunkAPI) => {
   try {
     const token = await tokenService.getToken();
-    const response = await axios.get(API_URL, {
+    const response = await axios.get(API_URL+'/categorys', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -25,7 +26,7 @@ export const fetchCategories = createAsyncThunk('/', async (_, thunkAPI) => {
 export const fetchSubCategoriesByParent = createAsyncThunk('categories/fetchSubCategoriesByParent', async (categoryId, thunkAPI) => {
   try {
     const token = await tokenService.getToken();
-    const response = await axios.get(`${API_URL}/${categoryId}/subcategories`, {
+    const response = await axios.get(`${API_URL}/${categoryId}/subcategorys`, {
       headers: {
         Authorization: `Bearer ${token}`
       }

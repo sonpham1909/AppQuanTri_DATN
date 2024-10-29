@@ -3,7 +3,10 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import tokenService from '../../services/tokenService';
 
-const API_URL = 'http://10.0.3.2:3000/v1/favorite';
+import {API_URL} from '@env'
+
+
+const API_URL_App = process.env.API_URL+'/favorite';
 
 export const toggleFavorite = createAsyncThunk(
   'favorites/toggleFavorite',
@@ -11,7 +14,7 @@ export const toggleFavorite = createAsyncThunk(
     try {
       const token = await tokenService.getToken();
       await axios.post(
-        `${API_URL}/toggle`,
+        `${API_URL_App}/toggle`,
         { productId },
         {
           headers: {
@@ -33,7 +36,7 @@ export const fetchFavoriteList = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const token = await tokenService.getToken();
-      const response = await axios.get(`${API_URL}/list`, {
+      const response = await axios.get(`${API_URL_App}/list`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
