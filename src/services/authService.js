@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://192.168.1.13:3000/v1/auth';
+const API_URL = 'http://10.0.3.2:3000/v1/auth';
 
 // Đăng ký
 const register = async (userData) => {

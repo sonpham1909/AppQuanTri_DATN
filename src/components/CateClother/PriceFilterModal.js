@@ -12,14 +12,14 @@ const PriceFilterModal = ({ visible, onClose, applyFilters, priceRange = [0, 100
   }, [priceRange, visible]);
 
   const applyFilter = () => {
-    applyFilters({ price: [tempMinPrice, tempMaxPrice] });
+    applyFilters(tempMinPrice, tempMaxPrice); // Chuyển khoảng giá cho hàm applyFilters
     onClose();
   };
 
   const resetFilter = () => {
     setTempMinPrice(0);
     setTempMaxPrice(10000000);
-    applyFilters({ price: [0, 10000000] });
+    applyFilters(0, 10000000); // Reset giá trị lọc về mặc định
     onClose();
   };
 
@@ -32,31 +32,33 @@ const PriceFilterModal = ({ visible, onClose, applyFilters, priceRange = [0, 100
           <View style={styles.sliderContainer}>
             <Text style={styles.priceText}>Giá từ: {tempMinPrice.toLocaleString('vi-VN')} VND</Text>
             <Slider
-              style={styles.slider}
-              minimumValue={0}
-              maximumValue={10000000}
-              value={tempMinPrice}
-              step={50000}
-              minimumTrackTintColor="#00A65E"
-              maximumTrackTintColor="#ddd"
-              thumbTintColor="#00A65E"
-              onValueChange={(value) => setTempMinPrice(value)}
-            />
+   style={styles.slider}
+   minimumValue={0}
+   maximumValue={10000000}
+   defaultValue={tempMinPrice}
+   step={50000}
+   minimumTrackTintColor="#00A65E"
+   maximumTrackTintColor="#ddd"
+   thumbTintColor="#00A65E"
+   onSlidingComplete={(value) => setTempMinPrice(value)} // Lưu giá trị khi dừng kéo
+/>
+
           </View>
 
           <View style={styles.sliderContainer}>
             <Text style={styles.priceText}>Giá đến: {tempMaxPrice.toLocaleString('vi-VN')} VND</Text>
             <Slider
-              style={styles.slider}
-              minimumValue={0}
-              maximumValue={10000000}
-              value={tempMaxPrice}
-              step={50000}
-              minimumTrackTintColor="#00A65E"
-              maximumTrackTintColor="#ddd"
-              thumbTintColor="#00A65E"
-              onValueChange={(value) => setTempMaxPrice(value)}
-            />
+   style={styles.slider}
+   minimumValue={0}
+   maximumValue={10000000}
+   defaultValue={tempMinPrice}
+   step={50000}
+   minimumTrackTintColor="#00A65E"
+   maximumTrackTintColor="#ddd"
+   thumbTintColor="#00A65E"
+   onSlidingComplete={(value) => setTempMinPrice(value)} // Lưu giá trị khi dừng kéo
+/>
+
           </View>
 
           <View style={styles.actionsContainer}>

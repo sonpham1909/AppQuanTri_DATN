@@ -2,26 +2,29 @@ import React, { useState, useEffect } from 'react';
 import { Modal, View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 
 const ColorFilterModal = ({ visible, filterOptions, onClose, applyFilters, initialFilters }) => {
-  const [tempSelectedColors, setTempSelectedColors] = useState(initialFilters || []);
+  const [selectedColors, setSelectedColors] = useState(initialFilters || []);
 
   useEffect(() => {
-    setTempSelectedColors(initialFilters || []);
+    setSelectedColors(initialFilters || []);
   }, [initialFilters, visible]);
 
+  // Hàm xử lý toggle chọn hoặc bỏ chọn màu sắc
   const toggleColor = (color) => {
-    setTempSelectedColors((prev) =>
+    setSelectedColors((prev) =>
       prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color]
     );
   };
 
-  const applyFilter = () => {
-    applyFilters({ color: tempSelectedColors });
+  // Áp dụng bộ lọc và đóng modal
+  const applyColorFilter = () => {
+    applyFilters(selectedColors);
     onClose();
   };
 
-  const resetFilter = () => {
-    setTempSelectedColors([]);
-    applyFilters({ color: [] });
+  // Reset lại bộ lọc
+  const resetColorFilter = () => {
+    setSelectedColors([]);
+    applyFilters([]);
     onClose();
   };
 
@@ -31,30 +34,28 @@ const ColorFilterModal = ({ visible, filterOptions, onClose, applyFilters, initi
         <View style={styles.modalContainer}>
           <Text style={styles.modalTitle}>Chọn màu sắc</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {(filterOptions || []).map((color) => (
+            {(filterOptions || []).map((color, index) => (
               <TouchableOpacity
-                key={color}
+                key={index}
                 onPress={() => toggleColor(color)}
                 style={[
                   styles.colorCircle,
-                  {
-                    backgroundColor: color.toLowerCase(),
-                    borderColor: tempSelectedColors.includes(color) ? '#00A65E' : '#ddd',
-                  },
+                  { backgroundColor: color ? color.toLowerCase() : '#ccc' }, // Xử lý màu không hợp lệ bằng màu mặc định
+                  selectedColors.includes(color) && styles.selectedCircle,
                 ]}
               >
-                {tempSelectedColors.includes(color) && (
-                  <Text style={styles.selectedText}>✔</Text>
+                {selectedColors.includes(color) && (
+                  <Text style={styles.checkMark}>✔</Text>
                 )}
               </TouchableOpacity>
             ))}
           </ScrollView>
 
           <View style={styles.actionsContainer}>
-            <TouchableOpacity onPress={resetFilter} style={[styles.actionButton, styles.resetButton]}>
+            <TouchableOpacity onPress={resetColorFilter} style={[styles.actionButton, styles.resetButton]}>
               <Text style={styles.actionButtonText}>Reset</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={applyFilter} style={[styles.actionButton, styles.applyButton]}>
+            <TouchableOpacity onPress={applyColorFilter} style={[styles.actionButton, styles.applyButton]}>
               <Text style={styles.actionButtonText}>Áp dụng</Text>
             </TouchableOpacity>
           </View>
@@ -65,65 +66,17 @@ const ColorFilterModal = ({ visible, filterOptions, onClose, applyFilters, initi
 };
 
 const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContainer: {
-    width: '90%',
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  colorCircle: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginHorizontal: 10,
-    borderWidth: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  selectedText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  actionsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
-  },
-  actionButton: {
-    flex: 1,
-    paddingVertical: 12,
-    borderRadius: 30,
-    alignItems: 'center',
-  },
-  resetButton: {
-    backgroundColor: '#FF7043',
-    marginRight: 10,
-  },
-  applyButton: {
-    backgroundColor: '#00A65E',
-  },
-  actionButtonText: {
-    color: 'white',
-    fontSize: 16,
-  },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' },
+  modalContainer: { width: '80%', backgroundColor: 'white', padding: 20, borderRadius: 10 },
+  modalTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 15 },
+  colorCircle: { marginHorizontal: 5, width: 30, height: 30, borderRadius: 15, borderWidth: 1, borderColor: '#ddd', justifyContent: 'center', alignItems: 'center' },
+  selectedCircle: { borderColor: '#00A65E', borderWidth: 2 },
+  checkMark: { color: 'white', fontSize: 14 },
+  actionsContainer: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 },
+  actionButton: { paddingVertical: 10, paddingHorizontal: 20, borderRadius: 5 },
+  resetButton: { backgroundColor: '#ddd' },
+  applyButton: { backgroundColor: '#00A65E' },
+  actionButtonText: { color: 'white', fontWeight: 'bold' },
 });
 
 export default ColorFilterModal;

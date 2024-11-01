@@ -9,10 +9,14 @@ import {
   toggleFavorite,
   fetchFavoriteList,
 } from '../../redux/actions/favoriteActions';
+import {fetchVariantsByProductId} from '../../redux/actions/actionsVariant';
+
+const SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'XXL']; // Thứ tự size
 
 const ProductList = ({navigation, title, products}) => {
   const dispatch = useDispatch();
   const reviews = useSelector(state => state.products.reviews);
+  const variants = useSelector(state => state.variants.variants);
   const favoriteList = useSelector(state => state.favorites.favoriteList);
 
   useEffect(() => {
@@ -21,6 +25,7 @@ const ProductList = ({navigation, title, products}) => {
     }
     products.forEach(product => {
       dispatch(fetchProductReviews(product._id));
+      dispatch(fetchVariantsByProductId(product._id)); // Gọi action để lấy các biến thể cho từng sản phẩm
     });
   }, [dispatch, products]);
 
@@ -45,38 +50,43 @@ const ProductList = ({navigation, title, products}) => {
           <Text style={styles.viewAll}>Tất Cả</Text>
         </TouchableOpacity>
       </View>
-
       <FlatList
         data={products}
         keyExtractor={item => item._id}
         renderItem={({item}) => {
+          const variantsItem = variants[item._id] || [];
           const productReviews = reviews[item._id] || {};
           const totalReviews = productReviews.totalReviews || 0;
           const averageRating = productReviews.averageRating || 0;
 
-          const sizes = Array.isArray(item.variants)
-            ? item.variants.map(variant => variant.size)
-            : [];
-            const colors = Array.isArray(item.variants)
-            ? [...new Set(item.variants.map(variant => variant.color))] // Loại bỏ các màu trùng lặp
-            : [];
-          const firstPrice =
-            Array.isArray(item.variants) && item.variants.length > 0
-              ? item.variants[0].price
-              : null;
-          const imageUrl =
-            Array.isArray(item.imageUrls) && item.imageUrls.length > 0
-              ? item.imageUrls[0]
-              : null;
+          const availableSizes = Array.from(
+            new Set(
+              variantsItem
+                .flatMap(variant => variant.sizes)
+                .filter(size => size.quantity > 0) // Lọc các size còn hàng
+                .map(size => size.size),
+            ),
+          ).sort((a, b) => SIZE_ORDER.indexOf(a) - SIZE_ORDER.indexOf(b)); // Sắp xếp theo SIZE_ORDER
+
+          // Kết hợp size đầu và size cuối
+          const sizeText =
+            availableSizes.length > 1
+              ? `${availableSizes[0]} - ${
+                  availableSizes[availableSizes.length - 1]
+                }`
+              : availableSizes[0] || '';
 
           return (
             <TouchableOpacity
-                onPress={() => navigation.navigate('ProductDetailScreen', { product: item })
-
+              onPress={() =>
+                navigation.navigate('ProductDetailScreen', {product: item})
               }
               style={styles.productItem}>
               <View style={styles.imageContainer}>
-                <Image source={{uri: imageUrl}} style={styles.productImage} />
+                <Image
+                  source={{uri: item.imageUrls[0]}}
+                  style={styles.productImage}
+                />
                 <TouchableOpacity
                   style={styles.favoriteIcon}
                   onPress={() => handleToggleFavorite(item._id)}>
@@ -86,29 +96,27 @@ const ProductList = ({navigation, title, products}) => {
                     color={isFavorite(item._id) ? 'red' : 'gray'}
                   />
                 </TouchableOpacity>
-                
               </View>
-
-             
-
               <View style={styles.colorOptions}>
-                {colors.map((color, index) => (
-                  <View
-                    key={index}
-                    style={[styles.colorSquare, {backgroundColor: color}]}
-                  />
+                {variantsItem.map(variant => (
+                  <View key={variant._id}>
+                    <View
+                      style={[
+                        styles.colorSquare,
+                        {backgroundColor: variant.color_code},
+                      ]}
+                    />
+                  </View>
                 ))}
               </View>
-
-              <View style={styles.sizeColorContainer}>
-                <Text style={styles.productSize}>
-                  {sizes[0]} - {sizes[sizes.length - 1]}
-                </Text>
+              <View style={styles.productSize}>
+                <Text style={styles.sizeText}>{sizeText}</Text>
               </View>
 
               <Text style={styles.productName}>{item.name}</Text>
+              <Text style={styles.productPrice}>{formatPrice(item.price)}</Text>
 
-              <Text style={styles.productPrice}>{formatPrice(firstPrice)}</Text>
+ 
 
               {totalReviews > 0 && (
                 <View style={styles.reviewSection}>
@@ -171,6 +179,7 @@ const styles = {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 5,
+    marginLeft: 8,
   },
   productSize: {fontSize: 12, color: '#999', marginLeft: 10},
   productName: {
@@ -187,12 +196,7 @@ const styles = {
     fontWeight: 'bold',
     marginBottom: 5,
   },
-  colorOptions: {
-    marginLeft: 10,
-    flexDirection: 'row',
-    marginBottom: 5,
-    marginTop: 5,
-  },
+
   colorSquare: {
     marginRight: 5,
     width: 15,
@@ -200,5 +204,11 @@ const styles = {
     marginHorizontal: 2,
     borderWidth: 1,
     borderColor: '#e0e0e0',
+  },
+  colorOptions: {
+    marginLeft: 8,
+    flexDirection: 'row',
+    marginBottom: 5,
+    marginTop: 5,
   },
 };

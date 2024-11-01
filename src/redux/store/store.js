@@ -5,6 +5,7 @@ import categoryReducer from '../slices/categorySlice';
 import productReducer from '../slices/productSlice';
 import favoriteReducer from '../slices/favoriteSlice';
 import reviewResponsesReducer from '../slices/reviewSlice';
+import variantReducer from '../slices/variantSlice'; // Import variantSlice
 
 const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ const store = configureStore({
     products: productReducer,
     favorites: favoriteReducer,
     reviewResponses: reviewResponsesReducer,
+    variants: variantReducer, // Thêm variantReducer vào store
 
   },
 });

@@ -14,7 +14,7 @@ export const fetchProductReviews = createAsyncThunk(
   async (productId, thunkAPI) => {
     try {
       const token = await tokenService.getToken();
-      const response = await axios.get(`${API_URL}/reviews/${productId}`, {
+      const response = await axios.get(`${API_URL}/products/reviews/${productId}` , {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -37,7 +37,7 @@ export const fetchLatestProducts = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const token = await tokenService.getToken();
-      const response = await axios.get(`${API_URL}/products`, {
+      const response = await axios.get(`${API_URL}/products/latest` , {
         headers: {
           Authorization: `Bearer ${token}`,
         },

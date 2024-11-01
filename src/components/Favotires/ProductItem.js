@@ -23,11 +23,8 @@ const FavoriteItem = ({ product, onToggleFavorite, navigation }) => {
         <Text style={styles.productName} numberOfLines={1}>
           {product.name || 'Tên sản phẩm'}
         </Text>
-        <Text style={styles.productPrice}>
-          {product.variants && product.variants.length > 0
-            ? formatPrice(product.variants[0].price)
-            : 'Chưa có giá'}
-        </Text>
+        <Text style={styles.productPrice}>{formatPrice(product.price)}</Text>
+
       </View>
 
       <View style={styles.buttonsContainer}>

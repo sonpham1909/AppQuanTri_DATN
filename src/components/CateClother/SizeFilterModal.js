@@ -1,27 +1,30 @@
-import React, { useState, useEffect } from 'react'; 
-import { Modal, View, Text, TouchableOpacity, ScrollView, StyleSheet, Dimensions } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Modal, View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 
 const SizeFilterModal = ({ visible, filterOptions, onClose, applyFilters, initialFilters }) => {
-  const [tempSelectedSizes, setTempSelectedSizes] = useState(initialFilters || []);
+  const [selectedSizes, setSelectedSizes] = useState(initialFilters || []);
 
   useEffect(() => {
-    setTempSelectedSizes(initialFilters || []);
+    setSelectedSizes(initialFilters || []);
   }, [initialFilters, visible]);
 
+  // Hàm xử lý toggle chọn hoặc bỏ chọn size
   const toggleSize = (size) => {
-    setTempSelectedSizes((prev) =>
+    setSelectedSizes((prev) =>
       prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
     );
   };
 
-  const applyFilter = () => {
-    applyFilters({ size: tempSelectedSizes });
+  // Áp dụng bộ lọc và đóng modal
+  const applySizeFilter = () => {
+    applyFilters(selectedSizes);
     onClose();
   };
 
-  const resetFilter = () => {
-    setTempSelectedSizes([]);
-    applyFilters({ size: [] });
+  // Reset lại bộ lọc
+  const resetSizeFilter = () => {
+    setSelectedSizes([]);
+    applyFilters([]);
     onClose();
   };
 
@@ -30,36 +33,26 @@ const SizeFilterModal = ({ visible, filterOptions, onClose, applyFilters, initia
       <View style={styles.modalOverlay}>
         <View style={styles.modalContainer}>
           <Text style={styles.modalTitle}>Chọn kích cỡ</Text>
-
-          {/* Nút lựa chọn kích cỡ */}
-          <ScrollView horizontal contentContainerStyle={styles.scrollContainer}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {(filterOptions || []).map((size) => (
               <TouchableOpacity
                 key={size}
                 onPress={() => toggleSize(size)}
                 style={[
                   styles.sizeButton,
-                  tempSelectedSizes.includes(size) && styles.sizeButtonSelected,
+                  selectedSizes.includes(size) && styles.selectedButton,
                 ]}
               >
-                <Text
-                  style={[
-                    styles.sizeButtonText,
-                    tempSelectedSizes.includes(size) && styles.sizeButtonTextSelected,
-                  ]}
-                >
-                  {size}
-                </Text>
+                <Text style={styles.sizeText}>{size}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
 
-          {/* Nút hành động */}
-          <View style={styles.actionButtonsContainer}>
-            <TouchableOpacity onPress={resetFilter} style={[styles.actionButton, styles.resetButton]}>
+          <View style={styles.actionsContainer}>
+            <TouchableOpacity onPress={resetSizeFilter} style={[styles.actionButton, styles.resetButton]}>
               <Text style={styles.actionButtonText}>Reset</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={applyFilter} style={[styles.actionButton, styles.applyButton]}>
+            <TouchableOpacity onPress={applySizeFilter} style={[styles.actionButton, styles.applyButton]}>
               <Text style={styles.actionButtonText}>Áp dụng</Text>
             </TouchableOpacity>
           </View>
@@ -70,76 +63,17 @@ const SizeFilterModal = ({ visible, filterOptions, onClose, applyFilters, initia
 };
 
 const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Nền mờ
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContainer: {
-    width: '90%',
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  scrollContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    paddingVertical: 10,
-  },
-  sizeButton: {
-    paddingVertical: 15,
-    paddingHorizontal: 25,
-    borderRadius: 25,
-    borderWidth: 1,
-    borderColor: '#00A65E',
-    backgroundColor: 'white',
-    marginHorizontal: 10,
-  },
-  sizeButtonSelected: {
-    backgroundColor: '#00A65E',
-  },
-  sizeButtonText: {
-    color: '#00A65E',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  sizeButtonTextSelected: {
-    color: 'white',
-  },
-  actionButtonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 20,
-  },
-  actionButton: {
-    flex: 1,
-    paddingVertical: 12,
-    borderRadius: 30,
-    alignItems: 'center',
-  },
-  resetButton: {
-    backgroundColor: '#FF7043',
-    marginRight: 10,
-  },
-  applyButton: {
-    backgroundColor: '#00A65E',
-  },
-  actionButtonText: {
-    color: 'white',
-    fontSize: 16,
-  },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' },
+  modalContainer: { width: '80%', backgroundColor: 'white', padding: 20, borderRadius: 10 },
+  modalTitle: { fontSize: 18, fontWeight: 'bold', marginBottom: 15 },
+  sizeButton: { marginHorizontal: 5, padding: 10, borderRadius: 5, borderWidth: 1, borderColor: '#ddd' },
+  selectedButton: { borderColor: '#00A65E', backgroundColor: '#E5F5F1' },
+  sizeText: { fontSize: 14 },
+  actionsContainer: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 },
+  actionButton: { paddingVertical: 10, paddingHorizontal: 20, borderRadius: 5 },
+  resetButton: { backgroundColor: '#ddd' },
+  applyButton: { backgroundColor: '#00A65E' },
+  actionButtonText: { color: 'white', fontWeight: 'bold' },
 });
 
 export default SizeFilterModal;

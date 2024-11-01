@@ -6,7 +6,6 @@ import tokenService from '../../services/tokenService';
 import {API_URL} from '@env'
 
 
-const API_URL_App = process.env.API_URL+'/favorite';
 
 export const toggleFavorite = createAsyncThunk(
   'favorites/toggleFavorite',
@@ -14,7 +13,7 @@ export const toggleFavorite = createAsyncThunk(
     try {
       const token = await tokenService.getToken();
       await axios.post(
-        `${API_URL_App}/toggle`,
+        `${API_URL}/favorite/toggle` ,
         { productId },
         {
           headers: {
@@ -36,7 +35,7 @@ export const fetchFavoriteList = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const token = await tokenService.getToken();
-      const response = await axios.get(`${API_URL_App}/list`, {
+      const response = await axios.get(`${API_URL}/favorite/list` , {
         headers: {
           Authorization: `Bearer ${token}`,
         },

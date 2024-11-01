@@ -18,7 +18,7 @@ export const fetchProductReviewResponses = createAsyncThunk(
       const token = await tokenService.getToken();
 
       const response = await axios.get(
-        `${API_URL}/Review/product/${productId}/reviews_with_responses`,
+        `${API_URL}/Review/product/${productId}/reviews_with_responses` ,
         {
           headers: {
             Authorization: `Bearer ${token}`,

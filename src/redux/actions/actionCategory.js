@@ -11,7 +11,7 @@ import {API_URL} from '@env'
 export const fetchCategories = createAsyncThunk('/', async (_, thunkAPI) => {
   try {
     const token = await tokenService.getToken();
-    const response = await axios.get(API_URL+'/categorys', {
+    const response = await axios.get(`${API_URL}/categorys` , {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -26,7 +26,7 @@ export const fetchCategories = createAsyncThunk('/', async (_, thunkAPI) => {
 export const fetchSubCategoriesByParent = createAsyncThunk('categories/fetchSubCategoriesByParent', async (categoryId, thunkAPI) => {
   try {
     const token = await tokenService.getToken();
-    const response = await axios.get(`${API_URL}/${categoryId}/subcategorys`, {
+    const response = await axios.get(`${API_URL}/categorys/${categoryId}/subcategories`, { // Sửa thành /subcategories
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -41,7 +41,7 @@ export const fetchSubCategoriesByParent = createAsyncThunk('categories/fetchSubC
 export const fetchProductsBySubCategory = createAsyncThunk('products/fetchProductsBySubCategory', async (subCategoryId, thunkAPI) => {
     try {
       const token = await tokenService.getToken();
-      const response = await axios.get(`${API_URL}/subcategories/${subCategoryId}/products`, {
+      const response = await axios.get(`${API_URL}/categorys/subcategories/${subCategoryId}/products`, { // Sửa thành /subcategories/${subCategoryId}/products
         headers: {
           Authorization: `Bearer ${token}`,
         },
