@@ -1,10 +1,11 @@
 // redux/slices/productSlice.js
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchProductReviews, fetchLatestProducts } from '../actions/actionProduct';
+import { fetchProductReviews, fetchLatestProducts,fetchPopularProducts } from '../actions/actionProduct';
 
 const initialState = {
   reviews: {},
   latestProducts: [],
+  popularProducts: [], // Sửa ở đây
   isLoading: false,
   error: null,
 };
@@ -35,6 +36,13 @@ const productSlice = createSlice({
       })
       .addCase(fetchLatestProducts.rejected, (state, action) => {
         state.error = action.payload;
+      })
+      .addCase(fetchPopularProducts.fulfilled, (state, action) => {
+        state.popularProducts = action.payload; // Sửa để lưu vào popularProducts
+      })
+      .addCase(fetchPopularProducts.rejected, (state, action) => {
+        state.error = action.payload;
+        console.error("Error fetching popular products:", action.payload);
       });
   },
 });

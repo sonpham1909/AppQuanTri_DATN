@@ -3,7 +3,7 @@ import { fetchVariantsByProductId, fetchColorsAndSizesBySubCategoryId } from '..
 
 const initialState = {
   variants: {},
-  colorsAndSizesBySubCategoryId: {}, // Cập nhật thành đối tượng
+  colorsAndSizesBySubCategoryId: {},
   isLoadingFilterOptions: false,
   error: null,
   isLoading: false,
@@ -31,7 +31,6 @@ const variantSlice = createSlice({
       })
       .addCase(fetchColorsAndSizesBySubCategoryId.fulfilled, (state, action) => {
         state.isLoadingFilterOptions = false;
-        // Thêm biến thể vào `colorsAndSizesBySubCategoryId` với `subCategoryId` làm khóa
         state.colorsAndSizesBySubCategoryId[action.meta.arg] = action.payload;
       })
       .addCase(fetchColorsAndSizesBySubCategoryId.rejected, (state, action) => {
@@ -40,5 +39,4 @@ const variantSlice = createSlice({
       });
   },
 });
-
 export default variantSlice.reducer;

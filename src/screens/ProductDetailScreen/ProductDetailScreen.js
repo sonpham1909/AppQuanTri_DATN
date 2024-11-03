@@ -95,17 +95,12 @@ const ProductDetailScreen = ({route, navigation}) => {
       <View style={styles.detailsContainer}>
         <Text style={styles.productTitle}>{product.name}</Text>
         <View style={styles.ratingRow}>
-          {totalReviews > 0 && (
-            <View style={styles.starsContainer}>
-              {Array.from({length: Math.round(averageRating)}, (_, i) => (
-                <Image
-                  key={i}
-                  source={require('../../assets/images/home_start.png')}
-                  style={styles.starIcon}
-                />
-              ))}
-              <Text style={styles.text1}>({totalReviews})</Text>
-            </View>
+        {totalReviews > 0 && (
+                <View style={styles.reviewSection}>
+                  <MaterialCommunityIcons name="star" size={18} color="black" />
+                  <Text style={styles.reviewCountBold}>{averageRating}</Text>
+                  <Text style={styles.reviewCount}> ({totalReviews})</Text>
+                </View>
           )}
         </View>
 
@@ -250,9 +245,6 @@ const styles = StyleSheet.create({
     opacity: 0.5, // Giảm độ sáng cho ô
     textDecorationLine: 'line-through', // Gạch bỏ văn bản
   },
-  ratingRow: {flexDirection: 'row', alignItems: 'center', marginBottom: 8},
-  starsContainer: {flexDirection: 'row', alignItems: 'center', marginRight: 5},
-  text1: {fontSize: 16, marginLeft: 5},
   productImage: {
     width: '100%',
     height: 250,
@@ -343,5 +335,21 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     borderLeftWidth: 1,
     borderColor: '#ddd',
+  },
+  reviewSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  reviewCountBold: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#000000',
+    marginLeft: 4,
+  },
+  reviewCount: {
+    fontSize: 12,
+    color: '#000000',
+    marginLeft: 3,
   },
 });

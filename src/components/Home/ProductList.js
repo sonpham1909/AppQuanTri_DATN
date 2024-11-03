@@ -3,7 +3,6 @@ import React, {useEffect} from 'react';
 import {FlatList, Image, Text, TouchableOpacity, View} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useDispatch, useSelector} from 'react-redux';
-import renderStars from '../Home/renderStars';
 import {fetchProductReviews} from '../../redux/actions/actionProduct';
 import {
   toggleFavorite,
@@ -57,8 +56,9 @@ const ProductList = ({navigation, title, products}) => {
           const variantsItem = variants[item._id] || [];
           const productReviews = reviews[item._id] || {};
           const totalReviews = productReviews.totalReviews || 0;
-          const averageRating = productReviews.averageRating || 0;
-
+          const averageRating = productReviews.averageRating
+            ? productReviews.averageRating.toFixed(1) // Làm tròn điểm trung bình đến 1 chữ số thập phân
+            : '0.0';
           const availableSizes = Array.from(
             new Set(
               variantsItem
@@ -116,12 +116,11 @@ const ProductList = ({navigation, title, products}) => {
               <Text style={styles.productName}>{item.name}</Text>
               <Text style={styles.productPrice}>{formatPrice(item.price)}</Text>
 
- 
-
               {totalReviews > 0 && (
                 <View style={styles.reviewSection}>
-                  {renderStars(averageRating)}
-                  <Text style={styles.reviewCount}>({totalReviews})</Text>
+                  <MaterialCommunityIcons name="star" size={18} color="black" />
+                  <Text style={styles.reviewCountBold}>{averageRating}</Text>
+                  <Text style={styles.reviewCount}> ({totalReviews})</Text>
                 </View>
               )}
             </TouchableOpacity>
@@ -173,6 +172,17 @@ const styles = {
     height: 150,
     borderRadius: 8,
     resizeMode: 'contain',
+  },
+  reviewCountBold: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#000000',
+    marginLeft: 4,
+  },
+  reviewCount: {
+    fontSize: 12,
+    color: '#000000',
+    marginLeft: 3,
   },
   favoriteIcon: {position: 'absolute', top: 5, right: 5},
   sizeColorContainer: {

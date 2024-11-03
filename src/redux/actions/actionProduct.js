@@ -48,3 +48,21 @@ export const fetchLatestProducts = createAsyncThunk(
     }
   }
 );
+
+
+export const fetchPopularProducts = createAsyncThunk(
+  'products/fetchPopularProducts',
+  async (_, thunkAPI) => {
+    try {
+      const token = await tokenService.getToken();
+      const response = await axios.get(`${API_URL}/products/popular` , {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response ? error.response.data.message : error.message);
+    }
+  }
+);

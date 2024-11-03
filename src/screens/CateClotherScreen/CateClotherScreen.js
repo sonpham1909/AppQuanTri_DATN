@@ -10,6 +10,10 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useNavigation } from '@react-navigation/native';
 import cateClotherStyles from '../../styles/cateClotherStyles';
 import { fetchProductsBySubCategory } from '../../redux/actions/actionCategory';
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs(['Warning: ...']); // Cảnh báo cụ thể
+LogBox.ignoreAllLogs(); // Nếu muốn bỏ qua tất cả các log
 
 
 const MAX_DISPLAY_ITEMS = 1;
@@ -33,7 +37,6 @@ const CateClotherScreen = ({ route }) => {
     const loadProductsAndVariants = async () => {
       setLoading(true);
       await dispatch(fetchProductsBySubCategory(subCategories[index]?._id));
-      await dispatch(fetchColorsAndSizesBySubCategoryId(subCategories[index]?._id));
       setLoading(false);
     };
 
@@ -42,78 +45,6 @@ const CateClotherScreen = ({ route }) => {
     }
   }, [index, dispatch, subCategories]);
 
-  useEffect(() => {
-    const colorsAndSizes = colorsAndSizesBySubCategoryId[subCategories[index]?._id] || { colors: [], sizes: [] };
-    // Loại bỏ giá trị null trong mảng colors
-    const validColors = colorsAndSizes.colors.filter(color => color !== null);
-    setAvailableColors(validColors);
-    setAvailableSizes(colorsAndSizes.sizes);
-    console.log('SubCategory ID:', subCategories[index]?._id);
-    console.log('Colors and Sizes:', colorsAndSizes);
-  }, [colorsAndSizesBySubCategoryId, index, subCategories]);
-
-  useEffect(() => {
-    if (products) {
-      setFilteredProductsState((prev) => ({
-        ...prev,
-        [index]: products,
-      }));
-    }
-  }, [products, index]);
-  const applyFilters = (newFilters) => {
-    const currentFilters = filterState[index] || { size: [], color: [] };
-    const updatedFilters = { ...currentFilters, ...newFilters };
-  
-    // Thông báo trạng thái bộ lọc
-    console.log('Updated Filters:', updatedFilters);
-  
-    const filteredProducts = (products || []).filter((product) => {
-      const subCategoryId = subCategories[index]?._id;
-  
-      // Kiểm tra xem `subCategoryId` có hợp lệ không
-      if (!subCategoryId) {
-        console.warn(`SubCategory ID is undefined for index: ${index}`);
-        return false;
-      }
-  
-      // Lấy thông tin về colors và sizes từ Redux Store
-      const variantInfo = colorsAndSizesBySubCategoryId[subCategoryId];
-      if (!variantInfo) {
-        console.warn(`No valid variants found for SubCategory ID: ${subCategoryId}`);
-        return false;
-      }
-  
-      const { colors, sizes } = variantInfo;
-  
-      // Điều kiện lọc kích cỡ
-      let matchesSize = true;
-      if (updatedFilters.size.length > 0) {
-        matchesSize = updatedFilters.size.some((size) => sizes.includes(size));
-      }
-  
-      // Điều kiện lọc màu sắc
-      let matchesColor = true;
-      if (updatedFilters.color.length > 0) {
-        matchesColor = updatedFilters.color.some((color) => colors.includes(color));
-      }
-  
-      console.log('Product:', product.name, 'Matches Size:', matchesSize, 'Matches Color:', matchesColor);
-  
-      return matchesSize && matchesColor;
-    });
-  
-    console.log('Filtered Products:', filteredProducts.map((p) => p.name));
-  
-    setFilterState((prev) => ({
-      ...prev,
-      [index]: updatedFilters,
-    }));
-    setFilteredProductsState((prev) => ({
-      ...prev,
-      [index]: filteredProducts,
-    }));
-  };
-  
   
   const getFilteredProductsForCurrentTab = () => {
     return filteredProductsState[index] || products;
@@ -211,20 +142,7 @@ const CateClotherScreen = ({ route }) => {
         )}
       />
 
-      <SizeFilterModal
-        visible={sizeFilterVisible}
-        filterOptions={availableSizes}
-        onClose={() => setSizeFilterVisible(false)}
-        applyFilters={(selectedSizes) => applyFilters({ size: selectedSizes })}
-        initialFilters={filterState[index]?.size || []}
-      />
-      <ColorFilterModal
-        visible={colorFilterVisible}
-        filterOptions={availableColors}
-        onClose={() => setColorFilterVisible(false)}
-        applyFilters={(selectedColors) => applyFilters({ color: selectedColors })}
-        initialFilters={filterState[index]?.color || []}
-      />
+   
     </View>
   );
 };
