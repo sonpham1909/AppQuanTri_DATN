@@ -13,6 +13,7 @@ const variantSlice = createSlice({
   name: 'variants',
   initialState,
   reducers: {},
+
   extraReducers: (builder) => {
     builder
       .addCase(fetchVariantsByProductId.pending, (state) => {

@@ -1,9 +1,6 @@
-// components/ProductList.js
 import React, {useEffect} from 'react';
 import {FlatList, Image, Text, TouchableOpacity, View} from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useDispatch, useSelector} from 'react-redux';
-import renderStars from '../Home/renderStars';
 import {fetchProductReviews} from '../../redux/actions/actionProduct';
 import {
   toggleFavorite,
@@ -11,6 +8,7 @@ import {
 } from '../../redux/actions/favoriteActions';
 import {fetchVariantsByProductId} from '../../redux/actions/actionsVariant';
 
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
@@ -49,8 +47,9 @@ const ProductList = ({navigation, products}) => {
           const variantsItem = variants[item._id] || [];
           const productReviews = reviews[item._id] || {};
           const totalReviews = productReviews.totalReviews || 0;
-          const averageRating = productReviews.averageRating || 0;
-
+          const averageRating = productReviews.averageRating
+          ? productReviews.averageRating.toFixed(1) // Làm tròn điểm trung bình đến 1 chữ số thập phân
+          : '0.0';
           const availableSizes = Array.from(
             new Set(
               variantsItem
@@ -109,8 +108,9 @@ const ProductList = ({navigation, products}) => {
 
               {totalReviews > 0 && (
                 <View style={styles.reviewSection}>
-                  {renderStars(averageRating)}
-                  <Text style={styles.reviewCount}>({totalReviews})</Text>
+                  <MaterialCommunityIcons name="star" size={18} color="black" />
+                  <Text style={styles.reviewCountBold}>{averageRating}</Text>
+                  <Text style={styles.reviewCount}> ({totalReviews})</Text>
                 </View>
               )}
             </TouchableOpacity>
@@ -126,9 +126,22 @@ const ProductList = ({navigation, products}) => {
 export default ProductList;
 
 const styles = {
-  productSection: {
-    marginBottom: 20,
-    paddingHorizontal: 10,
+  reviewSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 10,
+    marginBottom: 5,
+  },
+  reviewCountBold: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#000000',
+    marginLeft: 4,
+  },
+  reviewCount: {
+    fontSize: 12,
+    color: '#000000',
+    marginLeft: 3,
   },
   productItem: {
     backgroundColor: '#fff',

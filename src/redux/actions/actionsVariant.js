@@ -26,8 +26,14 @@ export const fetchVariantsByProductId = createAsyncThunk(
 export const fetchColorsAndSizesBySubCategoryId = createAsyncThunk(
   'variants/fetchColorsAndSizesBySubCategoryId',
   async (subCategoryId, thunkAPI) => {
+    const token = await tokenService.getToken(); // Lấy token
+
     try {
-      const response = await axios.get(`${API_URL}/variants/colorsAndSizesBySubCategoryId/${subCategoryId}`);
+      const response = await axios.get(`${API_URL}/variants/colorsAndSizesBySubCategoryId/${subCategoryId}` ,{
+      headers: {
+        Authorization: `Bearer ${token}`, // Thêm token vào header
+      },
+    });
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response ? error.response.data.message : error.message);

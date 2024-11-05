@@ -1,11 +1,17 @@
 // redux/slices/productSlice.js
-import { createSlice } from '@reduxjs/toolkit';
-import { fetchProductReviews, fetchLatestProducts,fetchPopularProducts } from '../actions/actionProduct';
+import {createSlice} from '@reduxjs/toolkit';
+import {
+  fetchProductReviews,
+  fetchLatestProducts,
+  fetchPopularProducts,
+  fetchProductsByVariant,
+} from '../actions/actionProduct';
 
 const initialState = {
   reviews: {},
   latestProducts: [],
-  popularProducts: [], // Sửa ở đây
+  popularProducts: [],
+  productsByVariant: [],
   isLoading: false,
   error: null,
 };
@@ -14,9 +20,9 @@ const productSlice = createSlice({
   name: 'products',
   initialState,
   reducers: {},
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
-      .addCase(fetchProductReviews.pending, (state) => {
+      .addCase(fetchProductReviews.pending, state => {
         state.isLoading = true;
       })
       .addCase(fetchProductReviews.fulfilled, (state, action) => {
@@ -42,7 +48,18 @@ const productSlice = createSlice({
       })
       .addCase(fetchPopularProducts.rejected, (state, action) => {
         state.error = action.payload;
-        console.error("Error fetching popular products:", action.payload);
+        console.error('Error fetching popular products:', action.payload);
+      })
+      .addCase(fetchProductsByVariant.pending, state => {
+        state.isLoading = true;
+      })
+      .addCase(fetchProductsByVariant.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.productsByVariant = action.payload;
+      })
+      .addCase(fetchProductsByVariant.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
       });
   },
 });

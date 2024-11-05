@@ -9,7 +9,7 @@ import {API_URL} from '@env'
 
 export const toggleFavorite = createAsyncThunk(
   'favorites/toggleFavorite',
-  async (productId, { dispatch, getState }) => {
+  async (productId, { dispatch }) => {
     try {
       const token = await tokenService.getToken();
       await axios.post(

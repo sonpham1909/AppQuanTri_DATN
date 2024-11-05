@@ -66,3 +66,30 @@ export const fetchPopularProducts = createAsyncThunk(
     }
   }
 );
+
+export const fetchProductsByVariant = createAsyncThunk(
+  'products/fetchProductsByVariant',
+  async ({ subCategoryId, size, color_code, minPrice, maxPrice }, thunkAPI) => {
+    try {
+      const token = await tokenService.getToken();
+      const params = {
+        sub_category_id: subCategoryId,
+        size,
+        color_code,
+        minPrice,
+        maxPrice,
+      };
+
+      const response = await axios.get(`${API_URL}/products/by-variant` , {
+        params,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response ? error.response.data.message : error.message);
+    }
+  }
+);

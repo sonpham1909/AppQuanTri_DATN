@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  Dimensions,
+  FlatList,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchProductReviews} from '../../redux/actions/actionProduct';
@@ -14,10 +16,14 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import {toggleFavorite} from '../../redux/actions/favoriteActions';
 import {fetchProductReviewResponses} from '../../redux/actions/actionsReview';
 import {fetchVariantsByProductId} from '../../redux/actions/actionsVariant';
+import renderStars from '../../components/Home/renderStars';
+
+const {width} = Dimensions.get('window');
 
 const ProductDetailScreen = ({route, navigation}) => {
   const {product} = route.params;
   const dispatch = useDispatch();
+  const flatListRef = useRef();
 
   const reviews = useSelector(state => state.products.reviews) || {};
   const {reviewResponses, isLoading, error} =
@@ -32,12 +38,14 @@ const ProductDetailScreen = ({route, navigation}) => {
   const [availableSizes, setAvailableSizes] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const [maxQuantity, setMaxQuantity] = useState(0);
-  const [displayedImage, setDisplayedImage] = useState(product.imageUrls[0] || 'fallback-image-url');
+  const [allImages, setAllImages] = useState([]);
 
   const productReviews = reviewResponses[product._id] || [];
   const totalReview = reviews[product._id] || {};
   const totalReviews = totalReview.totalReviews || 0;
-  const averageRating = totalReview.averageRating || 0;
+  const averageRating = totalReview.averageRating
+    ? totalReview.averageRating.toFixed(1)
+    : '0.0';
 
   const [isCollapsedMaterial, setIsCollapsedMaterial] = useState(true);
   const [isCollapsedDetails, setIsCollapsedDetails] = useState(true);
@@ -50,11 +58,10 @@ const ProductDetailScreen = ({route, navigation}) => {
 
   useEffect(() => {
     if (variants.length > 0) {
-      // Thiết lập màu mặc định nếu chưa có màu nào được chọn
       if (!selectedColor) {
         setSelectedColor(variants[0].color_code);
       }
-  
+
       const sizesForColor = variants
         .filter(v => v.color_code === selectedColor)
         .flatMap(v => v.sizes)
@@ -62,32 +69,48 @@ const ProductDetailScreen = ({route, navigation}) => {
           size: sizeObj.size,
           quantity: sizeObj.quantity,
         }));
-  
+
       setAvailableSizes(sizesForColor);
-  
-      // Thiết lập kích cỡ đầu tiên làm kích cỡ mặc định nếu chưa có kích cỡ nào được chọn
+
       if (sizesForColor.length > 0) {
         setSelectedSize(selectedSize || sizesForColor[0].size);
         const selectedSizeObj = sizesForColor.find(
-          sizeObj => sizeObj.size === (selectedSize || sizesForColor[0].size)
+          sizeObj => sizeObj.size === (selectedSize || sizesForColor[0].size),
         );
         setMaxQuantity(selectedSizeObj ? selectedSizeObj.quantity : 0);
       } else {
         setMaxQuantity(0);
       }
-  
-      // Cập nhật ảnh nếu có màu sắc
-      const selectedVariant = variants.find(v => v.color_code === selectedColor);
+
+      // Danh sách hình ảnh mới: ảnh của biến thể trước, ảnh của sản phẩm sau
+      const selectedVariant = variants.find(
+        v => v.color_code === selectedColor,
+      );
+      const newAllImages = [
+        selectedVariant?.image,
+        ...product.imageUrls,
+      ].filter(Boolean); // Loại bỏ giá trị null hoặc undefined
+
+      setAllImages(newAllImages);
+
+      // Cuộn đến vị trí của ảnh biến thể đã chọn
       if (selectedVariant) {
-        setDisplayedImage(selectedVariant.image);
+        const index = newAllImages.findIndex(
+          image => image === selectedVariant.image,
+        );
+        if (index !== -1 && flatListRef.current) {
+          flatListRef.current.scrollToIndex({index, animated: false});
+        }
       }
     }
   }, [selectedColor, variants, selectedSize]);
-  
+
   const handleToggleFavorite = () => dispatch(toggleFavorite(product._id));
 
-  const isSizeAvailable = (size) => {
-    return availableSizes.some(sizeObj => sizeObj.size === size && sizeObj.quantity > 0);
+  const isSizeAvailable = size => {
+    return availableSizes.some(
+      sizeObj => sizeObj.size === size && sizeObj.quantity > 0,
+    );
   };
 
   return (
@@ -95,19 +118,34 @@ const ProductDetailScreen = ({route, navigation}) => {
       <View style={styles.detailsContainer}>
         <Text style={styles.productTitle}>{product.name}</Text>
         <View style={styles.ratingRow}>
-        {totalReviews > 0 && (
-                <View style={styles.reviewSection}>
-                  <MaterialCommunityIcons name="star" size={18} color="black" />
-                  <Text style={styles.reviewCountBold}>{averageRating}</Text>
-                  <Text style={styles.reviewCount}> ({totalReviews})</Text>
-                </View>
+          {totalReviews > 0 && (
+            <View style={styles.reviewSection}>
+              {renderStars(averageRating)}
+              <Text style={styles.reviewCountBold}>{averageRating}</Text>
+
+              <Text style={styles.reviewCount}>({totalReviews})</Text>
+            </View>
           )}
         </View>
 
-        <Image
-          source={{uri: displayedImage}}
-          style={styles.productImage}
-        />
+        {allImages.length > 0 ? (
+          <FlatList
+            ref={flatListRef}
+            data={allImages}
+            horizontal
+            keyExtractor={(item, index) => `${item}-${index}`}
+            renderItem={({item}) => (
+              <View style={{width}}>
+                <Image source={{uri: item}} style={styles.productImage} />
+              </View>
+            )}
+            pagingEnabled
+            snapToAlignment="center"
+            showsHorizontalScrollIndicator={false}
+          />
+        ) : (
+          <Text>Không có ảnh sản phẩm nào để hiển thị.</Text>
+        )}
 
         <View style={styles.row}>
           <Text style={styles.label}>Màu Sắc: </Text>
@@ -119,11 +157,20 @@ const ProductDetailScreen = ({route, navigation}) => {
                   styles.colorCircle,
                   {backgroundColor: variant.color_code},
                   selectedColor === variant.color_code && styles.selectedColor,
-                  // Gạch ô nếu không còn kích thước nào
-                  availableSizes.length === 0 && styles.disabled,
                 ]}
                 onPress={() => {
-                  setSelectedColor(variant.color_code); // Cập nhật màu đã chọn
+                  setSelectedColor(variant.color_code);
+                  const newAllImages = [
+                    variant.image,
+                    ...product.imageUrls,
+                  ].filter(Boolean); // Cập nhật danh sách hình ảnh với ảnh biến thể đã chọn trước tiên
+                  setAllImages(newAllImages);
+                  const index = newAllImages.findIndex(
+                    image => image === variant.image,
+                  );
+                  if (index !== -1 && flatListRef.current) {
+                    flatListRef.current.scrollToIndex({index, animated: false});
+                  }
                 }}
               />
             ))}
@@ -139,10 +186,10 @@ const ProductDetailScreen = ({route, navigation}) => {
                 style={[
                   styles.sizeButton,
                   selectedSize === sizeObj.size && styles.selectedSize,
-                  !isSizeAvailable(sizeObj.size) && styles.disabled, // Gạch ô nếu không còn hàng
+                  !isSizeAvailable(sizeObj.size) && styles.disabled,
                 ]}
                 onPress={() => {
-                  if (isSizeAvailable(sizeObj.size)) { // Kiểm tra có còn hàng không
+                  if (isSizeAvailable(sizeObj.size)) {
                     setSelectedSize(sizeObj.size);
                     setMaxQuantity(sizeObj.quantity);
                   }
@@ -153,16 +200,24 @@ const ProductDetailScreen = ({route, navigation}) => {
           </View>
         </View>
 
-        <Text style={styles.price}>{`${product.price.toLocaleString() || '0'} VND`}</Text>
+        <Text style={styles.price}>{`${(
+          product.price * quantity
+        ).toLocaleString()} VND`}</Text>
 
         <View style={styles.quantityRow}>
           <Text style={styles.label}>Số Lượng: </Text>
           <View style={styles.quantityControls}>
-            <TouchableOpacity onPress={() => setQuantity(Math.max(1, quantity - 1))} style={styles.quantityButton}>
+            <TouchableOpacity
+              onPress={() => setQuantity(Math.max(1, quantity - 1))}
+              style={styles.quantityButton}>
               <Text style={styles.quantityButtonText}>-</Text>
             </TouchableOpacity>
             <Text style={styles.quantityText}>{quantity}</Text>
-            <TouchableOpacity onPress={() => setQuantity(Math.min(maxQuantity, quantity + 1))} style={styles.quantityButton}>
+            <TouchableOpacity
+              onPress={() =>
+                setQuantity(Math.min(maxQuantity, quantity + 1, 10))
+              }
+              style={styles.quantityButton}>
               <Text style={styles.quantityButtonText}>+</Text>
             </TouchableOpacity>
           </View>
@@ -172,7 +227,11 @@ const ProductDetailScreen = ({route, navigation}) => {
         <View style={styles.buttonsRow}>
           <TouchableOpacity onPress={handleToggleFavorite}>
             <MaterialCommunityIcons
-              name={favoriteList.some(fav => fav._id === product._id) ? 'heart' : 'heart-outline'}
+              name={
+                favoriteList.some(fav => fav._id === product._id)
+                  ? 'heart'
+                  : 'heart-outline'
+              }
               size={26}
               color="red"
             />
@@ -186,8 +245,11 @@ const ProductDetailScreen = ({route, navigation}) => {
 
         <View style={styles.section}>
           <Text style={styles.sectionLabel}>Mô tả</Text>
-          <TouchableOpacity onPress={() => setIsCollapsedMaterial(!isCollapsedMaterial)}>
-            <Text style={styles.sectionToggle}>Chất liệu {isCollapsedMaterial ? '+' : '-'}</Text>
+          <TouchableOpacity
+            onPress={() => setIsCollapsedMaterial(!isCollapsedMaterial)}>
+            <Text style={styles.sectionToggle}>
+              Chất liệu {isCollapsedMaterial ? '+' : '-'}
+            </Text>
           </TouchableOpacity>
           {!isCollapsedMaterial && (
             <Text style={styles.sectionContent}>
@@ -195,8 +257,11 @@ const ProductDetailScreen = ({route, navigation}) => {
             </Text>
           )}
 
-          <TouchableOpacity onPress={() => setIsCollapsedDetails(!isCollapsedDetails)}>
-            <Text style={styles.sectionToggle}>Chi tiết {isCollapsedDetails ? '+' : '-'}</Text>
+          <TouchableOpacity
+            onPress={() => setIsCollapsedDetails(!isCollapsedDetails)}>
+            <Text style={styles.sectionToggle}>
+              Chi tiết {isCollapsedDetails ? '+' : '-'}
+            </Text>
           </TouchableOpacity>
           {!isCollapsedDetails && (
             <Text style={styles.sectionContent}>
@@ -206,6 +271,17 @@ const ProductDetailScreen = ({route, navigation}) => {
         </View>
 
         <Text style={styles.sectionLabel}>Đánh giá</Text>
+        <View style={styles.ratingRow}>
+          {totalReviews > 0 && (
+            <View style={styles.reviewSection}>
+              {renderStars(averageRating)}
+              <Text style={styles.reviewCountBold}>{averageRating}</Text>
+
+              <Text style={styles.reviewCount}>({totalReviews})</Text>
+            </View>
+          )}
+        </View>
+
         {isLoading ? (
           <ActivityIndicator size="large" />
         ) : error ? (
@@ -228,29 +304,25 @@ const ProductDetailScreen = ({route, navigation}) => {
   );
 };
 
-
-
-
 export default ProductDetailScreen;
+
 const styles = StyleSheet.create({
   container: {flex: 1, backgroundColor: '#fff'},
   detailsContainer: {padding: 16},
   productTitle: {
     fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 8,
     color: '#000',
   },
   disabled: {
-    opacity: 0.5, // Giảm độ sáng cho ô
-    textDecorationLine: 'line-through', // Gạch bỏ văn bản
+    opacity: 0.5,
+    textDecorationLine: 'line-through',
   },
   productImage: {
-    width: '100%',
-    height: 250,
+    width: width,
+    height: 400,
     resizeMode: 'contain',
-    borderRadius: 8,
-    marginBottom: 16,
+    marginRight: 10,
   },
   row: {flexDirection: 'row', alignItems: 'center', marginBottom: 8},
   colorContainer: {flexDirection: 'row', marginLeft: 8},
@@ -299,7 +371,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   addToCartText: {color: '#fff', fontWeight: 'bold'},
-
   section: {marginVertical: 12},
   sectionLabel: {
     fontSize: 18,
@@ -309,7 +380,6 @@ const styles = StyleSheet.create({
   },
   sectionToggle: {fontSize: 16, color: '#3498db', marginVertical: 6},
   sectionContent: {fontSize: 14, color: '#666', paddingVertical: 4},
-
   reviewContainer: {
     backgroundColor: '#f9f9f9',
     padding: 10,

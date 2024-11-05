@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, ActivityIndicator, TouchableOpacity, Image, ScrollView, StyleSheet } from 'react-native';
 import { TabView, TabBar } from 'react-native-tab-view';
 import ProductList from '../../components/CateClother/ProductList';
@@ -11,12 +11,13 @@ import { useNavigation } from '@react-navigation/native';
 import cateClotherStyles from '../../styles/cateClotherStyles';
 import { fetchProductsBySubCategory } from '../../redux/actions/actionCategory';
 import { LogBox } from 'react-native';
+import { fetchProductsByVariant } from '../../redux/actions/actionProduct';
+import PriceFilterModal from '../../components/CateClother/PriceFilterModal'; // Import thêm PriceFilterModal
+
+const MAX_DISPLAY_ITEMS = 1;
 
 LogBox.ignoreLogs(['Warning: ...']); // Cảnh báo cụ thể
 LogBox.ignoreAllLogs(); // Nếu muốn bỏ qua tất cả các log
-
-
-const MAX_DISPLAY_ITEMS = 1;
 
 const CateClotherScreen = ({ route }) => {
   const { categoryName, subCategories, selectedTabIndex } = route.params;
@@ -24,28 +25,115 @@ const CateClotherScreen = ({ route }) => {
   const [loading, setLoading] = useState(false);
   const [sizeFilterVisible, setSizeFilterVisible] = useState(false);
   const [colorFilterVisible, setColorFilterVisible] = useState(false);
+  const [priceFilterVisible, setPriceFilterVisible] = useState(false); // Thêm trạng thái cho modal lọc giá
+
   const [filterState, setFilterState] = useState({});
   const [filteredProductsState, setFilteredProductsState] = useState({});
-  const [availableColors, setAvailableColors] = useState([]);
-  const [availableSizes, setAvailableSizes] = useState([]);
   const dispatch = useDispatch();
   const { products } = useSelector((state) => state.categories);
   const { colorsAndSizesBySubCategoryId } = useSelector((state) => state.variants);
   const navigation = useNavigation();
 
   useEffect(() => {
-    const loadProductsAndVariants = async () => {
-      setLoading(true);
-      await dispatch(fetchProductsBySubCategory(subCategories[index]?._id));
-      setLoading(false);
-    };
+    // Kiểm tra xem dữ liệu đã có sẵn trong trạng thái chưa, nếu có thì không cần tải lại
+    if (subCategories[index] && !filteredProductsState[index]) {
+      const loadProductsAndVariants = async () => {
+        setLoading(true);
+        try {
+          // Prefetch both products and variant data in parallel
+          await Promise.all([
+            dispatch(fetchProductsBySubCategory(subCategories[index]._id)),
+            dispatch(fetchColorsAndSizesBySubCategoryId(subCategories[index]._id)),
+          ]);
+        } catch (error) {
+          console.error("Error loading products and variants:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
 
-    if (subCategories[index]) {
       loadProductsAndVariants();
     }
-  }, [index, dispatch, subCategories]);
+  }, [index, dispatch, subCategories, filteredProductsState]);
 
+  useEffect(() => {
+    if (subCategories[index]) {
+      const filterProducts = async () => {
+        const { size, color, minPrice, maxPrice } = filterState[index] || {};
   
+        setLoading(true);
+        try {
+          let query = {
+            subCategoryId: subCategories[index]._id,
+          };
+  
+          // Thêm điều kiện vào query nếu có
+          if (size) {
+            query.size = size;
+          }
+          if (color) {
+            query.color_code = color;
+          }
+          if (minPrice != null) {
+            query.minPrice = minPrice;
+          }
+          if (maxPrice != null) {
+            query.maxPrice = maxPrice;
+          }
+  
+          // Gọi hàm fetch với query đã xây dựng
+          const response = await dispatch(fetchProductsByVariant(query));
+  
+          setFilteredProductsState((prevState) => ({
+            ...prevState,
+            [index]: response.payload,
+          }));
+        } catch (error) {
+          console.error("Error filtering products:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      filterProducts();
+    }
+  }, [filterState, index, dispatch, subCategories]);
+  
+
+  // useEffect(() => {
+  //   // Kiểm tra xem đã có bộ lọc và dữ liệu tương ứng chưa, nếu chưa thì thực hiện lọc
+  //   if (subCategories[index]) {
+  //     const filterProducts = async () => {
+  //       const { size, color, minPrice, maxPrice } = filterState[index] || {};
+        
+  //       // Nếu không có bộ lọc, không cần thực hiện lọc
+  //       if (!size && !color) return;
+
+  //       setLoading(true);
+  //       try {
+  //         const response = await dispatch(fetchProductsByVariant({
+  //           subCategoryId: subCategories[index]._id,
+  //           size,
+  //           color_code: color,
+  //           minPrice,
+  //           maxPrice,
+  //         }));
+
+  //         setFilteredProductsState((prevState) => ({
+  //           ...prevState,
+  //           [index]: response.payload,
+  //         }));
+  //       } catch (error) {
+  //         console.error("Error filtering products:", error);
+  //       } finally {
+  //         setLoading(false);
+  //       }
+  //     };
+
+  //     filterProducts();
+  //   }
+  // }, [filterState, index, dispatch, subCategories]);
+
   const getFilteredProductsForCurrentTab = () => {
     return filteredProductsState[index] || products;
   };
@@ -56,27 +144,25 @@ const CateClotherScreen = ({ route }) => {
       : items.join(', ');
   };
 
-  const renderScene = () => {
-    if (loading) {
-      return (
-        <View style={cateClotherStyles.loadingContainer}>
-          <ActivityIndicator size="large" color="#00A65E" />
-        </View>
-      );
-    }
-
+  const renderScene = useCallback(() => {
     const filteredProducts = getFilteredProductsForCurrentTab();
-
+    
     return (
       <View style={cateClotherStyles.container}>
-        {filteredProducts && filteredProducts.length > 0 ? (
-          <ProductList products={filteredProducts} />
+        {loading ? (
+          <View style={cateClotherStyles.loadingContainer}>
+            <ActivityIndicator size="large" color="#00A65E" />
+          </View>
+        ) : filteredProducts && filteredProducts.length > 0 ? (
+          <ProductList
+          navigation={navigation}
+          products={filteredProducts} />
         ) : (
           <Text>Không có sản phẩm phù hợp với bộ lọc</Text>
         )}
       </View>
     );
-  };
+  }, [filteredProductsState, index, loading]);
 
   return (
     <View style={cateClotherStyles.container}>
@@ -119,6 +205,18 @@ const CateClotherScreen = ({ route }) => {
             </Text>
             <MaterialCommunityIcons name="chevron-down" size={18} color="#666" />
           </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.filterButton1}
+            onPress={() => setPriceFilterVisible(true)}
+          >
+             <Text>
+      {filterState[index]?.minPrice != null && filterState[index]?.maxPrice != null
+        ? `Giá: ${filterState[index].minPrice.toLocaleString('vi-VN')} - ${filterState[index].maxPrice.toLocaleString('vi-VN')} VND`
+        : 'Giá'}
+    </Text>
+            <MaterialCommunityIcons name="chevron-down" size={18} color="#666" />
+          </TouchableOpacity>
         </ScrollView>
       </View>
 
@@ -128,7 +226,11 @@ const CateClotherScreen = ({ route }) => {
           routes: subCategories.map((sub) => ({ key: sub._id, title: sub.name })),
         }}
         renderScene={renderScene}
-        onIndexChange={setIndex}
+        onIndexChange={(newIndex) => {
+          setIndex(newIndex);
+          // Xóa trạng thái loading khi chuyển tab để tránh vòng lặp gọi `useEffect`
+          setLoading(false);
+        }}
         renderTabBar={(props) => (
           <TabBar
             {...props}
@@ -142,16 +244,51 @@ const CateClotherScreen = ({ route }) => {
         )}
       />
 
-   
+      <SizeFilterModal
+        visible={sizeFilterVisible}
+        filterOptions={colorsAndSizesBySubCategoryId[subCategories[index]?._id]?.sizes || []}
+        onClose={() => setSizeFilterVisible(false)}
+        applyFilters={(selectedSizes) => {
+          setFilterState((prevState) => ({
+            ...prevState,
+            [index]: { ...prevState[index], size: selectedSizes },
+          }));
+        }}
+        initialFilters={filterState[index]?.size}
+      />
+
+      <ColorFilterModal
+        visible={colorFilterVisible}
+        filterOptions={colorsAndSizesBySubCategoryId[subCategories[index]?._id]?.colors || []}
+        onClose={() => setColorFilterVisible(false)}
+        applyFilters={(selectedColors) => {
+          setFilterState((prevState) => ({
+            ...prevState,
+            [index]: { ...prevState[index], color: selectedColors },
+          }));
+        }}
+        initialFilters={filterState[index]?.color}
+      />
+      <PriceFilterModal
+        visible={priceFilterVisible}
+        onClose={() => setPriceFilterVisible(false)}
+        applyFilters={(minPrice, maxPrice) => {
+          setFilterState((prevState) => ({
+            ...prevState,
+            [index]: { ...prevState[index], minPrice, maxPrice },
+          }));
+        }}
+        priceRange={[
+          filterState[index]?.minPrice ?? 0,
+          filterState[index]?.maxPrice ?? 10000000,
+        ]}
+      />
+    
     </View>
   );
 };
 
 export default CateClotherScreen;
-
-
-
-
 
 const styles = StyleSheet.create({
   backButton: {
