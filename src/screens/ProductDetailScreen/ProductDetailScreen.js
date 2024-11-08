@@ -17,6 +17,7 @@ import {toggleFavorite} from '../../redux/actions/favoriteActions';
 import {fetchProductReviewResponses} from '../../redux/actions/actionsReview';
 import {fetchVariantsByProductId} from '../../redux/actions/actionsVariant';
 import renderStars from '../../components/Home/renderStars';
+import {fetchUserInfo} from '../../redux/actions/actionUser';
 
 const {width} = Dimensions.get('window');
 
@@ -32,6 +33,7 @@ const ProductDetailScreen = ({route, navigation}) => {
   const variants = useSelector(
     state => state.variants.variants[product._id] || [],
   );
+  const userInfo = useSelector(state => state.user.userInfo) || {};
 
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
@@ -55,6 +57,17 @@ const ProductDetailScreen = ({route, navigation}) => {
     dispatch(fetchProductReviewResponses(product._id));
     dispatch(fetchVariantsByProductId(product._id));
   }, [dispatch, product._id]);
+
+  useEffect(() => {
+    const usersToFetch = productReviews
+      .map(review => review.user_id)
+      .filter(userId => userId && !userInfo[userId]);
+
+    usersToFetch.forEach(userId => {
+      dispatch(fetchUserInfo(userId));
+      console.log(`Fetching user info for userId: ${userId}`); // Debug
+    });
+  }, [dispatch, productReviews]);
 
   useEffect(() => {
     if (variants.length > 0) {
@@ -82,28 +95,31 @@ const ProductDetailScreen = ({route, navigation}) => {
         setMaxQuantity(0);
       }
 
-      // Danh sách hình ảnh mới: ảnh của biến thể trước, ảnh của sản phẩm sau
-      const selectedVariant = variants.find(
-        v => v.color_code === selectedColor,
-      );
-      const newAllImages = [
-        selectedVariant?.image,
-        ...product.imageUrls,
-      ].filter(Boolean); // Loại bỏ giá trị null hoặc undefined
-
-      setAllImages(newAllImages);
-
-      // Cuộn đến vị trí của ảnh biến thể đã chọn
-      if (selectedVariant) {
-        const index = newAllImages.findIndex(
-          image => image === selectedVariant.image,
+      // Cập nhật danh sách ảnh chỉ khi chọn màu, không phải khi thay đổi kích cỡ
+      if (!selectedSize) {
+        // Chỉ cập nhật khi màu được chọn lần đầu
+        const selectedVariant = variants.find(
+          v => v.color_code === selectedColor,
         );
-        if (index !== -1 && flatListRef.current) {
-          flatListRef.current.scrollToIndex({index, animated: false});
+        const newAllImages = [
+          selectedVariant?.image,
+          ...product.imageUrls,
+        ].filter(Boolean); // Loại bỏ giá trị null hoặc undefined
+
+        setAllImages(newAllImages);
+
+        // Cuộn đến vị trí của ảnh biến thể đã chọn
+        if (selectedVariant) {
+          const index = newAllImages.findIndex(
+            image => image === selectedVariant.image,
+          );
+          if (index !== -1 && flatListRef.current) {
+            flatListRef.current.scrollToIndex({index, animated: false});
+          }
         }
       }
     }
-  }, [selectedColor, variants, selectedSize]);
+  }, [selectedColor, variants]); // Loại bỏ selectedSize khỏi dependencies
 
   const handleToggleFavorite = () => dispatch(toggleFavorite(product._id));
 
@@ -121,8 +137,6 @@ const ProductDetailScreen = ({route, navigation}) => {
           {totalReviews > 0 && (
             <View style={styles.reviewSection}>
               {renderStars(averageRating)}
-              <Text style={styles.reviewCountBold}>{averageRating}</Text>
-
               <Text style={styles.reviewCount}>({totalReviews})</Text>
             </View>
           )}
@@ -148,7 +162,7 @@ const ProductDetailScreen = ({route, navigation}) => {
         )}
 
         <View style={styles.row}>
-          <Text style={styles.label}>Màu Sắc: </Text>
+          <Text style={styles.sectionLabel}>Màu Sắc: </Text>
           <View style={styles.colorContainer}>
             {variants.map((variant, i) => (
               <TouchableOpacity
@@ -178,7 +192,7 @@ const ProductDetailScreen = ({route, navigation}) => {
         </View>
 
         <View style={styles.row}>
-          <Text style={styles.label}>Kích Cỡ: </Text>
+          <Text style={styles.sectionLabel}>Kích Cỡ: </Text>
           <View style={styles.sizeContainer}>
             {availableSizes.map((sizeObj, i) => (
               <TouchableOpacity
@@ -289,8 +303,25 @@ const ProductDetailScreen = ({route, navigation}) => {
         ) : (
           productReviews.map(review => (
             <View key={review._id} style={styles.reviewContainer}>
+              {userInfo[review.user_id] ? (
+                <View style={styles.userInfoContainer}>
+                  <Image
+                    source={{uri: userInfo[review.user_id].avatar}}
+                    style={styles.userAvatar}
+                  />
+                  <Text style={styles.userName}>
+                    {userInfo[review.user_id].full_name}
+                  </Text>
+                </View>
+              ) : (
+                <Text>Loading user info...</Text>
+              )}
               <Text style={styles.reviewComment}>{review.comment}</Text>
-              <Text style={styles.reviewRating}>Đánh giá: {review.rating}</Text>
+              <Text style={styles.reviewComment}>Size: {review.size}</Text>
+              <Text style={styles.reviewComment}>Màu: {review.color}</Text>
+              <View style={styles.reviewSection}>
+                {renderStars(review.rating)}
+              </View>
               {review.responses?.map(response => (
                 <Text key={response._id} style={styles.responseText}>
                   Phản hồi từ người bán: {response.comment}
@@ -309,48 +340,96 @@ export default ProductDetailScreen;
 const styles = StyleSheet.create({
   container: {flex: 1, backgroundColor: '#fff'},
   detailsContainer: {padding: 16},
+  userInfoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 8, // Giảm từ 10 xuống 8 để tiết kiệm không gian
+  },
+  userAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 8, // Giảm từ 10 xuống 8 để nhất quán với marginVertical
+  },
+  userName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   productTitle: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#000',
+    color: '#303030',
+    marginHorizontal: 8,
   },
-  disabled: {
-    opacity: 0.5,
-    textDecorationLine: 'line-through',
+  ratingRow:{
+    marginHorizontal:8,
+    marginVertical:5
+  },
+  reviewSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  reviewCountBold: {
+    fontSize: 14,
+    color: '#808080',
+  },
+  reviewCount: {
+    fontSize: 12,
+    color: '#27ae60',
+    fontWeight:'500',
   },
   productImage: {
-    width: width,
-    height: 400,
+    width: 396,
+    height: 248, // Giảm chiều cao ảnh để tiết kiệm không gian
     resizeMode: 'contain',
-    marginRight: 10,
+    borderRadius:10,
+    marginBottom:25
   },
-  row: {flexDirection: 'row', alignItems: 'center', marginBottom: 8},
+  row: {flexDirection: 'row', alignItems: 'center', marginBottom:14},
+
+  sectionLabel: {
+    fontSize: 15,
+    color: '#303030',
+    fontWeight:'500'
+  },
+
   colorContainer: {flexDirection: 'row', marginLeft: 8},
   colorCircle: {
     width: 30,
     height: 30,
-    borderRadius: 15,
-    marginHorizontal: 5,
+    borderRadius: 5,
+    marginHorizontal: 4,
     borderWidth: 1,
     borderColor: '#ddd',
+    backgroundColor: '#fff', // Thêm màu nền trắng để tạo ra khoảng trắng
   },
-  selectedColor: {borderWidth: 2, borderColor: '#000'},
+  selectedColor: {
+    borderWidth: 2,
+    borderColor: '#000',
+  },
+
+
+  disabled: {
+    opacity: 0.5,
+    textDecorationLine: 'line-through',
+  },
+
   sizeContainer: {flexDirection: 'row', marginLeft: 8},
   sizeButton: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
     borderRadius: 4,
     borderWidth: 1,
     borderColor: '#ccc',
-    marginHorizontal: 5,
+    marginHorizontal: 4,
   },
   selectedSize: {backgroundColor: '#ddd'},
-  price: {fontSize: 18, fontWeight: 'bold', color: 'green', marginBottom: 8},
-  quantityRow: {flexDirection: 'row', alignItems: 'center', marginBottom: 16},
+  price: {fontSize: 20, fontWeight: 'bold', color: '#27ae60', marginVertical: 10},
+  quantityRow: {flexDirection: 'row', alignItems: 'center', marginBottom: 12},
   quantityControls: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 8,
   },
   quantityButton: {
     padding: 6,
@@ -358,27 +437,22 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     borderRadius: 4,
   },
-  quantityButtonText: {fontSize: 18, color: '#333'},
-  quantityText: {marginHorizontal: 10, fontSize: 16, color: '#333'},
-  stockText: {color: '#27ae60', fontSize: 14},
-  buttonsRow: {flexDirection: 'row', alignItems: 'center', marginTop: 16},
+  quantityButtonText: {fontSize: 16, color: '#333'}, // Giảm từ 18 xuống 16
+  quantityText: {marginHorizontal: 8, fontSize: 16, color: '#333'},
+  stockText: {color: '#27ae60', fontSize: 14, marginBottom: 12},
+  buttonsRow: {flexDirection: 'row', alignItems: 'center', marginTop: 12},
   addToCartButton: {
     backgroundColor: '#27ae60',
-    padding: 12,
+    padding: 10,
     borderRadius: 8,
     alignItems: 'center',
     flex: 1,
-    marginLeft: 10,
+    marginLeft: 8,
   },
   addToCartText: {color: '#fff', fontWeight: 'bold'},
-  section: {marginVertical: 12},
-  sectionLabel: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8,
-  },
-  sectionToggle: {fontSize: 16, color: '#3498db', marginVertical: 6},
+  section: {marginVertical: 10},
+
+  sectionToggle: {fontSize: 16, color: '#3498db', marginVertical: 4},
   sectionContent: {fontSize: 14, color: '#666', paddingVertical: 4},
   reviewContainer: {
     backgroundColor: '#f9f9f9',
@@ -391,35 +465,19 @@ const styles = StyleSheet.create({
     shadowOffset: {width: 0, height: 2},
   },
   reviewComment: {
-    fontSize: 16,
+    fontSize: 15, // Giảm từ 16 xuống 15
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 5,
+    marginBottom: 4,
   },
-  reviewRating: {fontSize: 14, color: '#555'},
   responseText: {
     fontSize: 14,
     color: '#888',
-    marginLeft: 10,
+    marginLeft: 8,
     marginTop: 2,
-    paddingLeft: 10,
+    paddingLeft: 8,
     borderLeftWidth: 1,
     borderColor: '#ddd',
   },
-  reviewSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 5,
-  },
-  reviewCountBold: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: '#000000',
-    marginLeft: 4,
-  },
-  reviewCount: {
-    fontSize: 12,
-    color: '#000000',
-    marginLeft: 3,
-  },
+
 });

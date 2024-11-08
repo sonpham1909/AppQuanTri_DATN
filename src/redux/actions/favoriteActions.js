@@ -13,7 +13,7 @@ export const toggleFavorite = createAsyncThunk(
     try {
       const token = await tokenService.getToken();
       await axios.post(
-        `${API_URL}/favorite/toggle` ,
+        `${API_URL}/favorite/toggle`,
         { productId },
         {
           headers: {
@@ -35,7 +35,7 @@ export const fetchFavoriteList = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const token = await tokenService.getToken();
-      const response = await axios.get(`${API_URL}/favorite/list` , {
+      const response = await axios.get(`${API_URL}/favorite/list`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

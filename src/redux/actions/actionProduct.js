@@ -14,7 +14,7 @@ export const fetchProductReviews = createAsyncThunk(
   async (productId, thunkAPI) => {
     try {
       const token = await tokenService.getToken();
-      const response = await axios.get(`${API_URL}/products/reviews/${productId}` , {
+      const response = await axios.get(`${API_URL}/products/reviews/${productId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -37,7 +37,7 @@ export const fetchLatestProducts = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const token = await tokenService.getToken();
-      const response = await axios.get(`${API_URL}/products/latest` , {
+      const response = await axios.get(`${API_URL}/products/latest`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -55,7 +55,7 @@ export const fetchPopularProducts = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const token = await tokenService.getToken();
-      const response = await axios.get(`${API_URL}/products/popular` , {
+      const response = await axios.get(`${API_URL}/products/popular`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -80,7 +80,7 @@ export const fetchProductsByVariant = createAsyncThunk(
         maxPrice,
       };
 
-      const response = await axios.get(`${API_URL}/products/by-variant` , {
+      const response = await axios.get(`${API_URL}/products/by-variant`, {
         params,
         headers: {
           Authorization: `Bearer ${token}`,

@@ -1,18 +1,22 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { register, login } from '../actions/actionUser';
+import { register, login,fetchUserInfo } from '../actions/actionUser';
 
 const initialState = {
   user: null,
   token: null,
+  userInfo: null,
   isLoading: false,
   isError: false,
   isSuccess: false,
   message: '',
+  userInfo: {},
+
 };
 
 const userSlice = createSlice({
-  name: 'users',
+  name: 'user',
   initialState,
+
   reducers: {
     reset: (state) => {
       state.isLoading = false;
@@ -49,7 +53,16 @@ const userSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload?.message || 'Đăng nhập không thành công';
-      });
+      })
+      .addCase(fetchUserInfo.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(fetchUserInfo.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.userInfo[action.meta.arg] = action.payload;
+        console.log('User info updated in store:', state.userInfo); // Debug
+      })
+      
   },
 });
 
