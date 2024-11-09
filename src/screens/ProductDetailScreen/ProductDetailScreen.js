@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
-  Dimensions,
   FlatList,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
@@ -19,20 +18,15 @@ import {fetchVariantsByProductId} from '../../redux/actions/actionsVariant';
 import renderStars from '../../components/Home/renderStars';
 import {fetchUserInfo} from '../../redux/actions/actionUser';
 
-const {width} = Dimensions.get('window');
-
 const ProductDetailScreen = ({route, navigation}) => {
   const {product} = route.params;
   const dispatch = useDispatch();
   const flatListRef = useRef();
 
   const reviews = useSelector(state => state.products.reviews) || {};
-  const {reviewResponses, isLoading, error} =
-    useSelector(state => state.reviewResponses) || {};
+  const {reviewResponses, isLoading, error} = useSelector(state => state.reviewResponses) || {};
   const favoriteList = useSelector(state => state.favorites.favoriteList) || [];
-  const variants = useSelector(
-    state => state.variants.variants[product._id] || [],
-  );
+  const variants = useSelector( state => state.variants.variants[product._id] || [],);
   const userInfo = useSelector(state => state.user.userInfo) || {};
 
   const [selectedColor, setSelectedColor] = useState(null);
@@ -41,13 +35,12 @@ const ProductDetailScreen = ({route, navigation}) => {
   const [quantity, setQuantity] = useState(1);
   const [maxQuantity, setMaxQuantity] = useState(0);
   const [allImages, setAllImages] = useState([]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const productReviews = reviewResponses[product._id] || [];
   const totalReview = reviews[product._id] || {};
   const totalReviews = totalReview.totalReviews || 0;
-  const averageRating = totalReview.averageRating
-    ? totalReview.averageRating.toFixed(1)
-    : '0.0';
+  const averageRating = totalReview.averageRating ? totalReview.averageRating.toFixed(1)  : '0.0';
 
   const [isCollapsedMaterial, setIsCollapsedMaterial] = useState(true);
   const [isCollapsedDetails, setIsCollapsedDetails] = useState(true);
@@ -128,14 +121,22 @@ const ProductDetailScreen = ({route, navigation}) => {
       sizeObj => sizeObj.size === size && sizeObj.quantity > 0,
     );
   };
+  const onViewableItemsChanged = useRef(({viewableItems}) => {
+    if (viewableItems.length > 0) {
+      setCurrentImageIndex(viewableItems[0].index);
+    }
+  }).current;
+  const viewabilityConfig = {
+    itemVisiblePercentThreshold: 50,
+  };
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.detailsContainer}>
         <Text style={styles.productTitle}>{product.name}</Text>
-        <View style={styles.ratingRow}>
+        <View>
           {totalReviews > 0 && (
-            <View style={styles.reviewSection}>
+            <View style={styles.reviewSection1}>
               {renderStars(averageRating)}
               <Text style={styles.reviewCount}>({totalReviews})</Text>
             </View>
@@ -143,20 +144,27 @@ const ProductDetailScreen = ({route, navigation}) => {
         </View>
 
         {allImages.length > 0 ? (
-          <FlatList
-            ref={flatListRef}
-            data={allImages}
-            horizontal
-            keyExtractor={(item, index) => `${item}-${index}`}
-            renderItem={({item}) => (
-              <View style={{width}}>
-                <Image source={{uri: item}} style={styles.productImage} />
-              </View>
-            )}
-            pagingEnabled
-            snapToAlignment="center"
-            showsHorizontalScrollIndicator={false}
-          />
+          <>
+            <FlatList
+              ref={flatListRef}
+              data={allImages}
+              horizontal
+              keyExtractor={(item, index) => `${item}-${index}`}
+              renderItem={({item}) => (
+                <View style={styles.imageContainer}>
+                  <Image source={{uri: item}} style={styles.productImage} />
+                </View>
+              )}
+              pagingEnabled
+              snapToAlignment="center"
+              showsHorizontalScrollIndicator={false}
+              onViewableItemsChanged={onViewableItemsChanged}
+              viewabilityConfig={viewabilityConfig}
+            />
+            <Text style={styles.imageIndexText}>
+              {currentImageIndex + 1} / {allImages.length}
+            </Text>
+          </>
         ) : (
           <Text>Không có ảnh sản phẩm nào để hiển thị.</Text>
         )}
@@ -219,7 +227,7 @@ const ProductDetailScreen = ({route, navigation}) => {
         ).toLocaleString()} VND`}</Text>
 
         <View style={styles.quantityRow}>
-          <Text style={styles.label}>Số Lượng: </Text>
+          <Text style={styles.sectionLabel}>Số Lượng: </Text>
           <View style={styles.quantityControls}>
             <TouchableOpacity
               onPress={() => setQuantity(Math.max(1, quantity - 1))}
@@ -240,15 +248,17 @@ const ProductDetailScreen = ({route, navigation}) => {
 
         <View style={styles.buttonsRow}>
           <TouchableOpacity onPress={handleToggleFavorite}>
-            <MaterialCommunityIcons
-              name={
-                favoriteList.some(fav => fav._id === product._id)
-                  ? 'heart'
-                  : 'heart-outline'
-              }
-              size={26}
-              color="red"
-            />
+            <View style={styles.favoriteButton}>
+              <MaterialCommunityIcons
+                name={
+                  favoriteList.some(fav => fav._id === product._id)
+                    ? 'heart'
+                    : 'heart-outline'
+                }
+                size={22} // Giảm kích thước một chút để phù hợp với bgr tròn
+                color="#27ae60"
+              />
+            </View>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.addToCartButton}
@@ -258,12 +268,17 @@ const ProductDetailScreen = ({route, navigation}) => {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionLabel}>Mô tả</Text>
+          <Text style={styles.sectionPainted}>Mô tả</Text>
+
           <TouchableOpacity
+            style={styles.sectionHeader}
             onPress={() => setIsCollapsedMaterial(!isCollapsedMaterial)}>
-            <Text style={styles.sectionToggle}>
-              Chất liệu {isCollapsedMaterial ? '+' : '-'}
-            </Text>
+            <Text style={styles.sectionLabel}>Chất liệu</Text>
+            <MaterialCommunityIcons
+              name={isCollapsedMaterial ? 'chevron-down' : 'chevron-up'}
+              size={20}
+              color="#666"
+            />
           </TouchableOpacity>
           {!isCollapsedMaterial && (
             <Text style={styles.sectionContent}>
@@ -271,64 +286,87 @@ const ProductDetailScreen = ({route, navigation}) => {
             </Text>
           )}
 
+          <View style={styles.separator} />
+
           <TouchableOpacity
+            style={styles.sectionHeader}
             onPress={() => setIsCollapsedDetails(!isCollapsedDetails)}>
-            <Text style={styles.sectionToggle}>
-              Chi tiết {isCollapsedDetails ? '+' : '-'}
-            </Text>
+            <Text style={styles.sectionLabel}>Chi tiết</Text>
+            <MaterialCommunityIcons
+              name={isCollapsedDetails ? 'chevron-down' : 'chevron-up'}
+              size={20}
+              color="#666"
+            />
           </TouchableOpacity>
           {!isCollapsedDetails && (
             <Text style={styles.sectionContent}>
               {product.description || 'Không có thông tin chi tiết'}
             </Text>
           )}
+
+          <View style={styles.separator} />
         </View>
 
-        <Text style={styles.sectionLabel}>Đánh giá</Text>
-        <View style={styles.ratingRow}>
-          {totalReviews > 0 && (
-            <View style={styles.reviewSection}>
-              {renderStars(averageRating)}
-              <Text style={styles.reviewCountBold}>{averageRating}</Text>
-
-              <Text style={styles.reviewCount}>({totalReviews})</Text>
+        {totalReviews > 0 && (
+          <>
+            <Text style={styles.sectionLabelReview}>Đánh giá</Text>
+            <View style={styles.ratingRow}>
+              <View style={styles.reviewSection}>
+                {renderStars(averageRating)}
+                <Text style={styles.reviewCountBold}>{averageRating}</Text>
+                <Text style={styles.reviewCount}>({totalReviews})</Text>
+              </View>
             </View>
-          )}
-        </View>
+          </>
+        )}
 
         {isLoading ? (
           <ActivityIndicator size="large" />
         ) : error ? (
           <Text>{error}</Text>
         ) : (
-          productReviews.map(review => (
-            <View key={review._id} style={styles.reviewContainer}>
-              {userInfo[review.user_id] ? (
-                <View style={styles.userInfoContainer}>
-                  <Image
-                    source={{uri: userInfo[review.user_id].avatar}}
-                    style={styles.userAvatar}
-                  />
-                  <Text style={styles.userName}>
-                    {userInfo[review.user_id].full_name}
-                  </Text>
+          productReviews.map((review, index) => {
+            // Định dạng ngày thành dd/mm/yyyy
+            const formattedDate = new Date(review.createdAt).toLocaleDateString(
+              'vi-VN',
+            );
+
+            return (
+              <View
+                key={review._id}
+                style={[
+                  styles.reviewContainer,
+                  index === productReviews.length - 1 && styles.noBorder, // Áp dụng styles.noBorder nếu là item cuối cùng
+                ]}>
+                {userInfo[review.user_id] ? (
+                  <View style={styles.userInfoContainer}>
+                    <Image
+                      source={{uri: userInfo[review.user_id].avatar}}
+                      style={styles.userAvatar}
+                    />
+                    <Text style={styles.userName}>
+                      {userInfo[review.user_id].full_name}
+                    </Text>
+                  </View>
+                ) : (
+                  <Text>Loading user info...</Text>
+                )}
+                <View style={styles.reviewSection}>
+                  {renderStars(review.rating)}
+                  <Text style={styles.reviewDate}>{formattedDate}</Text>
                 </View>
-              ) : (
-                <Text>Loading user info...</Text>
-              )}
-              <Text style={styles.reviewComment}>{review.comment}</Text>
-              <Text style={styles.reviewComment}>Size: {review.size}</Text>
-              <Text style={styles.reviewComment}>Màu: {review.color}</Text>
-              <View style={styles.reviewSection}>
-                {renderStars(review.rating)}
+                <Text style={styles.reviewComment}>Size: {review.size}</Text>
+                <Text style={styles.reviewComment}>Màu: {review.color}</Text>
+                <Text style={styles.reviewComment}>{review.comment}</Text>
+
+                {review.responses?.map(response => (
+                  <Text key={response._id} style={styles.responseText}>
+                    Phản hồi từ người bán: {response.comment}
+                  </Text>
+                ))}
               </View>
-              {review.responses?.map(response => (
-                <Text key={response._id} style={styles.responseText}>
-                  Phản hồi từ người bán: {response.comment}
-                </Text>
-              ))}
-            </View>
-          ))
+            );
+          })
         )}
       </View>
     </ScrollView>
@@ -340,32 +378,8 @@ export default ProductDetailScreen;
 const styles = StyleSheet.create({
   container: {flex: 1, backgroundColor: '#fff'},
   detailsContainer: {padding: 16},
-  userInfoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 8, // Giảm từ 10 xuống 8 để tiết kiệm không gian
-  },
-  userAvatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 8, // Giảm từ 10 xuống 8 để nhất quán với marginVertical
-  },
-  userName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  productTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#303030',
-    marginHorizontal: 8,
-  },
-  ratingRow:{
-    marginHorizontal:8,
-    marginVertical:5
-  },
-  reviewSection: {
+  productTitle: { fontSize: 22, fontWeight: 'bold', color: '#303030', marginVertical: 5, },
+  reviewSection1: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 4,
@@ -377,28 +391,44 @@ const styles = StyleSheet.create({
   reviewCount: {
     fontSize: 12,
     color: '#27ae60',
-    fontWeight:'500',
+    fontWeight: '500',
   },
   productImage: {
     width: 396,
     height: 248, // Giảm chiều cao ảnh để tiết kiệm không gian
     resizeMode: 'contain',
-    borderRadius:10,
-    marginBottom:25
+    borderRadius: 10,
+    marginBottom: 25,
   },
-  row: {flexDirection: 'row', alignItems: 'center', marginBottom:14},
+  imageContainer: {
+    backgroundColor: '#f0f0f0', // Nền màu xám cho container
+    borderRadius: 12, // Bo góc cho container
+    overflow: 'hidden', // Đảm bảo ảnh không vượt ra khỏi container
+    marginVertical: 16,
+    height: 250, // Đặt chiều cao của container ảnh
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  imageIndexText: {
+    fontSize: 16,
+    color: '#333',
+    textAlign: 'center',
+    marginTop: 8,
+  },
+  row: {flexDirection: 'row', alignItems: 'center', marginBottom: 14},
 
   sectionLabel: {
     fontSize: 15,
     color: '#303030',
-    fontWeight:'500'
+    fontWeight: '500',
   },
 
   colorContainer: {flexDirection: 'row', marginLeft: 8},
   colorCircle: {
     width: 30,
     height: 30,
-    borderRadius: 5,
+    borderRadius: 14,
     marginHorizontal: 4,
     borderWidth: 1,
     borderColor: '#ddd',
@@ -409,9 +439,8 @@ const styles = StyleSheet.create({
     borderColor: '#000',
   },
 
-
   disabled: {
-    opacity: 0.5,
+    opacity: 1.5,
     textDecorationLine: 'line-through',
   },
 
@@ -425,59 +454,200 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
   selectedSize: {backgroundColor: '#ddd'},
-  price: {fontSize: 20, fontWeight: 'bold', color: '#27ae60', marginVertical: 10},
-  quantityRow: {flexDirection: 'row', alignItems: 'center', marginBottom: 12},
+  price: {fontSize: 20, fontWeight: 'bold', color: '#27ae60', marginBottom: 15},
+  quantityRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
   quantityControls: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
   },
   quantityButton: {
-    padding: 6,
+    width: 30, // Đặt chiều rộng cố định
+    height: 30, // Đặt chiều cao cố định
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 4,
+    borderRadius: 8,
+    backgroundColor: '#ffffff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 1,
   },
-  quantityButtonText: {fontSize: 16, color: '#333'}, // Giảm từ 18 xuống 16
-  quantityText: {marginHorizontal: 8, fontSize: 16, color: '#333'},
-  stockText: {color: '#27ae60', fontSize: 14, marginBottom: 12},
-  buttonsRow: {flexDirection: 'row', alignItems: 'center', marginTop: 12},
+  quantityButtonText: {
+    fontSize: 18,
+    color: '#333',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  quantityText: {
+    marginHorizontal: 12,
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '600',
+  },
+  stockText: {
+    color: '#27ae60',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  buttonsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    marginVertical: 20,
+  },
+
+  favoriteButton: {
+    width: 50, // Chiều rộng và chiều cao cố định để tạo hình tròn
+    height: 50,
+    borderRadius: 10, // Bo góc tròn để tạo thành hình tròn
+    backgroundColor: '#F0F0F0', // Màu nền nhẹ nhàng giúp nổi bật icon trái tim
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2, // Thêm đổ bóng để nổi bật
+  },
   addToCartButton: {
     backgroundColor: '#27ae60',
-    padding: 10,
+    paddingVertical: 15,
+    paddingHorizontal: 16,
     borderRadius: 8,
     alignItems: 'center',
     flex: 1,
-    marginLeft: 8,
-  },
-  addToCartText: {color: '#fff', fontWeight: 'bold'},
-  section: {marginVertical: 10},
-
-  sectionToggle: {fontSize: 16, color: '#3498db', marginVertical: 4},
-  sectionContent: {fontSize: 14, color: '#666', paddingVertical: 4},
-  reviewContainer: {
-    backgroundColor: '#f9f9f9',
-    padding: 10,
-    borderRadius: 8,
-    marginBottom: 10,
+    marginLeft: 16,
     shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
     shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  reviewComment: {
-    fontSize: 15, // Giảm từ 16 xuống 15
+  addToCartText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+
+  section: {
+    marginVertical: 10,
+  },
+  sectionPainted: {
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
+    marginBottom: 12,
+  },
+
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between', // Đặt icon và tiêu đề căn đều hai bên
+    paddingVertical: 8,
+  },
+
+  sectionContent: {
+    fontSize: 14,
+    color: '#666',
+    paddingVertical: 8,
+    paddingLeft: 16, // Thụt lề để phần nội dung dễ phân biệt
+  },
+  separator: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+    marginVertical: 8, // Tạo khoảng cách giữa các phần
+  },
+
+  sectionLabelReview: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginTop: 10,
+  },
+  ratingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    borderBottomWidth: 1,
+    borderColor: '#e0e0e0',
+    paddingBottom: 10,
+  },
+  reviewSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+    justifyContent:'space-between'
+  },
+  reviewCountBold: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    marginLeft: 4,
+  },
+  reviewCount: {
+    fontSize: 14,
+    color: '#888',
+    marginLeft: 4,
+  },
+  userInfoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 8,
+  },
+  userAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 8,
+  },
+  userName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  reviewContainer: {
+    backgroundColor: '#ffffff',
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    shadowOffset: {width: 0, height: 2},
+    paddingBottom: 15,
+    borderBottomWidth: 1,
+    borderColor: '#e0e0e0',
+    marginBottom: 12, // Đặt khoảng cách giữa các item
+  },
+  noBorder: {
+    borderBottomWidth: 0, // Bỏ đường kẻ cho item cuối cùng
+  },
+
+  reviewComment: {
+    fontSize: 14,
+    color: '#444',
     marginBottom: 4,
   },
+  reviewDate: {
+    fontSize: 12,
+    color: '#888',
+
+ },
   responseText: {
     fontSize: 14,
     color: '#888',
     marginLeft: 8,
-    marginTop: 2,
+    marginTop: 4,
     paddingLeft: 8,
     borderLeftWidth: 1,
     borderColor: '#ddd',
   },
-
 });

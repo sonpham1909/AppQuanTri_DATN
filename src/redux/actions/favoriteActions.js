@@ -13,7 +13,7 @@ export const toggleFavorite = createAsyncThunk(
     try {
       const token = await tokenService.getToken();
       await axios.post(
-        `${API_URL}/favorite/toggle`,
+        `${API_URL}/favorite/toggle` ,
         { productId },
         {
           headers: {

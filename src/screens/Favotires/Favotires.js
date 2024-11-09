@@ -9,9 +9,7 @@ const Favorites = ({ navigation }) => {
   const dispatch = useDispatch();
   const favoriteList = useSelector(state => state.favorites.favoriteList);
 
-  const formatPrice = price =>
-    price.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'});
-
+ 
   useEffect(() => {
     dispatch(fetchFavoriteList());
   }, [dispatch]);
