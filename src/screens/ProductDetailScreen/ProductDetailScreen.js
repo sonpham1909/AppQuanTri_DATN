@@ -18,186 +18,226 @@ import {fetchVariantsByProductId} from '../../redux/actions/actionsVariant';
 import renderStars from '../../components/Home/renderStars';
 import {fetchUserInfo} from '../../redux/actions/actionUser';
 
-const ProductDetailScreen = ({route, navigation}) => {
-  const {product} = route.params;
-  const dispatch = useDispatch();
-  const flatListRef = useRef();
 
-  const reviews = useSelector(state => state.products.reviews) || {};
-  const {reviewResponses, isLoading, error} =
-    useSelector(state => state.reviewResponses) || {};
-  const favoriteList = useSelector(state => state.favorites.favoriteList) || [];
-  const variants = useSelector(
-    state => state.variants.variants[product._id] || [],
-  );
-  const userInfo = useSelector(state => state.user.userInfo) || {};
-
-  const [selectedColor, setSelectedColor] = useState(null);
-  const [selectedSize, setSelectedSize] = useState(null);
-  const [availableSizes, setAvailableSizes] = useState([]);
-  const [quantity, setQuantity] = useState(1);
-  const [maxQuantity, setMaxQuantity] = useState(0);
-  const [allImages, setAllImages] = useState([]);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  const productReviews = reviewResponses[product._id] || [];
-  const totalReview = reviews[product._id] || {};
-  const totalReviews = totalReview.totalReviews || 0;
-  const averageRating = totalReview.averageRating
-    ? totalReview.averageRating.toFixed(1)
-    : '0.0';
-
-  const [isCollapsedMaterial, setIsCollapsedMaterial] = useState(true);
-  const [isCollapsedDetails, setIsCollapsedDetails] = useState(true);
-
-  useEffect(() => {
-    dispatch(fetchProductReviews(product._id));
-    dispatch(fetchProductReviewResponses(product._id));
-    dispatch(fetchVariantsByProductId(product._id));
-  }, [dispatch, product._id]);
-
-  useEffect(() => {
-    const usersToFetch = productReviews
-      .map(review => review.user_id)
-      .filter(userId => userId && !userInfo[userId]);
-
-    usersToFetch.forEach(userId => {
-      dispatch(fetchUserInfo(userId));
-      console.log(`Fetching user info for userId: ${userId}`); // Debug
-    });
-  }, [dispatch, productReviews]);
-
-  useEffect(() => {
-    if (variants.length > 0) {
-      if (!selectedColor) {
-        setSelectedColor(variants[0].color_code);
+  // Component chính của màn hình chi tiết sản phẩm
+  const ProductDetailScreen = ({route, navigation}) => {
+    // Lấy sản phẩm từ tham số route
+    const {product} = route.params;
+  
+    // Tạo dispatch để gửi action đến Redux store
+    const dispatch = useDispatch();
+  
+    // Tham chiếu đến FlatList để có thể cuộn đến vị trí ảnh mong muốn
+    const flatListRef = useRef();
+  
+    // Lấy thông tin từ Redux store, bao gồm đánh giá, phản hồi đánh giá, danh sách yêu thích, biến thể sản phẩm, và thông tin người dùng
+    const reviews = useSelector(state => state.products.reviews) || {};
+    const {reviewResponses, isLoading, error} =
+      useSelector(state => state.reviewResponses) || {};
+    const favoriteList = useSelector(state => state.favorites.favoriteList) || [];
+    const variants = useSelector(state => state.variants.variants[product._id] || []);
+    const userInfo = useSelector(state => state.user.userInfo) || {};
+  
+    // Các biến trạng thái để quản lý trạng thái giao diện, như màu sắc, kích cỡ được chọn, số lượng sản phẩm, danh sách hình ảnh, v.v.
+    const [selectedColor, setSelectedColor] = useState(null);
+    const [selectedSize, setSelectedSize] = useState(null);
+    const [availableSizes, setAvailableSizes] = useState([]);
+    const [quantity, setQuantity] = useState(1);
+    const [maxQuantity, setMaxQuantity] = useState(0);
+    const [allImages, setAllImages] = useState([]);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [isCollapsedMaterial, setIsCollapsedMaterial] = useState(true);
+    const [isCollapsedDetails, setIsCollapsedDetails] = useState(true);
+  
+    // Các biến được suy ra từ dữ liệu Redux và trạng thái, dùng để hiển thị tổng số đánh giá và đánh giá trung bình
+    const productReviews = reviewResponses[product._id] || [];
+    const totalReview = reviews[product._id] || {};
+    const totalReviews = totalReview.totalReviews || 0;
+    const averageRating = totalReview.averageRating
+      ? totalReview.averageRating.toFixed(1)
+      : '0.0';
+  
+    // Sử dụng useEffect để lấy dữ liệu khi component được mount
+    useEffect(() => {
+      // Lấy danh sách đánh giá của sản phẩm
+      dispatch(fetchProductReviews(product._id));
+      // Lấy phản hồi cho các đánh giá
+      dispatch(fetchProductReviewResponses(product._id));
+      // Lấy danh sách biến thể của sản phẩm (màu sắc, kích cỡ)
+      dispatch(fetchVariantsByProductId(product._id));
+    }, [dispatch, product._id]);
+  
+    // Lấy thông tin người dùng cho các đánh giá chưa có thông tin
+    useEffect(() => {
+      const usersToFetch = productReviews
+        .map(review => review.user_id)
+        .filter(userId => userId && !userInfo[userId]);
+      // Lọc ra danh sách người dùng cần lấy thông tin, tránh lấy thông tin lặp lại
+  
+      usersToFetch.forEach(userId => {
+        // Gửi action để lấy thông tin người dùng cho từng userId
+        dispatch(fetchUserInfo(userId));
+      });
+    }, [dispatch, productReviews, userInfo]);
+  
+    // Cập nhật danh sách kích cỡ khả dụng và hình ảnh khi màu sắc hoặc biến thể thay đổi
+    useEffect(() => {
+      if (variants.length > 0) {
+        // Nếu có biến thể, chọn màu đầu tiên nếu chưa có màu nào được chọn
+        if (!selectedColor) {
+          setSelectedColor(variants[0].color_code);
+        }
+  
+        // Lấy danh sách kích cỡ khả dụng cho màu sắc được chọn
+        const sizesForColor = getSizesForColor(variants, selectedColor);
+        setAvailableSizes(sizesForColor);
+  
+        if (sizesForColor.length > 0) {
+          // Nếu chưa có kích cỡ nào được chọn, chọn kích cỡ đầu tiên
+          setSelectedSize(selectedSize || sizesForColor[0].size);
+          const selectedSizeObj = sizesForColor.find(
+            sizeObj => sizeObj.size === (selectedSize || sizesForColor[0].size),
+          );
+          // Cập nhật số lượng tối đa có thể mua của kích cỡ được chọn
+          setMaxQuantity(selectedSizeObj ? selectedSizeObj.quantity : 0);
+        } else {
+          setMaxQuantity(0);
+        }
+  
+        // Nếu chưa có kích cỡ nào được chọn, cập nhật danh sách hình ảnh
+        if (!selectedSize) {
+          updateAllImages(variants, selectedColor, product.imageUrls);
+        }
       }
-
-      const sizesForColor = variants
-        .filter(v => v.color_code === selectedColor)
+    }, [selectedColor, variants]);
+  
+    // Các hàm trợ giúp để lấy kích cỡ cho màu sắc và cập nhật hình ảnh
+    const getSizesForColor = (variants, color) => {
+      // Trả về danh sách kích cỡ và số lượng cho màu sắc đã chọn
+      return variants
+        .filter(v => v.color_code === color)
         .flatMap(v => v.sizes)
         .map(sizeObj => ({
           size: sizeObj.size,
           quantity: sizeObj.quantity,
         }));
-
-      setAvailableSizes(sizesForColor);
-
-      if (sizesForColor.length > 0) {
-        setSelectedSize(selectedSize || sizesForColor[0].size);
-        const selectedSizeObj = sizesForColor.find(
-          sizeObj => sizeObj.size === (selectedSize || sizesForColor[0].size),
-        );
-        setMaxQuantity(selectedSizeObj ? selectedSizeObj.quantity : 0);
-      } else {
-        setMaxQuantity(0);
-      }
-
-      // Cập nhật danh sách ảnh chỉ khi chọn màu, không phải khi thay đổi kích cỡ
-      if (!selectedSize) {
-        // Chỉ cập nhật khi màu được chọn lần đầu
-        const selectedVariant = variants.find(
-          v => v.color_code === selectedColor,
-        );
-        const newAllImages = [
-          selectedVariant?.image,
-          ...product.imageUrls,
-        ].filter(Boolean); // Loại bỏ giá trị null hoặc undefined
-
-        setAllImages(newAllImages);
-
-        // Cuộn đến vị trí của ảnh biến thể đã chọn
-        if (selectedVariant) {
-          const index = newAllImages.findIndex(
-            image => image === selectedVariant.image,
-          );
-          if (index !== -1 && flatListRef.current) {
-            flatListRef.current.scrollToIndex({index, animated: false});
-          }
+    };
+  
+    const updateAllImages = (variants, color, defaultImages) => {
+      // Cập nhật danh sách hình ảnh cho màu sắc đã chọn
+      const selectedVariant = variants.find(v => v.color_code === color);
+      const newAllImages = [selectedVariant?.image, ...defaultImages].filter(Boolean);
+      setAllImages(newAllImages);
+  
+      if (selectedVariant) {
+        const index = newAllImages.findIndex(image => image === selectedVariant.image);
+        if (index !== -1 && flatListRef.current) {
+          flatListRef.current.scrollToIndex({index, animated: false});
         }
       }
-    }
-  }, [selectedColor, variants]); // Loại bỏ selectedSize khỏi dependencies
-
-  const handleToggleFavorite = () => dispatch(toggleFavorite(product._id));
-
-  const isSizeAvailable = size => {
-    return availableSizes.some(
-      sizeObj => sizeObj.size === size && sizeObj.quantity > 0,
-    );
-  };
-  const onViewableItemsChanged = useRef(({viewableItems}) => {
-    if (viewableItems.length > 0) {
-      setCurrentImageIndex(viewableItems[0].index);
-    }
-  }).current;
-  const viewabilityConfig = {
-    itemVisiblePercentThreshold: 50,
-  };
-
-  return (
-    <ScrollView style={styles.container}>
-      <View style={styles.detailsContainer}>
-        <Text style={styles.productTitle}>{product.name}</Text>
-        <View>
-          {totalReviews > 0 && (
-            <View style={styles.reviewSection1}>
-              {renderStars(averageRating)}
-              <Text style={styles.reviewCount}>({totalReviews})</Text>
-            </View>
-          )}
+    };
+  
+    // Xử lý khi người dùng muốn thêm hoặc bỏ sản phẩm khỏi danh sách yêu thích
+    const handleToggleFavorite = () => dispatch(toggleFavorite(product._id));
+  
+    // Kiểm tra xem kích cỡ có khả dụng không
+    const isSizeAvailable = size => {
+      return availableSizes.some(sizeObj => sizeObj.size === size && sizeObj.quantity > 0);
+    };
+  
+    // Xử lý khi người dùng chọn màu sắc, cập nhật màu đã chọn và danh sách hình ảnh
+    const handleColorSelect = variant => {
+      setSelectedColor(variant.color_code);
+      updateAllImages(variants, variant.color_code, product.imageUrls);
+    };
+  
+    // Xử lý khi người dùng chọn kích cỡ, cập nhật kích cỡ và số lượng tối đa
+    const handleSizeSelect = sizeObj => {
+      if (isSizeAvailable(sizeObj.size)) {
+        setSelectedSize(sizeObj.size);
+        setMaxQuantity(sizeObj.quantity);
+      }
+    };
+  
+    // Cập nhật chỉ mục của hình ảnh hiện tại khi người dùng cuộn qua danh sách hình ảnh
+    const onViewableItemsChanged = useRef(({viewableItems}) => {
+      if (viewableItems.length > 0) {
+        setCurrentImageIndex(viewableItems[0].index);
+      }
+    }).current;
+  
+    // Cấu hình mức độ hiển thị cần thiết để kích hoạt sự kiện cuộn của FlatList
+    const viewabilityConfig = {
+      itemVisiblePercentThreshold: 50,
+    };
+  
+    // Render chính của màn hình chi tiết sản phẩm
+    return (
+      <ScrollView style={styles.container}>
+        <View style={styles.detailsContainer}>
+          <Text style={styles.productTitle}>{product.name}</Text>
+          {totalReviews > 0 && renderReviewSummary()}
+          {renderImages()}
+          {renderColorOptions()}
+          {renderSizeOptions()}
+          {renderPrice()}
+          {renderQuantitySelector()}
+          {renderButtons()}
+          {renderDescription()}
+          {renderReviews()}
         </View>
-
-        {allImages.length > 0 ? (
-          <>
-            <FlatList
-              ref={flatListRef}
-              data={allImages}
-              horizontal
-              keyExtractor={(item, index) => `${item}-${index}`}
-              renderItem={({item}) => (
-                <View style={styles.imageContainer}>
-                  <Image source={{uri: item}} style={styles.productImage} />
-                </View>
-              )}
-              pagingEnabled
-              snapToAlignment="center"
-              showsHorizontalScrollIndicator={false}
-              onViewableItemsChanged={onViewableItemsChanged}
-              viewabilityConfig={viewabilityConfig}
-            />
-            <Text style={styles.imageIndexText}>
-              {currentImageIndex + 1} / {allImages.length}
-            </Text>
-          </>
-        ) : (
-          <Text>Không có ảnh sản phẩm nào để hiển thị.</Text>
-        )}
+      </ScrollView>
+    );
+  
+    // Các hàm render để hiển thị các phần khác nhau của màn hình chi tiết sản phẩm
+    function renderImages() {
+      // Hàm render hình ảnh sản phẩm
+      return allImages.length > 0 ? (
+        <>
+          <FlatList
+            ref={flatListRef}
+            data={allImages}
+            horizontal
+            keyExtractor={(item, index) => `${item}-${index}`}
+            renderItem={({item}) => (
+              <View style={styles.imageContainer}>
+                <Image source={{uri: item}} style={styles.productImage} />
+              </View>
+            )}
+            pagingEnabled
+            snapToAlignment="center"
+            showsHorizontalScrollIndicator={false}
+            onViewableItemsChanged={onViewableItemsChanged}
+            viewabilityConfig={viewabilityConfig}
+          />
+          <Text style={styles.imageIndexText}>
+            {currentImageIndex + 1} / {allImages.length}
+          </Text>
+        </>
+      ) : (
+        <Text>Không có ảnh sản phẩm nào để hiển thị.</Text>
+      );
+    }
+  
+    function renderColorOptions() {
+      // Hàm render các tùy chọn màu sắc sản phẩm
+      return (
         <View style={styles.row}>
           <Text style={styles.sectionLabel}>Màu Sắc: </Text>
+          {selectedColor && (
+            <Text style={styles.selectedColorName}>
+              {variants.find(variant => variant.color_code === selectedColor)?.color}
+            </Text>
+          )}
           <View style={styles.colorContainer}>
             {variants.map((variant, i) => (
               <TouchableOpacity
                 key={i}
                 style={[
                   styles.colorCircleWrapper,
-                  selectedColor === variant.color_code &&
-                    styles.selectedColorWrapper,
+                  selectedColor === variant.color_code && styles.selectedColorWrapper,
                 ]}
-                onPress={() => {
-                  setSelectedColor(variant.color_code);
-                  const newAllImages = [
-                    variant.image,
-                    ...product.imageUrls,
-                  ].filter(Boolean);
-                  setAllImages(newAllImages);
-                  const index = newAllImages.findIndex(
-                    image => image === variant.image,
-                  );
-                  if (index !== -1 && flatListRef.current) {
-                    flatListRef.current.scrollToIndex({index, animated: false});
-                  }
-                }}>
+                onPress={() => handleColorSelect(variant)}>
                 <View
                   style={[
                     styles.colorCircle,
@@ -208,7 +248,12 @@ const ProductDetailScreen = ({route, navigation}) => {
             ))}
           </View>
         </View>
-
+      );
+    }
+  
+    function renderSizeOptions() {
+      // Hàm render các tùy chọn kích cỡ sản phẩm
+      return (
         <View style={styles.row}>
           <Text style={styles.sectionLabel}>Kích Cỡ: </Text>
           <View style={styles.sizeContainer}>
@@ -220,42 +265,50 @@ const ProductDetailScreen = ({route, navigation}) => {
                   selectedSize === sizeObj.size && styles.selectedSize,
                   !isSizeAvailable(sizeObj.size) && styles.disabled,
                 ]}
-                onPress={() => {
-                  if (isSizeAvailable(sizeObj.size)) {
-                    setSelectedSize(sizeObj.size);
-                    setMaxQuantity(sizeObj.quantity);
-                  }
-                }}>
+                onPress={() => handleSizeSelect(sizeObj)}>
                 <Text style={styles.sizeText}>{sizeObj.size}</Text>
               </TouchableOpacity>
             ))}
           </View>
         </View>
-
-        <Text style={styles.price}>{`${(
-          product.price * quantity
-        ).toLocaleString()} VND`}</Text>
-
-        <View style={styles.quantityRow}>
-          <Text style={styles.sectionLabel}>Số Lượng: </Text>
-          <View style={styles.quantityControls}>
-            <TouchableOpacity
-              onPress={() => setQuantity(Math.max(1, quantity - 1))}
-              style={styles.quantityButton}>
-              <Text style={styles.quantityButtonText}>-</Text>
-            </TouchableOpacity>
-            <Text style={styles.quantityText}>{quantity}</Text>
-            <TouchableOpacity
-              onPress={() =>
-                setQuantity(Math.min(maxQuantity, quantity + 1, 10))
-              }
-              style={styles.quantityButton}>
-              <Text style={styles.quantityButtonText}>+</Text>
-            </TouchableOpacity>
+      );
+    }
+  
+    function renderQuantitySelector() {
+      // Hàm render phần chọn số lượng sản phẩm
+      return (
+        <View>
+          <View style={styles.quantityRow}>
+            <Text style={styles.sectionLabel}>Số Lượng: </Text>
+            <View style={styles.quantityControls}>
+              <TouchableOpacity
+                onPress={() => setQuantity(Math.max(1, quantity - 1))}
+                style={styles.quantityButton}>
+                <Text style={styles.quantityButtonText}>-</Text>
+              </TouchableOpacity>
+              <Text style={styles.quantityText}>{quantity}</Text>
+              <TouchableOpacity
+                onPress={() => setQuantity(Math.min(maxQuantity, quantity + 1, 10))}
+                style={styles.quantityButton}>
+                <Text style={styles.quantityButtonText}>+</Text>
+              </TouchableOpacity>
+            </View>
           </View>
+          <Text style={styles.stockText}>Còn {maxQuantity} sản phẩm</Text>
         </View>
-        <Text style={styles.stockText}>Còn {maxQuantity} sản phẩm</Text>
-
+      );
+    }
+  
+    function renderPrice() {
+      // Hàm render giá sản phẩm
+      return (
+        <Text style={styles.price}>{`${(product.price * quantity).toLocaleString()} VND`}</Text>
+      );
+    }
+  
+    function renderButtons() {
+      // Hàm render các nút (yêu thích và thêm vào giỏ hàng)
+      return (
         <View style={styles.buttonsRow}>
           <TouchableOpacity onPress={handleToggleFavorite}>
             <View style={styles.favoriteButton}>
@@ -265,7 +318,7 @@ const ProductDetailScreen = ({route, navigation}) => {
                     ? 'heart'
                     : 'heart-outline'
                 }
-                size={22} // Giảm kích thước một chút để phù hợp với bgr tròn
+                size={22}
                 color="#27ae60"
               />
             </View>
@@ -276,10 +329,15 @@ const ProductDetailScreen = ({route, navigation}) => {
             <Text style={styles.addToCartText}>Thêm Giỏ Hàng</Text>
           </TouchableOpacity>
         </View>
-
+      );
+    }
+  
+    function renderDescription() {
+      // Hàm render phần mô tả, chất liệu và chi tiết sản phẩm
+      return (
         <View style={styles.section}>
           <Text style={styles.sectionPainted}>Mô tả</Text>
-
+  
           <TouchableOpacity
             style={styles.sectionHeader}
             onPress={() => setIsCollapsedMaterial(!isCollapsedMaterial)}>
@@ -295,9 +353,9 @@ const ProductDetailScreen = ({route, navigation}) => {
               {product.material || 'Không có thông tin chất liệu'}
             </Text>
           )}
-
+  
           <View style={styles.separator} />
-
+  
           <TouchableOpacity
             style={styles.sectionHeader}
             onPress={() => setIsCollapsedDetails(!isCollapsedDetails)}>
@@ -313,77 +371,90 @@ const ProductDetailScreen = ({route, navigation}) => {
               {product.description || 'Không có thông tin chi tiết'}
             </Text>
           )}
-
+  
           <View style={styles.separator} />
         </View>
-
-        {totalReviews > 0 && (
-          <>
-            <Text style={styles.sectionLabelReview}>Đánh giá</Text>
-            <View style={styles.ratingRow}>
-              <View style={styles.reviewSection}>
-                {renderStars(averageRating)}
-                <Text style={styles.reviewCountBold}>{averageRating}</Text>
-                <Text style={styles.reviewCount}>({totalReviews})</Text>
-              </View>
+      );
+    }
+  
+    function renderReviewSummary() {
+      // Hàm render phần tóm tắt đánh giá sản phẩm
+      return (
+        <View style={styles.reviewSection1}>
+          {renderStars(averageRating)}
+          <Text style={styles.reviewCount}>({totalReviews})</Text>
+        </View>
+      );
+    }
+  
+    function renderReviews() {
+      // Hàm render chi tiết các đánh giá sản phẩm
+      if (totalReviews === 0) return null;
+  
+      return (
+        <>
+          <Text style={styles.sectionLabelReview}>Đánh giá</Text>
+          <View style={styles.ratingRow}>
+            <View style={styles.reviewSection}>
+              {renderStars(averageRating)}
+              <Text style={styles.reviewCountBold}>{averageRating}</Text>
+              <Text style={styles.reviewCount}>({totalReviews})</Text>
             </View>
-          </>
-        )}
-
-        {isLoading ? (
-          <ActivityIndicator size="large" />
-        ) : error ? (
-          <Text>{error}</Text>
-        ) : (
-          productReviews.map((review, index) => {
-            // Định dạng ngày thành dd/mm/yyyy
-            const formattedDate = new Date(review.createdAt).toLocaleDateString(
-              'vi-VN',
-            );
-
-            return (
-              <View
-                key={review._id}
-                style={[
-                  styles.reviewContainer,
-                  index === productReviews.length - 1 && styles.noBorder, // Áp dụng styles.noBorder nếu là item cuối cùng
-                ]}>
-                {userInfo[review.user_id] ? (
-                  <View style={styles.userInfoContainer}>
-                    <Image
-                      source={{uri: userInfo[review.user_id].avatar}}
-                      style={styles.userAvatar}
-                    />
-                    <Text style={styles.userName}>
-                      {userInfo[review.user_id].full_name}
-                    </Text>
-                  </View>
-                ) : (
-                  <Text>Loading user info...</Text>
-                )}
-                <View style={styles.reviewSection}>
-                  {renderStars(review.rating)}
-                  <Text style={styles.reviewDate}>{formattedDate}</Text>
-                </View>
-                <Text style={styles.reviewComment}>Size: {review.size}</Text>
-                <Text style={styles.reviewComment}>Màu: {review.color}</Text>
-                <Text style={styles.reviewComment}>{review.comment}</Text>
-
-                {review.responses?.map(response => (
-                  <Text key={response._id} style={styles.responseText}>
-                    Phản hồi từ người bán: {response.comment}
-                  </Text>
-                ))}
-              </View>
-            );
-          })
-        )}
-      </View>
-    </ScrollView>
-  );
-};
-
-export default ProductDetailScreen;
+          </View>
+  
+          {isLoading ? (
+            <ActivityIndicator size="large" />
+          ) : error ? (
+            <Text>{error}</Text>
+          ) : (
+            productReviews.map((review, index) => renderReviewItem(review, index))
+          )}
+        </>
+      );
+    }
+  
+    function renderReviewItem(review, index) {
+      // Hàm render một mục đánh giá của sản phẩm
+      const formattedDate = new Date(review.createdAt).toLocaleDateString('vi-VN');
+  
+      return (
+        <View
+          key={review._id}
+          style={[
+            styles.reviewContainer,
+            index === productReviews.length - 1 && styles.noBorder,
+          ]}>
+          {userInfo[review.user_id] ? (
+            <View style={styles.userInfoContainer}>
+              <Image
+                source={{uri: userInfo[review.user_id].avatar}}
+                style={styles.userAvatar}
+              />
+              <Text style={styles.userName}>{userInfo[review.user_id].full_name}</Text>
+            </View>
+          ) : (
+            <Text>Loading user info...</Text>
+          )}
+          <View style={styles.reviewSection}>
+            {renderStars(review.rating)}
+            <Text style={styles.reviewDate}>{formattedDate}</Text>
+          </View>
+          <Text style={styles.reviewComment}>Size: {review.size}</Text>
+          <Text style={styles.reviewComment}>Màu: {review.color}</Text>
+          <Text style={styles.reviewComment}>{review.comment}</Text>
+  
+          {review.responses?.map(response => (
+            <Text key={response._id} style={styles.responseText}>
+              Phản hồi từ người bán: {response.comment}
+            </Text>
+          ))}
+        </View>
+      );
+    }
+  };
+  
+  export default ProductDetailScreen;
+  
 
 const styles = StyleSheet.create({
   container: {flex: 1, backgroundColor: '#fff'},
@@ -456,7 +527,13 @@ const styles = StyleSheet.create({
     opacity: 1.5,
     textDecorationLine: 'line-through',
   },
-
+  selectedColorName: {
+    marginRights: 10,
+    fontSize: 16,
+    color: '#000',
+    fontWeight: 'bold',
+  },
+  
   sizeContainer: {flexDirection: 'row', marginLeft: 8},
   sizeButton: {
     paddingVertical: 5,

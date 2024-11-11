@@ -195,80 +195,12 @@ const globalStyles = StyleSheet.create({
     shadowRadius: 8,//độ lan
     elevation: 1,//chiều cao của phần tử so với nền bóng đổ
   },
-  sectionTitleSetting:{
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#333',
-  },
-  infoContainerSetting:{
-    marginBottom: 15,
-  },
-  labelSetting:{
-    fontSize: 14,
-    marginBottom: 5,
-    color: '#333',
-  },
-  inputSetting:{
-    height: 40,
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    backgroundColor: '#f5f5f5',
-    color: '#333',
-  },
-  switchSetting:{
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  containerAddress:{
-    flexGrow: 1,
-    padding: 16,
-    backgroundColor: '#FFF',
-  },
-  headingAddress:{
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 16,
-  },
-  inputAddress:{
-    marginBottom: 16,
-    marginLeft: 5,
-  },
-  switchContainerAddress:{
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  buttonAddress:{
-    backgroundColor: '#00aaff',
-    padding: 8,
-  },
-  pickerContainerAddress:{
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
-  },
-  pickerAddress:{
-    height: 50,
-    width: '100%',
-  },
-  inputContainerAddress:{
-    backgroundColor: colors.background,
-    borderRadius: 5,
-    height: 70,
-    marginBottom: 16,
-  },
-  labelAddress:{
-    marginLeft: 5,
-    marginTop: 5,
-    fontSize: 12,
-    justifyContent:'flex-end'
-  },
+ 
+
+
+
+
+ 
 
   
 });

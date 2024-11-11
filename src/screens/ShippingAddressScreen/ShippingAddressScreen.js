@@ -83,34 +83,41 @@ const ShippingAddressScreen = () => {
     </View>
   );
 
-  if (isLoading) return <Text>Loading...</Text>;
-  if (error) return <Text>Error: {error}</Text>;
-  if (!isLoading && (!addressesList || addressesList.length === 0)) return (
-    <View style={styles.emptyContainer}>
-      <Text>Không có địa chỉ nào</Text>
-    </View>
-  );
+ 
 
   return (
     <View style={globalStyles.ShippingAddressContainer}>
       <View style={globalStyles.ShippingAddressContent}>
-        <FlatList
-          data={addressesList}
-          keyExtractor={(item) => item._id}
-          renderItem={renderItem}
-        />
+        {isLoading ? (
+          <Text>Loading...</Text>
+        ) : error ? (
+          <Text>Error: {error}</Text>
+        ) : (
+          <FlatList
+            data={addressesList}
+            keyExtractor={(item) => item._id}
+            renderItem={renderItem}
+            ListEmptyComponent={() => (
+              <View style={styles.emptyContainer}>
+                <Text>Không có địa chỉ nào</Text>
+              </View>
+            )}
+          />
+        )}
       </View>
-      {/* Nút thêm địa chỉ */}
+      {/* Nút thêm địa chỉ luôn hiển thị */}
       <TouchableOpacity
-        style={globalStyles.addButton}
-        onPress={() => navigation.navigate('AddAddress')}>
+        style={styles.addButton}
+        onPress={() => navigation.navigate('AddAddress')}
+      >
         <Image
-          style={globalStyles.addIcon}
+          style={styles.addIcon}
           source={require('../../assets/images/icon_add.png')}
         />
       </TouchableOpacity>
     </View>
   );
+  
 };
 
 
@@ -122,7 +129,23 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 100, 
   },
+  addButton: {
+    position: 'absolute',
+    right: 20,
+    bottom: 20,
+    backgroundColor: '#28a745',
+    borderRadius: 50,
+    padding: 15,
+    elevation: 5,
+  },
+  addIcon: {
+    width: 30,
+    height: 30,
+    tintColor: '#FFF',
+  },
+  
   checked: {
     fontSize: 16,
     color: 'green',
