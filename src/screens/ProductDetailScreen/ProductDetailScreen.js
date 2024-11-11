@@ -24,9 +24,12 @@ const ProductDetailScreen = ({route, navigation}) => {
   const flatListRef = useRef();
 
   const reviews = useSelector(state => state.products.reviews) || {};
-  const {reviewResponses, isLoading, error} = useSelector(state => state.reviewResponses) || {};
+  const {reviewResponses, isLoading, error} =
+    useSelector(state => state.reviewResponses) || {};
   const favoriteList = useSelector(state => state.favorites.favoriteList) || [];
-  const variants = useSelector( state => state.variants.variants[product._id] || [],);
+  const variants = useSelector(
+    state => state.variants.variants[product._id] || [],
+  );
   const userInfo = useSelector(state => state.user.userInfo) || {};
 
   const [selectedColor, setSelectedColor] = useState(null);
@@ -40,7 +43,9 @@ const ProductDetailScreen = ({route, navigation}) => {
   const productReviews = reviewResponses[product._id] || [];
   const totalReview = reviews[product._id] || {};
   const totalReviews = totalReview.totalReviews || 0;
-  const averageRating = totalReview.averageRating ? totalReview.averageRating.toFixed(1)  : '0.0';
+  const averageRating = totalReview.averageRating
+    ? totalReview.averageRating.toFixed(1)
+    : '0.0';
 
   const [isCollapsedMaterial, setIsCollapsedMaterial] = useState(true);
   const [isCollapsedDetails, setIsCollapsedDetails] = useState(true);
@@ -168,7 +173,6 @@ const ProductDetailScreen = ({route, navigation}) => {
         ) : (
           <Text>Không có ảnh sản phẩm nào để hiển thị.</Text>
         )}
-
         <View style={styles.row}>
           <Text style={styles.sectionLabel}>Màu Sắc: </Text>
           <View style={styles.colorContainer}>
@@ -176,16 +180,16 @@ const ProductDetailScreen = ({route, navigation}) => {
               <TouchableOpacity
                 key={i}
                 style={[
-                  styles.colorCircle,
-                  {backgroundColor: variant.color_code},
-                  selectedColor === variant.color_code && styles.selectedColor,
+                  styles.colorCircleWrapper,
+                  selectedColor === variant.color_code &&
+                    styles.selectedColorWrapper,
                 ]}
                 onPress={() => {
                   setSelectedColor(variant.color_code);
                   const newAllImages = [
                     variant.image,
                     ...product.imageUrls,
-                  ].filter(Boolean); // Cập nhật danh sách hình ảnh với ảnh biến thể đã chọn trước tiên
+                  ].filter(Boolean);
                   setAllImages(newAllImages);
                   const index = newAllImages.findIndex(
                     image => image === variant.image,
@@ -193,8 +197,14 @@ const ProductDetailScreen = ({route, navigation}) => {
                   if (index !== -1 && flatListRef.current) {
                     flatListRef.current.scrollToIndex({index, animated: false});
                   }
-                }}
-              />
+                }}>
+                <View
+                  style={[
+                    styles.colorCircle,
+                    {backgroundColor: variant.color_code},
+                  ]}
+                />
+              </TouchableOpacity>
             ))}
           </View>
         </View>
@@ -378,24 +388,18 @@ export default ProductDetailScreen;
 const styles = StyleSheet.create({
   container: {flex: 1, backgroundColor: '#fff'},
   detailsContainer: {padding: 16},
-  productTitle: { fontSize: 22, fontWeight: 'bold', color: '#303030', marginVertical: 5, },
-  reviewSection1: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 4,
+  productTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#303030',
+    marginVertical: 5,
   },
-  reviewCountBold: {
-    fontSize: 14,
-    color: '#808080',
-  },
-  reviewCount: {
-    fontSize: 12,
-    color: '#27ae60',
-    fontWeight: '500',
-  },
+  reviewSection1: {flexDirection: 'row', alignItems: 'center', marginBottom: 4},
+  reviewCountBold: {fontSize: 14, color: '#808080'},
+  reviewCount: {fontSize: 12, color: '#27ae60', fontWeight: '500'},
   productImage: {
     width: 396,
-    height: 248, // Giảm chiều cao ảnh để tiết kiệm không gian
+    height: 248,
     resizeMode: 'contain',
     borderRadius: 10,
     marginBottom: 25,
@@ -424,19 +428,28 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 
-  colorContainer: {flexDirection: 'row', marginLeft: 8},
+  colorContainer: {
+    flexDirection: 'row',
+  },
+  colorCircleWrapper: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    marginHorizontal: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  selectedColorWrapper: {
+    borderWidth: 2,
+    borderColor: '#000', // Màu viền ngoài khi màu được chọn
+  },
   colorCircle: {
     width: 30,
     height: 30,
-    borderRadius: 14,
-    marginHorizontal: 4,
+    borderRadius: 15, // Đảm bảo hình tròn hoàn hảo
     borderWidth: 1,
     borderColor: '#ddd',
-    backgroundColor: '#fff', // Thêm màu nền trắng để tạo ra khoảng trắng
-  },
-  selectedColor: {
-    borderWidth: 2,
-    borderColor: '#000',
+    backgroundColor: '#fff', // Màu nền trắng để tạo khoảng trắng rõ ràng
   },
 
   disabled: {
@@ -586,7 +599,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 4,
-    justifyContent:'space-between'
+    justifyContent: 'space-between',
   },
   reviewCountBold: {
     fontSize: 16,
@@ -639,8 +652,7 @@ const styles = StyleSheet.create({
   reviewDate: {
     fontSize: 12,
     color: '#888',
-
- },
+  },
   responseText: {
     fontSize: 14,
     color: '#888',

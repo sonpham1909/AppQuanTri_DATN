@@ -6,6 +6,7 @@ import productReducer from '../slices/productSlice';
 import favoriteReducer from '../slices/favoriteSlice';
 import reviewResponsesReducer from '../slices/reviewSlice';
 import variantReducer from '../slices/variantSlice'; // Import variantSlice
+import addressReducer from '../slices/addressSlice'; // Import addressSlice
 
 const store = configureStore({
   reducer: {
@@ -15,6 +16,8 @@ const store = configureStore({
     favorites: favoriteReducer,
     reviewResponses: reviewResponsesReducer,
     variants: variantReducer, // Thêm variantReducer vào store
+    addresses: addressReducer, // Thêm addressReducer vào store
+
 
   },
 });

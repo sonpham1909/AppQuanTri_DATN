@@ -17,8 +17,9 @@ export const fetchCategories = createAsyncThunk('/', async (_, thunkAPI) => {
     });
     return response.data;
   } catch (error) {
-    return thunkAPI.rejectWithValue(error.response.data);
-  }
+    return thunkAPI.rejectWithValue(
+      error.response ? error.response.data.message : error.message)
+    }
 });
 
 // Action để lấy danh mục con dựa theo danh mục cha
@@ -28,7 +29,8 @@ export const fetchSubCategoriesByParent = createAsyncThunk(
     try {
       const token = await tokenService.getToken();
       const response = await axios.get(
-        `${API_URL}/categorys/${categoryId}/subcategories`, {
+        `${API_URL}/categorys/${categoryId}/subcategories`,
+        {
           // Sửa thành /subcategories
           headers: {
             Authorization: `Bearer ${token}`,
@@ -37,7 +39,8 @@ export const fetchSubCategoriesByParent = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(
+        error.response ? error.response.data.message : error.message)
     }
   },
 );
@@ -59,7 +62,8 @@ export const fetchProductsBySubCategory = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(
+        error.response ? error.response.data.message : error.message)
     }
   },
 );

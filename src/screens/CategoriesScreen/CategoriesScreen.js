@@ -18,6 +18,7 @@ const CategoriesScreen = ({route}) => {
   const {category} = route.params; // Nhận dữ liệu danh mục cha từ route.params
   const dispatch = useDispatch();
   const {subCategories, isLoading} = useSelector(state => state.categories);
+  
   const navigation = useNavigation(); // Hook điều hướng
 
   useEffect(() => {
@@ -35,19 +36,19 @@ const CategoriesScreen = ({route}) => {
   return (
     <View style={cateStyles.container}>
       <View style={styles.header}>
-  <TouchableOpacity
-    style={styles.backButton}
-    onPress={() => navigation.navigate('Trang chủ')} // Điều hướng về màn hình Home
-  >
-    <Image
-      source={require('../../assets/images/icon_back.png')} // Đường dẫn tới icon quay lại
-      style={styles.backIcon} // Style cho icon
-    />
-  </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.navigate('Trang chủ')} // Điều hướng về màn hình Home
+        >
+          <Image
+            source={require('../../assets/images/icon_back.png')} // Đường dẫn tới icon quay lại
+            style={styles.backIcon} // Style cho icon
+          />
+        </TouchableOpacity>
 
-  {/* Hiển thị tên danh mục cha ở giữa */}
-  <Text style={styles.categoryNameText}>{category.namecategory}</Text>
-</View>
+        {/* Hiển thị tên danh mục cha ở giữa */}
+        <Text style={styles.categoryNameText}>{category.namecategory}</Text>
+      </View>
 
       <FlatList
         data={subCategories}
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
   header: {
     marginVertical: 15,
     flexDirection: 'row',
-    
+
     alignItems: 'center',
     justifyContent: 'center', // Căn giữa nội dung trong hàng ngang
   },

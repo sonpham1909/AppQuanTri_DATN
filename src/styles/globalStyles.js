@@ -269,11 +269,7 @@ const globalStyles = StyleSheet.create({
     fontSize: 12,
     justifyContent:'flex-end'
   },
-  separator: {
-    marginVertical: 5,
-    height: 1,
-    backgroundColor: '#E0E0E0',
-  },
+
   
 });
 

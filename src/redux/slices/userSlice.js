@@ -10,7 +10,6 @@ const initialState = {
   isSuccess: false,
   message: '',
   userInfo: {},
-
 };
 
 const userSlice = createSlice({

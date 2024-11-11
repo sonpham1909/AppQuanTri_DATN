@@ -1,74 +1,102 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   FlatList,
   View,
   Text,
-  StyleSheet,
   TouchableOpacity,
   Image,
+  Alert,
+  StyleSheet,
 } from 'react-native';
-import colors from '../../constants/colors';
-import spacing from '../../constants/spacing';
-import Header from '../../components/ShippingAddress/Header';
 import globalStyles from '../../styles/globalStyles';
 import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import { fetchAllAddresses, updateDefaultAddress,deleteAddress } from '../../redux/actions/actionAddress';
+
 
 const ShippingAddressScreen = () => {
-  // Hàm xử lý khi nhấn vào một điều hướng
+  // Hàm xử lý khi nhấn vào một điều hướnga
   const navigation = useNavigation();
-  // Dữ liệu danh sách địa chỉ giả định
-  const addresses = [
-    {
-      id: '1',
-      name: 'Phùng Tiến Dũng',
-      address: 'Số 55, Ngõ 177, Đường Cầu Diễn, Bắc Từ Liêm, Hà Nội',
-      isDefault: true,
-    },
-    {
-      id: '2',
-      name: 'Phùng Tiến Dũng',
-      address: 'Số 55, Ngõ 177, Đường Cầu Diễn, Bắc Từ Liêm, Hà Nội',
-      isDefault: false,
-    },
-    {
-      id: '3',
-      name: 'Phùng Tiến Dũng',
-      address: 'Số 55, Ngõ 177, Đường Cầu Diễn, Bắc Từ Liêm, Hà Nội',
-      isDefault: false,
-    },
-  ];
+  const dispatch = useDispatch();
+  const addressesList = useSelector(state => state.addresses.addressesList);
+  const isLoading = useSelector(state => state.addresses.isLoading);
+  const error = useSelector(state => state.addresses.error);
+
+  // Gọi API để lấy danh sách địa chỉ
+  useEffect(() => {
+    dispatch(fetchAllAddresses());
+  }, [dispatch]);
+
+  // Hàm xác nhận và xóa địa chỉ
+  const handleDeleteAddress = (addressId) => {
+    Alert.alert(
+      'Xác nhận xóa',
+      'Bạn có chắc chắn muốn xóa địa chỉ này không?',
+      [
+        {
+          text: 'Hủy',
+          style: 'cancel',
+        },
+        {
+          text: 'Xóa',
+          onPress: () => {
+            dispatch(deleteAddress(addressId)).then(() => {
+              // Gọi lại fetchAllAddresses sau khi xóa thành công để cập nhật giao diện
+              dispatch(fetchAllAddresses());
+            });
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  };
 
   // Hàm render từng địa chỉ trong danh sách
-  const renderItem = ({item}) => (
-    <View style={globalStyles.card}>
-      <View style={globalStyles.cardContent}>
-        <Text style={globalStyles.AddressName}>{item.name}</Text>
-        <TouchableOpacity>
-          <Image
-            style={globalStyles.editIcon}
-            source={require('../../assets/images/icon_edit.png')}
-          />
+  const renderItem = ({ item }) => (
+    <View style={styles.card}>
+      <View style={styles.cardContent}>
+        <Text style={styles.AddressName}>{item.recipientName}</Text>
+        <TouchableOpacity onPress={() => dispatch(updateDefaultAddress(item._id))}>
+          {item.isDefault ? (
+            <Text style={styles.checked}>✓</Text> // Dấu tích khi được chọn
+          ) : (
+            <Text style={styles.unchecked}>○</Text> // Dấu chưa chọn
+          )}
         </TouchableOpacity>
-
+        {/* Nút xóa địa chỉ (không cho phép xóa địa chỉ mặc định) */}
+       
       </View>
-      <View style={globalStyles.separator}></View>
-
-
-      <Text style={globalStyles.address}>{item.address}</Text>
+      <View style={styles.separator}></View>
+      <Text style={styles.address}>{'Địa chỉ: '}{item.addressDetail.street}, {item.addressDetail.ward}, {item.addressDetail.district}, {item.addressDetail.city}{'\n'}{'\n'}{'Điện thoại: '}{item.recipientPhone}{'\n'}{'\n'}{'Ghi chú: '}{item.notes}</Text>
       {/* nếu isDefault = true hiển thị text mặc định */}
-      {item.isDefault && (
+      {/* {item.isDefault && (
         <Text style={globalStyles.defaultLabel}>Mặc định</Text>
-      )}
+      )} */}
+       {!item.isDefault && (
+          <TouchableOpacity onPress={() => handleDeleteAddress(item._id)}>
+            <Image
+              style={styles.deleteIconAddress}
+              source={require('../../assets/images/icon_delete.png')}
+            />
+          </TouchableOpacity>
+        )}
+    </View>
+  );
+
+  if (isLoading) return <Text>Loading...</Text>;
+  if (error) return <Text>Error: {error}</Text>;
+  if (!isLoading && (!addressesList || addressesList.length === 0)) return (
+    <View style={styles.emptyContainer}>
+      <Text>Không có địa chỉ nào</Text>
     </View>
   );
 
   return (
     <View style={globalStyles.ShippingAddressContainer}>
-      
       <View style={globalStyles.ShippingAddressContent}>
         <FlatList
-          data={addresses}
-          keyExtractor={item => item.id}
+          data={addressesList}
+          keyExtractor={(item) => item._id}
           renderItem={renderItem}
         />
       </View>
@@ -85,4 +113,70 @@ const ShippingAddressScreen = () => {
   );
 };
 
+
+
 export default ShippingAddressScreen;
+
+const styles = StyleSheet.create({
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checked: {
+    fontSize: 16,
+    color: 'green',
+  },
+  unchecked: {
+    fontSize: 20,
+    color: 'gray',
+  },
+  deleteIconAddress: {
+    width: 20,
+    height: 20,
+    tintColor: '#000',
+    alignSelf:'flex-end',
+    margin:5
+  },
+  card: {
+    width:'auto',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding:7,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+    marginBottom:15
+  },
+  cardContent: {
+    padding:7,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  AddressName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    
+  },
+  address: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 4,
+    padding:7
+  },
+  separator: {
+    marginVertical: 5,
+    height: 1,
+    backgroundColor: '#E0E0E0',
+  },
+  address: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 4,
+    padding:7
+  },
+});

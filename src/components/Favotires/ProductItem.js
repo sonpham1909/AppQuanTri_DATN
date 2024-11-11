@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {  useSelector } from 'react-redux';
 
+
 const FavoriteItem = ({ product, onToggleFavorite, navigation }) => {
   const favoriteList = useSelector(state => state.favorites.favoriteList);
 
