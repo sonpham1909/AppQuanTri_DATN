@@ -5,6 +5,7 @@ import {
   fetchLatestProducts,
   fetchPopularProducts,
   fetchProductsByVariant,
+  fetchProductById,
 } from '../actions/actionProduct';
 
 const initialState = {
@@ -12,6 +13,7 @@ const initialState = {
   latestProducts: [],
   popularProducts: [],
   productsByVariant: [],
+  productDetails: {}, // Chi tiết sản phẩm được lưu trữ tại đây
   isLoading: false,
   error: null,
 };
@@ -58,6 +60,20 @@ const productSlice = createSlice({
         state.productsByVariant = action.payload;
       })
       .addCase(fetchProductsByVariant.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      }).addCase(fetchProductById.pending, state => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchProductById.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const { productId, productDetails } = action.payload;
+        if (productId && productDetails) {
+          state.productDetails[productId] = productDetails; // Lưu sản phẩm với productId làm khóa
+        }
+      })      
+      .addCase(fetchProductById.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       });

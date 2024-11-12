@@ -18,9 +18,7 @@ const ShippingAddressScreen = () => {
   // Hàm xử lý khi nhấn vào một điều hướnga
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const addressesList = useSelector(state => state.addresses.addressesList);
-  const isLoading = useSelector(state => state.addresses.isLoading);
-  const error = useSelector(state => state.addresses.error);
+  const { addressesList, isLoading, error } = useSelector(state => state.addresses);
 
   // Gọi API để lấy danh sách địa chỉ
   useEffect(() => {
@@ -91,7 +89,7 @@ const ShippingAddressScreen = () => {
         {isLoading ? (
           <Text>Loading...</Text>
         ) : error ? (
-          <Text>Error: {error}</Text>
+          <Text>Phiên bản hết hạn bạn cần đăng nhập lại</Text>
         ) : (
           <FlatList
             data={addressesList}

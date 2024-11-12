@@ -27,3 +27,27 @@ export const fetchProductReviewResponses = createAsyncThunk(
     }
   },
 );
+
+export const fetchUserReviews = createAsyncThunk(
+  'reviews/fetchUserReviews',
+  async (_, thunkAPI) => {
+    try {
+      const token = await tokenService.getToken();
+      if (!token) {
+        throw new Error("User token is not available or has expired.");
+      }
+
+      const response = await axios.get(`${API_URL}/Review/reviews_ByUser`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response ? error.response.data.message : error.message
+      );
+    }
+  }
+);
