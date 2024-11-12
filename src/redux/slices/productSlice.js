@@ -7,6 +7,7 @@ import {
   fetchProductsByVariant,
   fetchProductById,
   fetchtProductById,
+  fetchtProductById1,
 } from '../actions/actionProduct';
 
 const initialState = {
@@ -79,14 +80,14 @@ const productSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload;
       })
-      .addCase(fetchtProductById.pending, state => {
+      .addCase(fetchtProductById1.pending, state => {
         state.isLoading = true;
       })
-      .addCase(fetchtProductById.fulfilled, (state, action) => {
+      .addCase(fetchtProductById1.fulfilled, (state, action) => {
         state.isLoading = false;
         state.productById = action.payload;
       })
-      .addCase(fetchtProductById.rejected, (state, action) => {
+      .addCase(fetchtProductById1.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       });

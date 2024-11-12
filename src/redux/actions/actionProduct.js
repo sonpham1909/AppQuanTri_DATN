@@ -103,7 +103,7 @@ export const fetchProductsByVariant = createAsyncThunk(
  
 );
 
-export const fetchtProductById = createAsyncThunk(
+export const fetchtProductById1 = createAsyncThunk(
   'products/fetchtProductById',
   async (productId, thunkAPI) => {
     try {

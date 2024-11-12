@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchtProductById } from '../../redux/actions/actionProduct';
+import { fetchtProductById, fetchtProductById1 } from '../../redux/actions/actionProduct';
 import handleProductPress from '../AllProduct/handleProductPress';
 
 const CartItem = ({ item, onIncrease, onDecrease, onRemove, navigation }) => {
@@ -10,7 +10,7 @@ const CartItem = ({ item, onIncrease, onDecrease, onRemove, navigation }) => {
   const product = useSelector(state => state.products.productById);
 
   const handleFetchProduct = () => {
-    dispatch(fetchtProductById(item.product_id._id))
+    dispatch(fetchtProductById1(item.product_id._id))
       .unwrap() // Nếu bạn dùng Redux Toolkit, `unwrap()` giúp lấy kết quả từ Promise của thunk
       .then(itemProduct => {
         navigation.navigate('ProductDetailScreen', { product: itemProduct });
