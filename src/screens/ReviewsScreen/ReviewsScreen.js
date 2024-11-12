@@ -58,10 +58,11 @@ const ReviewsScreen = ({navigation}) => {
               {product.name || 'Product Name'}
             </Text>
 
-            <Text
-              style={
-                styles.priceReview
-              }>{`${product.price.toLocaleString()} VND`}</Text>
+            <Text style={styles.priceReview}>
+              {product.price !== undefined
+                ? `${product.price.toLocaleString()} VND`
+                : 'Giá không xác định'}
+            </Text>
           </View>
         </View>
         <View
@@ -84,17 +85,14 @@ const ReviewsScreen = ({navigation}) => {
     return <Text>Loading...</Text>;
   }
 
-
   if (userReviews.length === 0) {
     return (
       <View style={styles.noReviewsContainer}>
-        <Text style={styles.noReviewsText}>
-          Bạn chưa có đánh giá nào
-        </Text>
+        <Text style={styles.noReviewsText}>Bạn chưa có đánh giá nào</Text>
       </View>
     );
   }
-    if (reviewError || productError) {
+  if (reviewError || productError) {
     return <Text>Error: {reviewError || productError}</Text>;
   }
   return (
