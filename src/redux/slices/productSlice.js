@@ -5,6 +5,7 @@ import {
   fetchLatestProducts,
   fetchPopularProducts,
   fetchProductsByVariant,
+  fetchtProductById,
 } from '../actions/actionProduct';
 
 const initialState = {
@@ -12,6 +13,7 @@ const initialState = {
   latestProducts: [],
   popularProducts: [],
   productsByVariant: [],
+  productById:[],
   isLoading: false,
   error: null,
 };
@@ -58,6 +60,17 @@ const productSlice = createSlice({
         state.productsByVariant = action.payload;
       })
       .addCase(fetchProductsByVariant.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchtProductById.pending, state => {
+        state.isLoading = true;
+      })
+      .addCase(fetchtProductById.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.productById = action.payload;
+      })
+      .addCase(fetchtProductById.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       });

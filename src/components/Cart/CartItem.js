@@ -1,20 +1,41 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchtProductById } from '../../redux/actions/actionProduct';
+import handleProductPress from '../AllProduct/handleProductPress';
 
-const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
+const CartItem = ({ item, onIncrease, onDecrease, onRemove, navigation }) => {
+
+  const dispatch = useDispatch();
+  const product = useSelector(state => state.products.productById);
+
+  const handleFetchProduct = () => {
+    dispatch(fetchtProductById(item.product_id._id))
+      .unwrap() // Nếu bạn dùng Redux Toolkit, `unwrap()` giúp lấy kết quả từ Promise của thunk
+      .then(itemProduct => {
+        navigation.navigate('ProductDetailScreen', { product: itemProduct });
+      })
+      .catch(error => {
+        console.error('Error fetching product:', error);
+      });
+  };
+  
+ 
+  
   return (
-    <View style={styles.cartItem}>
-      <Image source={item.image} style={styles.itemImage} />
+    <TouchableOpacity onPress={handleFetchProduct}>
+      <View style={styles.cartItem}>
+      <Image source={{uri:item.image_variant}} style={styles.itemImage} />
       <View style={styles.itemInfo}>
         <Text style={styles.itemName}>{item.name} - ({item.color})</Text>
         <Text style={styles.itemPrice}>{item.price.toLocaleString()} VND</Text>
         <Text style={styles.itemSize}>Size - {item.size}</Text>
         <View style={styles.quantityContainer}>
-          <TouchableOpacity onPress={() => onDecrease(item.id)} style={styles.quantityButton}>
+          <TouchableOpacity onPress={() => onDecrease(item._id)} style={styles.quantityButton}>
             <Text style={styles.quantityText}>-</Text>
           </TouchableOpacity>
           <Text style={styles.quantityValue}>{item.quantity}</Text>
-          <TouchableOpacity onPress={() => onIncrease(item.id)} style={styles.quantityButton}>
+          <TouchableOpacity onPress={() => onIncrease(item._id)} style={styles.quantityButton}>
             <Text style={styles.quantityText}>+</Text>
           </TouchableOpacity>
         </View>
@@ -33,6 +54,7 @@ const CartItem = ({ item, onIncrease, onDecrease, onRemove }) => {
       <View style={styles.separator}></View>
 
     </View>
+    </TouchableOpacity>
     
   );
 };

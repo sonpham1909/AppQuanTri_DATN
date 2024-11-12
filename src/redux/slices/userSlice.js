@@ -43,10 +43,11 @@ const userSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(login.fulfilled, (state, action) => {
+        console.log('Login response payload:', action.payload); // Debug
         state.isLoading = false;
         state.isSuccess = true;
         state.token = action.payload.accessToken;
-        state.user = action.payload.user;
+        state.user = action.payload;
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;

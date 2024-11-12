@@ -1,50 +1,93 @@
-import React, { useState } from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, FlatList, StyleSheet, ActivityIndicator, Text } from 'react-native';
 import CartItem from '../../components/Cart/CartItem';
 import DiscountCodeInput from '../../components/Cart/DiscountCodeInput';
 import TotalAmount from '../../components/Cart/TotalAmount';
 import CheckoutButton from '../../components/Cart/CheckoutButton';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteCartItem, fetchCart, updatequantity } from '../../redux/actions/actionCart';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const CartScreen = () => {
-  const [cartItems, setCartItems] = useState([
-    { id: 1, name: 'Áo Pattern', price: 157000, size: 'M', color: 'Orenger', quantity: 1, image: require('../../assets/images/item_1.png') },
-    { id: 2, name: 'Áo giữ nhiệt', price: 279000, size: 'M', color: 'Green', quantity: 1, image: require('../../assets/images/item_2.png') },
-    { id: 3, name: 'Quần dài nam', price: 590000, size: 'M', color: 'Red', quantity: 1, image: require('../../assets/images/item_3.png') },
-    
-  ]);
+const CartScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
+  const { cart, isLoading } = useSelector(state => state.cart);
+  const user = useSelector(state => state.user.user);
   
+
+  useEffect(() => {
+    if (user && user._id) {
+      dispatch(fetchCart(user._id));
+      
+    }
+  }, [dispatch, user]);
+
   const [discountCode, setDiscountCode] = useState('');
-  
-  const totalAmount = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+
+  const totalAmount = Array.isArray(cart) && cart.length > 0
+  ? cart.reduce((total, item) => total + item.price * item.quantity, 0)
+  : 0;
+
 
   const handleQuantityChange = (id, action) => {
-    setCartItems(prevItems => prevItems.map(item => {
-      if (item.id === id) {
-        const newQuantity = action === 'increase' ? item.quantity + 1 : item.quantity > 1 ? item.quantity - 1 : item.quantity;
-        return { ...item, quantity: newQuantity };
+    // Cập nhật UI ngay lập tức trong local state
+    const updatedCart = cart.map(cartItem => {
+      if (cartItem._id === id) {
+        // Tăng hoặc giảm số lượng
+        let newQuantity = action === 'increase' ? cartItem.quantity + 1 : cartItem.quantity - 1;
+        newQuantity = newQuantity > 0 ? newQuantity : 1; // Đảm bảo số lượng tối thiểu là 1
+        return { ...cartItem, quantity: newQuantity };
       }
-      return item;
-    }));
+      return cartItem;
+    });
+
+    // Cập nhật lại state giỏ hàng để UI phản hồi nhanh
+    dispatch({ type: 'UPDATE_CART_LOCAL', payload: updatedCart });
+
+    // Sau đó gọi API để cập nhật số lượng trên server
+    dispatch(updatequantity({ cartItemId: id, quantity: updatedCart.find(item => item._id === id).quantity }));
   };
 
-  const handleRemoveItem = (id) => {
-    setCartItems(prevItems => prevItems.filter(item => item.id !== id));
+  const handleRemoveItem = id => {
+    // Gọi API để xóa sản phẩm khỏi giỏ hàng trên server
+    dispatch(deleteCartItem(id)).then(() => {
+      // Đợi đến khi API trả về thành công
+      dispatch(fetchCart(user._id)); // Lấy lại danh sách giỏ hàng mới để cập nhật UI
+    });
   };
+  
+
+  if (isLoading) {
+    return <ActivityIndicator size="large" color="#00ff00" />;
+  }
+
+  if (!cart || cart.length === 0) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <MaterialCommunityIcons
+          name="cart-off"
+          size={64}
+          color="#B0B0B0"
+        />
+        <Text style={{ marginTop: 10, color: '#B0B0B0' }}>Giỏ hàng của bạn đang trống</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       {/* Cart Items List */}
       <FlatList
-        data={cartItems}
+        data={cart}
         renderItem={({ item }) => (
           <CartItem
             item={item}
-            onIncrease={(id) => handleQuantityChange(id, 'increase')}
-            onDecrease={(id) => handleQuantityChange(id, 'decrease')}
-            onRemove={(id) => handleRemoveItem(id)}
+            onIncrease={() => handleQuantityChange(item._id, 'increase')}
+            onDecrease={() => handleQuantityChange(item._id, 'decrease')}
+            onRemove={() => handleRemoveItem(item._id)}
+            navigation={navigation}
           />
         )}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={item => item._id.toString()}
       />
 
       {/* Discount Code Input */}
@@ -67,4 +110,3 @@ const styles = StyleSheet.create({
 });
 
 export default CartScreen;
-

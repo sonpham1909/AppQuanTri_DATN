@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import React, { useEffect, useState } from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   View,
@@ -15,13 +15,35 @@ import colors from '../constants/colors';
 import Nofication from '../screens/Nofication/Nofication';
 import Favotires from '../screens/Favotires/Favotires';
 import Personal from '../screens/Personal/Personal';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCart } from '../redux/actions/actionCart';
 
 const Tab = createBottomTabNavigator();
 
 const CustomHomeHeader = () => {
+  const dispatch = useDispatch();
+  const {cart, cartLength,isLoading} = useSelector(state => state.cart);
+  const user = useSelector(state => state.user.user);
+ 
+
+  useEffect(() => {
+    if (user && user._id) {
+      dispatch(fetchCart(user._id));
+    }
+  }, [dispatch, user]);
+  useEffect(() => {
+    if (!isLoading) {
+      console.log('Cart:', cartLength);
+    }
+  }, [isLoading, cart]);
+  const CountCart = cartLength? cartLength : 0
+  
+  
+  
   const navigation = useNavigation();
   const [searchText, setSearchText] = useState('');
+  const [cartItemCount, setCartItemCount] = useState(3); // Đặt giả định là 3 sản phẩm trong giỏ
 
   const handleTextChange = text => {
     if (text.length <= 39) {
@@ -55,6 +77,11 @@ const CustomHomeHeader = () => {
             size={24} // Kích thước của icon
             color="#00A65E" // Màu sắc của icon
           />
+          {CountCart >0  && (
+            <View style={styles.badgeContainer}>
+              <Text style={styles.badgeText}>{cartLength}</Text>
+            </View>
+          )}
         </View>
       </TouchableOpacity>
     </View>
@@ -64,8 +91,8 @@ const CustomHomeHeader = () => {
 const BottomTabNavigator = () => {
   return (
     <Tab.Navigator
-      screenOptions={({route}) => ({
-        tabBarIcon: ({color, size, focused}) => {
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size, focused }) => {
           let iconName;
 
           if (route.name === 'Trang chủ') {
@@ -108,17 +135,17 @@ const BottomTabNavigator = () => {
       <Tab.Screen
         name="Yêu thích"
         component={Favotires}
-        options={{title: 'Yêu thích', headerTitleAlign: 'center'}}
+        options={{ title: 'Yêu thích', headerTitleAlign: 'center' }}
       />
       <Tab.Screen
         name="Thông báo"
         component={Nofication}
-        options={{title: 'Thông báo', headerTitleAlign: 'center'}}
+        options={{ title: 'Thông báo', headerTitleAlign: 'center' }}
       />
       <Tab.Screen
         name="Cá nhân"
         component={Personal}
-        options={{title: 'Cá nhân', headerTitleAlign: 'center'}}
+        options={{ title: 'Cá nhân', headerTitleAlign: 'center' }}
       />
     </Tab.Navigator>
   );
@@ -151,11 +178,6 @@ const styles = StyleSheet.create({
     height: 15,
     marginRight: 10, // Khoảng cách giữa biểu tượng và ô input
   },
-  icon1: {
-    width: 30,
-    height: 30,
-    resizeMode: 'stretch',
-  },
   notificationIconContainer: {
     width: 35, // Đặt chiều rộng cho hình tròn
     height: 35, // Đặt chiều cao cho hình tròn
@@ -163,6 +185,22 @@ const styles = StyleSheet.create({
     backgroundColor: 'white', // Màu nền
     justifyContent: 'center',
     alignItems: 'center', // Canh giữa nội dung
+  },
+  badgeContainer: {
+    position: 'absolute',
+    right: -5, // Tùy chỉnh vị trí để badge nằm ở góc trên bên phải của icon
+    top: -5,  // Tùy chỉnh vị trí
+    backgroundColor: 'red',
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  badgeText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
 });
 
