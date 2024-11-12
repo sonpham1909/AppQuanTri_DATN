@@ -232,7 +232,7 @@ const AddAddress = () => {
         <View style={styles.inputContainerAddress}>
           <Text style={styles.labelAddress}>Địa chỉ chi tiết</Text>
           <TextInput
-            placeholder="Ex: 25 đường Hà Nội ngõ 16"
+            placeholder="Chi tiết địa chỉ nhận hàng "
             value={address}
             onChangeText={text => setAddress(text)}
             style={styles.inputAddress}
@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 5,
     position: 'absolute',
-    top: '90%',
+    top: '85%',
     left: 20,
     right: 20,
   },

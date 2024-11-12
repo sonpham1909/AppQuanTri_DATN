@@ -66,10 +66,10 @@ const ShippingAddressScreen = () => {
       </View>
       <View style={styles.separator}></View>
       <Text style={styles.address}>{'Địa chỉ: '}{item.addressDetail.street}, {item.addressDetail.ward}, {item.addressDetail.district}, {item.addressDetail.city}{'\n'}{'\n'}{'Điện thoại: '}{item.recipientPhone}{'\n'}{'\n'}{'Ghi chú: '}{item.notes}</Text>
-      {/* nếu isDefault = true hiển thị text mặc định */}
-      {/* {item.isDefault && (
+       {/* nếu isDefault = true hiển thị text mặc định */} 
+      {item.isDefault && (
         <Text style={globalStyles.defaultLabel}>Mặc định</Text>
-      )} */}
+      )} 
        {!item.isDefault && (
           <TouchableOpacity onPress={() => handleDeleteAddress(item._id)}>
             <Image
