@@ -299,35 +299,42 @@ const ProductDetailScreen = ({ route, navigation }) => {
   function renderColorOptions() {
     // Hàm render các tùy chọn màu sắc sản phẩm
     return (
-      <View style={styles.row}>
-        <Text style={styles.sectionLabel}>Màu Sắc: </Text>
-        {selectedColor && (
-          <Text style={styles.selectedColorName}>
-            {variants.find(variant => variant.color_code === selectedColor)?.color}
-          </Text>
-        )}
+      <View>
+        
+
         <View style={styles.colorContainer}>
           {variants.map((variant, i) => (
             <TouchableOpacity
               key={i}
               style={[
                 styles.colorCircleWrapper,
-                selectedColor === variant.color_code && styles.selectedColorWrapper,
+                selectedColor === variant.color_code &&
+                  styles.selectedColorWrapper,
               ]}
               onPress={() => handleColorSelect(variant)}>
               <View
                 style={[
                   styles.colorCircle,
-                  { backgroundColor: variant.color_code },
+                  {backgroundColor: variant.color_code},
                 ]}
               />
             </TouchableOpacity>
           ))}
         </View>
+        <View style={styles.row}>
+          <Text style={styles.sectionLabel}>Màu Sắc: </Text>
+          {selectedColor && (
+            <Text style={styles.selectedColorName}>
+              {
+                variants.find(variant => variant.color_code === selectedColor)
+                  ?.color
+              }
+            </Text>
+          )}
+        </View>
       </View>
     );
   }
-
   function renderSizeOptions() {
     // Hàm render các tùy chọn kích cỡ sản phẩm
     return (
@@ -851,6 +858,21 @@ const styles = StyleSheet.create({
   },
   viewCartButtonText: {
     color: '#fff',
+    fontWeight: 'bold',
+  },
+  colorCircleWrapper: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight:7,
+    marginLeft:-3
+  },
+  selectedColorName: {
+    marginRights: 10,
+    fontSize: 16,
+    color: '#000',
     fontWeight: 'bold',
   },
 });
