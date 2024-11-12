@@ -1,80 +1,107 @@
-import {StyleSheet, Text, View, Image} from 'react-native';
-import React from 'react';
-import {FlatList} from 'react-native-gesture-handler';
-import globalStyles from '../../styles/globalStyles';
+import React, {useEffect} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {fetchUserReviews} from '../../redux/actions/actionsReview';
+import {fetchProductById} from '../../redux/actions/actionProduct'; // Import action lấy thông tin sản phẩm
+import {StyleSheet, Text, View, Image, FlatList} from 'react-native';
+import renderStars from '../../components/Home/renderStars';
 
-const ReviewsScreen = navigation => {
-  // data
-  const data = [
-    {
-      product_id: '1',
-      rating: '4',
-      coment: 'đẹp quá',
-      date: '2022-01-01',
-      image:
-        'https://cdn2.yame.vn/pimg/ao-so-mi-co-be-tay-ngan-soi-nhan-tao-tham-hut-bieu-tuong-dang-rong-on-gian-seventy-seven-22-0023258/37a5b9fe-a458-e900-bdbf-001b3f08ea68.jpg?w=540&h=756&c=true&ntf=false',
-      name: 'áo',
-      price: '100.000',
-    },
-    {
-      product_id: '2',
-      rating: '4',
-      coment: 'đẹp quá',
-      date: '2022-01-01',
-      image:
-        'https://cdn2.yame.vn/pimg/ao-so-mi-co-be-tay-ngan-soi-nhan-tao-tham-hut-bieu-tuong-dang-rong-on-gian-seventy-seven-22-0023258/37a5b9fe-a458-e900-bdbf-001b3f08ea68.jpg?w=540&h=756&c=true&ntf=false',
-      name: 'áo',
-      price: '100.000',
-    },
-  ];
-  //hàm render
-  const renderItem = ({item}) => (
-    <View style={globalStyles.cardReview}>
-      <View style={globalStyles.renderItemReview}>
-        {/* ảnh sản phẩm */}
-        <Image
-          source={{uri: item.image}}
-          style={globalStyles.imageReview}
-        />
-        <View>
-          {/* tên sản phẩm */}
-          <Text style={globalStyles.nameReview}>{item.name}</Text>
-          {/* giá sản phẩm */}
-          <Text style={globalStyles.priceReview}>{item.price} VND</Text>
-        </View>
-      </View>
+const ReviewsScreen = ({navigation}) => {
+  const dispatch = useDispatch();
 
-      <View style={{marginTop: 10}}>
-         {/* đánh giá sao */}
-         <View style={globalStyles.renderStarReview}>
-            {renderStars(item.rating)}
-            {/* ngày */}
-            <Text style={globalStyles.dateReview}>{item.date}</Text>
-          </View>
-        <Text>{item.coment}</Text>
-      </View>
-    </View>
-  );
+  // Lấy danh sách đánh giá từ Redux store
+  const {
+    userReviews,
+    isLoading: isLoadingReviews,
+    error: reviewError,
+  } = useSelector(state => state.reviewResponses);
+  const {
+    productDetails,
+    isLoading: isLoadingProduct,
+    error: productError,
+  } = useSelector(state => state.products);
 
-  const renderStars = rating => {
-    const stars = [];
+  // Fetch danh sách đánh giá khi component được mount
+  useEffect(() => {
+    dispatch(fetchUserReviews());
+  }, [dispatch]);
 
-    const ratingNumber = parseInt(rating, 10);//ép kiểu
-    for (let i = 0; i < ratingNumber; i++) {
-      stars.push(
-        <Image
-          key={i}
-          source={require('../../assets/images/home_start.png')}
-        />,
-      );
+  // Fetch thông tin sản phẩm cho từng đánh giá khi `userReviews` thay đổi
+  useEffect(() => {
+    if (userReviews && userReviews.length > 0) {
+      const productIdsToFetch = userReviews
+        .map(review => review.product_id)
+        .filter(productId => productId && !productDetails[productId]); // Chỉ gọi nếu product chưa tồn tại
+
+      // Đảm bảo không gọi lại liên tục cùng một sản phẩm
+      productIdsToFetch.forEach(productId => {
+        if (!productDetails[productId]) {
+          dispatch(fetchProductById(productId));
+        }
+      });
     }
-    return stars;
+  }, [userReviews, dispatch, productDetails]);
+
+  const renderItem = ({item}) => {
+    const product = productDetails[item.product_id] || {};
+    const formattedDate = new Date(item.createdAt).toLocaleDateString('vi-VN'); // Lấy thông tin sản phẩm từ Redux store nếu có
+    return (
+      <View style={styles.cardReview}>
+        <View style={styles.renderItemReview}>
+          <View style={styles.imageWrapper}>
+            <Image
+              source={{uri: item.image_variant}}
+              style={styles.imageReview}
+            />
+          </View>
+          <View style={styles.productInfo}>
+            <Text style={styles.nameReview}>
+              {product.name || 'Product Name'}
+            </Text>
+
+            <Text
+              style={
+                styles.priceReview
+              }>{`${product.price.toLocaleString()} VND`}</Text>
+          </View>
+        </View>
+        <View
+          style={{
+            marginTop: 10,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          <View style={styles.renderStarReview}>
+            {renderStars(item.rating)}
+          </View>
+          <Text style={styles.reviewDate}>{formattedDate}</Text>
+        </View>
+        <Text style={styles.comment}>{item.comment}</Text>
+      </View>
+    );
   };
+
+  if (isLoadingReviews || isLoadingProduct) {
+    return <Text>Loading...</Text>;
+  }
+
+
+  if (userReviews.length === 0) {
+    return (
+      <View style={styles.noReviewsContainer}>
+        <Text style={styles.noReviewsText}>
+          Bạn chưa có đánh giá nào
+        </Text>
+      </View>
+    );
+  }
+    if (reviewError || productError) {
+    return <Text>Error: {reviewError || productError}</Text>;
+  }
   return (
-    <View>
+    <View style={styles.container}>
       <FlatList
-        data={data}
-        keyExtractor={item => item.product_id}
+        data={userReviews}
+        keyExtractor={item => item._id}
         renderItem={renderItem}
       />
     </View>
@@ -82,3 +109,91 @@ const ReviewsScreen = navigation => {
 };
 
 export default ReviewsScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f0f0f0',
+    padding: 10,
+    justifyContent: 'center',
+  },
+  imageWrapper: {
+    backgroundColor: '#f0f0f0', // Màu nền nhạt
+    padding: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  imageReview: {
+    width: 80,
+    height: 80,
+    borderRadius: 8,
+  },
+  renderItemReview: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  productInfo: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  nameReview: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginHorizontal: 15,
+  },
+  priceReview: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    color: '#27ae60',
+    marginTop: 4,
+    marginHorizontal: 15,
+  },
+  renderStarReview: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  dateReview: {
+    position: 'absolute',
+    right: 0,
+    fontSize: 12,
+    color: '#888',
+  },
+  comment: {
+    fontSize: 14,
+    color: '#555',
+    margin: 5,
+  },
+  starIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 2,
+  },
+  cardReview: {
+    padding: 10,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    width: '100%',
+    alignSelf: 'center',
+    marginBottom: 10,
+  },
+  noReviewsContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  noReviewsText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#666',
+    textAlign: 'center',
+  },
+});

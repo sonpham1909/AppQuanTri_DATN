@@ -1,10 +1,11 @@
 // redux/slices/reviewSlice.js
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchProductReviewResponses } from '../actions/actionsReview'; // Đảm bảo đường dẫn chính xác
+import { fetchProductReviewResponses,fetchUserReviews } from '../actions/actionsReview'; // Đảm bảo đường dẫn chính xác
 
 // Khởi tạo state ban đầu
 const initialState = {
-  reviewResponses: {}, // Lưu trữ danh sách đánh giá và phản hồi cho mỗi sản phẩm
+  userReviews: [],
+  reviewResponses:[], // Lưu trữ danh sách đánh giá và phản hồi cho mỗi sản phẩm
   isLoading: false,
   error: null,
 };
@@ -28,6 +29,18 @@ const reviewResponsesSlice = createSlice({
       .addCase(fetchProductReviewResponses.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
+      })
+      .addCase(fetchUserReviews.pending, state => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchUserReviews.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.userReviews = action.payload; // Cập nhật danh sách đánh giá từ API
+      })
+      .addCase(fetchUserReviews.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.error.message;
       });
   },
 });

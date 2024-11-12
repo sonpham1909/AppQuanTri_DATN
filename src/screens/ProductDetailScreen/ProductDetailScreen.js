@@ -578,14 +578,16 @@ const styles = StyleSheet.create({
 
   colorContainer: {
     flexDirection: 'row',
+    marginBottom:5
   },
   colorCircleWrapper: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    marginHorizontal: 4,
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight:7,
+    marginLeft:-3
   },
   selectedColorWrapper: {
     borderWidth: 2,

@@ -121,3 +121,26 @@ export const fetchtProductById = createAsyncThunk(
     }
   },
 );
+
+
+export const fetchProductById = createAsyncThunk(
+  'products/fetchProductById',
+  async (productId, thunkAPI) => {
+    try {
+      const token = await tokenService.getToken();
+      const response = await axios.get(`${API_URL}/products/${productId}/by-id`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return {
+        productId,
+        productDetails: response.data,
+      };
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response ? error.response.data.message : error.message
+      );
+    }
+  }
+);
