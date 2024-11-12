@@ -91,7 +91,7 @@ const CartScreen = ({ navigation }) => {
       />
 
       {/* Discount Code Input */}
-      <DiscountCodeInput discountCode={discountCode} onChangeCode={setDiscountCode} />
+     
 
       {/* Total Amount */}
       <TotalAmount total={totalAmount} />
