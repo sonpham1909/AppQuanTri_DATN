@@ -1,15 +1,20 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { register, login,fetchUserInfo } from '../actions/actionUser';
+import {createSlice} from '@reduxjs/toolkit';
+import {
+  register,
+  login,
+  fetchUserInfo,
+  fetchUserInfoVS1,
+} from '../actions/actionUser';
 
 const initialState = {
   user: null,
   token: null,
-  userInfo: null,
   isLoading: false,
   isError: false,
   isSuccess: false,
   message: '',
   userInfo: {},
+  userInfovs1: {},
 };
 
 const userSlice = createSlice({
@@ -17,16 +22,16 @@ const userSlice = createSlice({
   initialState,
 
   reducers: {
-    reset: (state) => {
+    reset: state => {
       state.isLoading = false;
       state.isError = false;
       state.isSuccess = false;
       state.message = '';
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
-      .addCase(register.pending, (state) => {
+      .addCase(register.pending, state => {
         state.isLoading = true;
       })
       .addCase(register.fulfilled, (state, action) => {
@@ -39,7 +44,7 @@ const userSlice = createSlice({
         state.isError = true;
         state.message = action.payload?.message || 'Đăng ký không thành công';
       })
-      .addCase(login.pending, (state) => {
+      .addCase(login.pending, state => {
         state.isLoading = true;
       })
       .addCase(login.fulfilled, (state, action) => {
@@ -54,7 +59,7 @@ const userSlice = createSlice({
         state.isError = true;
         state.message = action.payload?.message || 'Đăng nhập không thành công';
       })
-      .addCase(fetchUserInfo.pending, (state) => {
+      .addCase(fetchUserInfo.pending, state => {
         state.isLoading = true;
       })
       .addCase(fetchUserInfo.fulfilled, (state, action) => {
@@ -62,9 +67,23 @@ const userSlice = createSlice({
         state.userInfo[action.meta.arg] = action.payload;
         console.log('User info updated in store:', state.userInfo); // Debug
       })
-      
+      .addCase(fetchUserInfoVS1.pending, state => {
+        state.isLoading = true;
+      })
+      .addCase(fetchUserInfoVS1.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.userInfovs1 = action.payload;
+        console.log('User info fetched by token:', state.userInfovs1); // Debug
+      })
+      .addCase(fetchUserInfoVS1.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message =
+          action.payload?.message ||
+          'Lấy thông tin người dùng không thành công';
+      });
   },
 });
 
-export const { reset } = userSlice.actions;
+export const {reset} = userSlice.actions;
 export default userSlice.reducer;

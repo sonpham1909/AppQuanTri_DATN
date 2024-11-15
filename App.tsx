@@ -9,7 +9,6 @@ import BottomTabNavigator from './src/navigation/BottomTabNavigator';
 import CategoriesScreen from './src/screens/CategoriesScreen/CategoriesScreen';
 import InvoicesScreen from './src/screens/InvoicesScreen/InvoicesScreen';
 import ReviewsScreen from './src/screens/ReviewsScreen/ReviewsScreen';
-import store, { persistor } from './src/redux/store/store';
 // Đường dẫn tới store.js
 import { Provider } from 'react-redux'; // Thêm import Provider từ react-redux
 import CateClother from './src/screens/CateClotherScreen/CateClotherScreen';
@@ -24,15 +23,14 @@ import AllProductScreen from './src/screens/AllProductScreen/AllProductScreen'
 import SettingScreen from './src/screens/SettingScreen/SettingScreen';
 import ShippingAddressScreen from './src/screens/ShippingAddressScreen/ShippingAddressScreen';
 import AddAddress from './src/screens/ShippingAddressScreen/AddAddressScreen';
-import { PersistGate } from 'redux-persist/integration/react';
 import CartItem from './src/components/Cart/CartItem';
+import store from './src/redux/store/store';
 
 const Stack = createStackNavigator();
 
 const App = () => {
   return (
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
         <NavigationContainer>
           <Stack.Navigator
             initialRouteName="Welcom"
@@ -290,7 +288,6 @@ const App = () => {
            
           </Stack.Navigator>
         </NavigationContainer>
-      </PersistGate>
     </Provider>
   );
 };

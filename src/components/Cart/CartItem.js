@@ -1,17 +1,24 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { fetchtProductById1 } from '../../redux/actions/actionProduct';
 
 const CartItem = ({ item, onIncrease, onDecrease, onRemove, navigation }) => {
+  const dispatch = useDispatch();
+
 
   // Hàm điều hướng tới màn hình chi tiết sản phẩm
   const handleNavigateToProductDetail = () => {
-    if (item.product_id) {
-      // Điều hướng tới ProductDetailScreen với sản phẩm đã có trong giỏ hàng
-      navigation.navigate('ProductDetailScreen', { product: item.product_id });
-    } else {
-      console.error('Product information is not available');
-    }
+    dispatch(fetchtProductById1(item.product_id._id))
+      .unwrap() // Nếu bạn dùng Redux Toolkit, unwrap() giúp lấy kết quả từ Promise của thunk
+      .then(itemProduct => {
+        navigation.navigate('ProductDetailScreen', { product: itemProduct });
+      })
+      .catch(error => {
+        console.error('Error fetching product:', error);
+      });
   };
+ 
 
   return (
     <TouchableOpacity onPress={handleNavigateToProductDetail}>

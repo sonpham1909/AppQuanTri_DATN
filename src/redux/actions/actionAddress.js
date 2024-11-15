@@ -6,6 +6,24 @@ import {API_URL} from '@env';
 import tokenService from '../../services/tokenService';
 console.log('API_URL:', API_URL);
 
+export const fetchDefaultAddress = createAsyncThunk(
+  'addresses/fetchDefaultAddress',
+  async (_, thunkAPI) => {
+    try {
+      const token = await tokenService.getToken(); // Lấy token từ AsyncStorage
+      const response = await axios.get(`${API_URL}/address/default`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data; // Trả về thông tin địa chỉ mặc định
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response ? error.response.data.message : error.message
+      );
+    }
+  }
+);
 //  lấy tất cả địa chỉ
 export const fetchAllAddresses = createAsyncThunk(
   'addresses/fetchAllAddresses',

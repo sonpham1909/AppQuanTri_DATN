@@ -86,4 +86,27 @@ export const deleteCartItem = createAsyncThunk(
             return thunkAPI.rejectWithValue(error.response.data);
         }
     },
+    
 );
+
+
+// Hàm deleteAllCartItems - xóa toàn bộ các mục trong giỏ hàng của người dùng
+export const deleteAllCartItems = createAsyncThunk(
+    'cart/deleteAllCartItems',
+    async (_, thunkAPI) => {
+      try {
+        const token = await tokenService.getToken();
+        await axios.delete(`${API_URL}/cart/clearCart`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        return; // Không cần payload trả về khi xóa hết
+      } catch (error) {
+        console.error('Error deleting all cart items:', error);
+        return thunkAPI.rejectWithValue(
+          error.response ? error.response.data.message : error.message
+        );
+      }
+    }
+  );
