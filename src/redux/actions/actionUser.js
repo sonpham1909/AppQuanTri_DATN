@@ -47,3 +47,22 @@ export const fetchUserInfo = createAsyncThunk(
 );
 
 
+export const fetchUserInfoVS1 = createAsyncThunk(
+  'user/fetchUserInfoVs1',
+  async (_, thunkAPI) => {
+    try {
+      const token = await tokenService.getToken();
+      const response = await axios.get(`${API_URL}/users/getuserVersion1`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response ? error.response.data.message : error.message
+      );
+    }
+  }
+);
+

@@ -1,37 +1,52 @@
-import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 
-const PaymentMethod = ({ methods }) => {
-  const [selectedMethod, setSelectedMethod] = useState(null); // Quản lý trạng thái phương thức thanh toán được chọn
+const PaymentMethod = ({ methods, selectedMethod, onSelectMethod }) => {
+  const [selectedValue, setSelectedValue] = useState(selectedMethod);
+  const [selectedMethodImage, setSelectedMethodImage] = useState(null);
 
-  const handleSelectMethod = (method) => {
-    setSelectedMethod(method.name); // Cập nhật phương thức được chọn
+  useEffect(() => {
+    // Chọn phương thức thanh toán đầu tiên mặc định nếu chưa có giá trị được chọn
+    if (!selectedValue && methods.length > 0) {
+      setSelectedValue(methods[0]._id);
+      onSelectMethod(methods[0]._id);
+      setSelectedMethodImage(methods[0].image); // Đặt hình ảnh đầu tiên làm mặc định
+    }
+  }, [methods]);
+
+  const handleValueChange = (value) => {
+    setSelectedValue(value);
+    onSelectMethod(value);
+
+    // Tìm hình ảnh của phương thức được chọn
+    const method = methods.find((method) => method._id === value);
+    if (method) {
+      setSelectedMethodImage(method.image);
+    }
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Phương thức thanh toán</Text>
-      </View>
-      <View style={styles.infoBox}>
-        {methods.map((method, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.methodContainer}
-            onPress={() => handleSelectMethod(method)}
-          >
-          
-            <View style={styles.checkBox}>
-              {selectedMethod === method.name ? (
-                <Text style={styles.checked}>✓</Text> // Dấu tích khi được chọn
-              ) : (
-                <Text style={styles.unchecked}>○</Text> // Dấu chưa chọn
-              )}
-            </View>
-            <Image source={method.icon} style={styles.methodIcon} />
-            <Text style={styles.methodText}>{method.name}</Text>
-          </TouchableOpacity>
-        ))}
+      <Text style={styles.title}>Phương thức thanh toán</Text>
+      <View style={styles.pickerContainer}>
+        {selectedMethodImage && (
+          <Image
+            source={{ uri: selectedMethodImage }}
+            style={styles.methodImage}
+          />
+        )}
+        <Picker
+          selectedValue={selectedValue}
+          onValueChange={(itemValue) => handleValueChange(itemValue)}
+          style={styles.picker}
+        >
+          {methods
+            .filter((method) => method.is_active) // Lọc chỉ phương thức đang hoạt động
+            .map((method) => (
+              <Picker.Item key={method._id} label={method.name} value={method._id} />
+            ))}
+        </Picker>
       </View>
     </View>
   );
@@ -47,44 +62,38 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   title: {
-    fontFamily:'Nunito Sans',
     fontSize: 18,
-    color: '#242424',
     fontWeight: 'bold',
-    marginBottom:15,
+    fontFamily: 'Nunito Sans',
+    color: '#242424',
+    marginBottom: 15,
   },
   infoBox: {
     backgroundColor: '#F9F9F9',
-    padding: 15,
     borderRadius: 8,
   },
-  methodContainer: {
+  pickerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 10,
+    backgroundColor: '#F9F9F9',
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#DDD',
+    marginLeft:8
   },
-  methodIcon: {
-    width: 30,
-    height: 30,
+  picker: {
+    flex: 1,
+    backgroundColor: '#F9F9F9',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#DDD',
     marginRight: 10,
   },
-  methodText: {
-    flex: 1,
-    color: '#333',
-    fontSize: 14,
-  },
-  checkBox: {
-    marginLeft: 10,
-    marginRight:0,
-  },
-  checked: {
-    fontSize: 18,
-    color: '#00A65E',
-  },
-  unchecked: {
-    fontSize: 18,
-    color: '#888',
+ 
+  methodImage: {
+    width: 50,
+    height: 30,
   },
 });
 

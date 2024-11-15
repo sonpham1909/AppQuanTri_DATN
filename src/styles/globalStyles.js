@@ -141,45 +141,7 @@ const globalStyles = StyleSheet.create({
     width: 20,
     height: 20,
   },
-  imageReview: {
-    width: 100,
-    height: 100,
-    marginRight: 10,
-    borderRadius: 5,
-  },
-  renderItemReview: {
-    flexDirection: 'row',
-  },
-  nameReview: {
-    marginTop: 20,
-  },
-  priceReview: {
-    fontWeight: 'bold',
-    fontSize: 20,
-    color: 'black',
-  },
-  renderStarReview: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 5,
-  },
-  dateReview: {
-    right: 10,
-    position: 'absolute',
-  },
-  cardReview:{
-    padding: 10,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 2,
-    width: '90%',  // Chiều rộng chiếm 90% màn hình
-    alignSelf: 'center', // Căn giữa theo chiều ngang
-    marginTop:10
-  },
+  
   containerSetting:{
     padding: 20,
     backgroundColor: '#f8f8f8',

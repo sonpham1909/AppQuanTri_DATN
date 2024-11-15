@@ -1,14 +1,15 @@
+// components/ShippingInfo.js
 import React from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import {useNavigation} from '@react-navigation/native'; // Để điều hướng
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-const ShippingInfo = ({name, address}) => {
+const ShippingInfo = ({ recipientName, addressDetail, recipientPhone, notes }) => {
   const navigation = useNavigation();
 
   const handleEditPress = () => {
-    // Điều hướng sang màn hình chỉnh sửa địa chỉ
-    navigation.navigate('ShippingAddressScreen'); // Tên màn hình đích, tùy vào cấu hình navigation
+    navigation.navigate('ShippingAddressScreen'); // Điều hướng đến màn hình chỉnh sửa địa chỉ
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -17,11 +18,19 @@ const ShippingInfo = ({name, address}) => {
           <Text style={styles.editText}>✎</Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.infoBox}>
-        <Text style={styles.name}>{name}</Text>
-        <View style={styles.separator} />
-        <Text style={styles.address}>{address}</Text>
-      </View>
+      {recipientName ? (
+        <View style={styles.infoBox}>
+          <Text style={styles.name}>{recipientName}</Text>
+          <View style={styles.separator} />
+          <Text style={styles.address}>
+            {addressDetail?.street}, {addressDetail?.ward}, {addressDetail?.district}, {addressDetail?.city}{'\n'}
+            {recipientPhone},{'\n'}
+            {notes}
+          </Text>
+        </View>
+      ) : (
+        <Text style={styles.noAddressText}>Chưa có địa chỉ mặc định</Text>
+      )}
     </View>
   );
 };
@@ -36,10 +45,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   title: {
-    fontFamily: 'Nunito Sans',
     fontSize: 18,
-    color: '#242424',
     fontWeight: 'bold',
+    color: '#242424',
     marginBottom: 15,
   },
   editText: {
@@ -49,10 +57,9 @@ const styles = StyleSheet.create({
   infoBox: {
     backgroundColor: '#F9F9F9',
     borderRadius: 8,
-    height: 100,
+    padding: 10,
   },
   name: {
-    padding: 10,
     fontWeight: 'bold',
     color: '#000000',
     fontSize: 16,
@@ -63,9 +70,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#E0E0E0',
   },
   address: {
-    padding: 10,
     color: '#888',
     fontSize: 14,
+  },
+  noAddressText: {
+    fontSize: 16,
+    color: '#888',
+  },
+  errorText: {
+    fontSize: 16,
+    color: 'red',
   },
 });
 

@@ -1,8 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchAllAddresses, updateDefaultAddress, deleteAddress,addAddress } from '../actions/actionAddress';
+import { fetchAllAddresses, updateDefaultAddress, deleteAddress,addAddress,fetchDefaultAddress } from '../actions/actionAddress';
 
 const initialState = {
   addressesList: [],
+  defaultAddress: null,
   isLoading: false,
   error: null,
 };
@@ -11,7 +12,6 @@ const addressSlice = createSlice({
   name: 'addresses',
   initialState,
   reducers: {},
-
   extraReducers: (builder) => {
     builder
       // Xử lý khi lấy tất cả địa chỉ
@@ -25,13 +25,10 @@ const addressSlice = createSlice({
         state.addressesList = Array.isArray(action.payload) ? action.payload : []; // Gán giá trị luôn là mảng
         state.error = null;
       })
-      
       .addCase(fetchAllAddresses.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message;
       })
-
-    
       // Xử lý khi cập nhật địa chỉ mặc định
       .addCase(updateDefaultAddress.pending, (state) => {
         state.isLoading = true;
@@ -48,7 +45,6 @@ const addressSlice = createSlice({
         state.isLoading = false;
         state.error = action.error.message;
       })
-
       // Xử lý khi xóa địa chỉ
       .addCase(deleteAddress.pending, (state) => {
         state.isLoading = true;
@@ -63,7 +59,7 @@ const addressSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload;
       })
-      //thêm địa chỉ mới 
+      // Thêm địa chỉ mới
       .addCase(addAddress.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -76,6 +72,19 @@ const addressSlice = createSlice({
       .addCase(addAddress.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message;
+      })
+      // Lấy địa chỉ mặc định của người dùng
+      .addCase(fetchDefaultAddress.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchDefaultAddress.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.defaultAddress = action.payload;
+      })
+      .addCase(fetchDefaultAddress.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
       });
   },
 });

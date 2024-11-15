@@ -2,29 +2,30 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-const InvoiceCard = () => {
+const InvoiceCard = ({ order }) => {
   const navigation = useNavigation();
 
   const handleDetailPress = () => {
-    navigation.navigate('DetailedOrders');
+    navigation.navigate('DetailedOrders', { orderId: order._id });
   };
 
   return (
     <View style={styles.invoiceCard}>
       <View style={{ paddingHorizontal: 20, paddingTop: 20 }}>
         <View style={styles.invoiceHeader}>
-          <Text style={styles.invoiceText}>Order No238562312</Text>
-          <Text style={styles.detailText}>20/03/2020</Text>
+          <Text style={styles.invoiceText}>Order {order._id}</Text>
+          <Text style={styles.detailText}>{new Date(order.createdAt).toLocaleDateString()}</Text>
         </View>
       </View>
       <View style={styles.divider} />
       <View style={{ paddingHorizontal: 40, paddingBottom: 20 }}>
         <View style={styles.invoiceDetails}>
           <Text style={styles.detailText}>
-            Số lượng: <Text style={styles.invoiceText}>03</Text>
+            Số lượng: <Text style={styles.invoiceText}>{order.total_products}</Text>
           </Text>
           <Text style={styles.detailText}>
-            Tổng tiền: <Text style={styles.boldText}>$150</Text>
+            Tổng tiền: <Text style={styles.boldText}>{Number(order.total_amount).toLocaleString('vi-VN')} $
+            </Text>
           </Text>
         </View>
         <View style={styles.invoiceActions}>

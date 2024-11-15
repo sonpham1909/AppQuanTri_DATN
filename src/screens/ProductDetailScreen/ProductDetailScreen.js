@@ -31,8 +31,6 @@ const ProductDetailScreen = ({ route, navigation }) => {
   // Tạo dispatch để gửi action đến Redux store
   const dispatch = useDispatch();
 
-  const user = useSelector(state => state.user.user);
-  console.log(user._id);
 
 
 
@@ -157,7 +155,6 @@ const ProductDetailScreen = ({ route, navigation }) => {
   const handleAddToCart = () => {
     const variant = variants.find(variant => variant.color_code === selectedColor);
     const cartData = {
-      userId: user._id,
       productId: product._id,
       color: variant?.color,
       size: selectedSize,

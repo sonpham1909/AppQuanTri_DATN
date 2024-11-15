@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import React, {useEffect, useState} from 'react';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   View,
@@ -15,32 +15,26 @@ import colors from '../constants/colors';
 import Nofication from '../screens/Nofication/Nofication';
 import Favotires from '../screens/Favotires/Favotires';
 import Personal from '../screens/Personal/Personal';
-import { useNavigation } from '@react-navigation/native';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchCart } from '../redux/actions/actionCart';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {fetchCart} from '../redux/actions/actionCart';
 
 const Tab = createBottomTabNavigator();
 
 const CustomHomeHeader = () => {
   const dispatch = useDispatch();
-  const {cart, cartLength,isLoading} = useSelector(state => state.cart);
-  const user = useSelector(state => state.user.user);
- 
+  const {cart, cartLength, isLoading} = useSelector(state => state.cart);
 
   useEffect(() => {
-    if (user && user._id) {
-      dispatch(fetchCart(user._id));
-    }
-  }, [dispatch, user]);
+    dispatch(fetchCart());
+  }, [dispatch]);
   useEffect(() => {
     if (!isLoading) {
       console.log('Cart:', cartLength);
     }
   }, [isLoading, cart]);
-  const CountCart = cartLength? cartLength : 0
-  
-  
-  
+  const CountCart = cartLength ? cartLength : 0;
+
   const navigation = useNavigation();
   const [searchText, setSearchText] = useState('');
   const [cartItemCount, setCartItemCount] = useState(3); // Đặt giả định là 3 sản phẩm trong giỏ
@@ -77,7 +71,7 @@ const CustomHomeHeader = () => {
             size={24} // Kích thước của icon
             color="#00A65E" // Màu sắc của icon
           />
-          {CountCart >0  && (
+          {CountCart > 0 && (
             <View style={styles.badgeContainer}>
               <Text style={styles.badgeText}>{cartLength}</Text>
             </View>
@@ -91,8 +85,8 @@ const CustomHomeHeader = () => {
 const BottomTabNavigator = () => {
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ color, size, focused }) => {
+      screenOptions={({route}) => ({
+        tabBarIcon: ({color, size, focused}) => {
           let iconName;
 
           if (route.name === 'Trang chủ') {
@@ -135,17 +129,17 @@ const BottomTabNavigator = () => {
       <Tab.Screen
         name="Yêu thích"
         component={Favotires}
-        options={{ title: 'Yêu thích', headerTitleAlign: 'center' }}
+        options={{title: 'Yêu thích', headerTitleAlign: 'center'}}
       />
       <Tab.Screen
         name="Thông báo"
         component={Nofication}
-        options={{ title: 'Thông báo', headerTitleAlign: 'center' }}
+        options={{title: 'Thông báo', headerTitleAlign: 'center'}}
       />
       <Tab.Screen
         name="Cá nhân"
         component={Personal}
-        options={{ title: 'Cá nhân', headerTitleAlign: 'center' }}
+        options={{title: 'Cá nhân', headerTitleAlign: 'center'}}
       />
     </Tab.Navigator>
   );
@@ -189,7 +183,7 @@ const styles = StyleSheet.create({
   badgeContainer: {
     position: 'absolute',
     right: -5, // Tùy chỉnh vị trí để badge nằm ở góc trên bên phải của icon
-    top: -5,  // Tùy chỉnh vị trí
+    top: -5, // Tùy chỉnh vị trí
     backgroundColor: 'red',
     borderRadius: 10,
     width: 20,

@@ -6,7 +6,6 @@ import {
   fetchPopularProducts,
   fetchProductsByVariant,
   fetchProductById,
-  fetchtProductById,
   fetchtProductById1,
 } from '../actions/actionProduct';
 
