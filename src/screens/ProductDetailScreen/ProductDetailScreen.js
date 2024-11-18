@@ -58,6 +58,9 @@ const ProductDetailScreen = ({ route, navigation }) => {
   const [selectedColorM, setSelectedColorM] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const scaleValue = useRef(new Animated.Value(0)).current;
+  const [selectedReviewImageIndex, setSelectedReviewImageIndex] = useState(0);
+  const [isImageModalVisible, setImageModalVisible] = useState(false);
+  const [selectedReviewImages, setSelectedReviewImages] = useState([]);
 
   // Các biến được suy ra từ dữ liệu Redux và trạng thái, dùng để hiển thị tổng số đánh giá và đánh giá trung bình
   const productReviews = reviewResponses[product._id] || [];
@@ -219,6 +222,13 @@ const ProductDetailScreen = ({ route, navigation }) => {
     itemVisiblePercentThreshold: 50,
   };
 
+  //xem ảnh review
+  const handleImagePress = (images, index) => {
+    setSelectedReviewImages(images);
+    setSelectedReviewImageIndex(index);
+    setImageModalVisible(true);
+  };
+
   // Render chính của màn hình chi tiết sản phẩm
   return (
     <ScrollView style={styles.container}>
@@ -297,7 +307,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
     // Hàm render các tùy chọn màu sắc sản phẩm
     return (
       <View>
-        
+
 
         <View style={styles.colorContainer}>
           {variants.map((variant, i) => (
@@ -306,13 +316,13 @@ const ProductDetailScreen = ({ route, navigation }) => {
               style={[
                 styles.colorCircleWrapper,
                 selectedColor === variant.color_code &&
-                  styles.selectedColorWrapper,
+                styles.selectedColorWrapper,
               ]}
               onPress={() => handleColorSelect(variant)}>
               <View
                 style={[
                   styles.colorCircle,
-                  {backgroundColor: variant.color_code},
+                  { backgroundColor: variant.color_code },
                 ]}
               />
             </TouchableOpacity>
@@ -483,6 +493,50 @@ const ProductDetailScreen = ({ route, navigation }) => {
           </View>
         </View>
 
+        <Modal
+          visible={isImageModalVisible}
+          transparent={true}
+          onRequestClose={() => setImageModalVisible(false)}
+        >
+          <View style={styles.imageModalContainer}>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setImageModalVisible(false)}
+            >
+              <MaterialCommunityIcons name="close" size={30} color="#fff" />
+            </TouchableOpacity>
+
+            <FlatList
+              data={selectedReviewImages}
+              horizontal
+              pagingEnabled
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item }) => (
+                <Image
+                  source={{ uri: item }}
+                  style={styles.fullscreenImage}
+                  resizeMode="contain"
+                />
+              )}
+              initialScrollIndex={selectedReviewImageIndex}
+              getItemLayout={(data, index) => (
+                { length: 400, offset: 400 * index, index }
+              )}
+              onViewableItemsChanged={useRef(({ viewableItems }) => {
+                if (viewableItems.length > 0) {
+                  setSelectedReviewImageIndex(viewableItems[0].index);
+                }
+              }).current}
+              viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
+            />
+
+            {/* Hiển thị chỉ mục của ảnh hiện tại trên tổng số ảnh */}
+            <Text style={styles.imageIndexText}>
+              {selectedReviewImageIndex + 1} / {selectedReviewImages.length}
+            </Text>
+          </View>
+        </Modal>
+
         {isLoading ? (
           <ActivityIndicator size="large" />
         ) : error ? (
@@ -497,7 +551,13 @@ const ProductDetailScreen = ({ route, navigation }) => {
   function renderReviewItem(review, index) {
     // Hàm render một mục đánh giá của sản phẩm
     const formattedDate = new Date(review.createdAt).toLocaleDateString('vi-VN');
-
+  
+    // Tách danh sách hình ảnh thành các nhóm nhỏ mỗi nhóm chứa hai ảnh
+    const groupedImages = [];
+    for (let i = 0; i < review.img.length; i += 2) {
+      groupedImages.push(review.img.slice(i, i + 2));
+    }
+  
     return (
       <View
         key={review._id}
@@ -520,10 +580,27 @@ const ProductDetailScreen = ({ route, navigation }) => {
           {renderStars(review.rating)}
           <Text style={styles.reviewDate}>{formattedDate}</Text>
         </View>
+  
+        {/* Sử dụng map để hiển thị ảnh theo hàng hai ảnh */}
+        {groupedImages.map((imageGroup, groupIndex) => (
+          <View key={groupIndex} style={{
+            flexDirection:'row',
+            alignItems:'center'
+          }}>
+            {imageGroup.map((img, imgIndex) => (
+              <TouchableOpacity
+                key={imgIndex}
+                onPress={() => handleImagePress(review.img, groupIndex * 2 + imgIndex)}>
+                <Image source={{ uri: img }}  />
+              </TouchableOpacity>
+            ))}
+          </View>
+        ))}
+  
         <Text style={styles.reviewComment}>Size: {review.size}</Text>
         <Text style={styles.reviewComment}>Màu: {review.color}</Text>
         <Text style={styles.reviewComment}>{review.comment}</Text>
-       
+  
         {review.responses?.map(response => (
           <Text key={response._id} style={styles.responseText}>
             Phản hồi từ người bán: {response.comment}
@@ -532,6 +609,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
       </View>
     );
   }
+  
 };
 
 export default ProductDetailScreen;
@@ -582,7 +660,7 @@ const styles = StyleSheet.create({
 
   colorContainer: {
     flexDirection: 'row',
-    marginBottom:5
+    marginBottom: 5
   },
   colorCircleWrapper: {
     width: 36,
@@ -590,8 +668,8 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight:7,
-    marginLeft:-3
+    marginRight: 7,
+    marginLeft: -3
   },
   selectedColorWrapper: {
     borderWidth: 2,
@@ -783,6 +861,12 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginRight: 8,
   },
+  imgReview: {
+    width: 80,
+    height: 80,
+
+    marginRight: 8,
+  },
   userName: {
     fontSize: 16,
     fontWeight: 'bold',
@@ -863,8 +947,8 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight:7,
-    marginLeft:-3
+    marginRight: 7,
+    marginLeft: -3
   },
   selectedColorName: {
     marginRights: 10,
@@ -872,4 +956,31 @@ const styles = StyleSheet.create({
     color: '#000',
     fontWeight: 'bold',
   },
+  imageModalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fullscreenImage: {
+    width: 420, // Chiều rộng cố định cho mỗi ảnh trong slide
+    height: '80%',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 30,
+    right: 20,
+    zIndex: 1,
+  },
+  imageIndexText: {
+    fontSize: 18,
+    color: '#fff',
+    textAlign: 'center',
+    marginTop: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 10,
+  },
+  
 });

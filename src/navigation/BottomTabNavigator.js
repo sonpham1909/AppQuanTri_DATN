@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import React, { useEffect, useState } from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   View,
@@ -9,21 +9,42 @@ import {
   StyleSheet,
   Text,
   Alert,
+  Modal,
 } from 'react-native';
 import HomeScreen from '../screens/HomeScreen/HomeScreen';
 import colors from '../constants/colors';
 import Nofication from '../screens/Nofication/Nofication';
 import Favotires from '../screens/Favotires/Favotires';
 import Personal from '../screens/Personal/Personal';
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
-import {fetchCart} from '../redux/actions/actionCart';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCart } from '../redux/actions/actionCart';
 
 const Tab = createBottomTabNavigator();
 
 const CustomHomeHeader = () => {
   const dispatch = useDispatch();
-  const {cart, cartLength, isLoading} = useSelector(state => state.cart);
+  const { cart, cartLength, isLoading } = useSelector(state => state.cart);
+  const [isModalSearch, setisModalSearch] = useState(false);
+
+  const handlePressSearchModal = () => {
+    navigation.navigate('StartSearch')
+
+  }
+
+  const Onclose = () => {
+    setisModalSearch(false);
+  }
+
+  //gửi text để tìm kiếm
+  handleOnSearch = (searchKeyword) =>{
+ 
+    if(searchKeyword){
+      navigation.navigate('SearchScreen',{searchKeyWord: searchKeyword}, { merge: true });
+    }
+
+  }
+
 
   useEffect(() => {
     dispatch(fetchCart());
@@ -54,13 +75,25 @@ const CustomHomeHeader = () => {
           source={require('../assets/images/home_search.png')}
           style={styles.icon}
         />
+        <TouchableOpacity
+        style={{
+          flex:1,
+          height:40,
+          zIndex:2
+        }}
+         onPress={handlePressSearchModal}>
         <TextInput
           placeholder="Tìm Kiếm..."
           style={styles.searchInput}
           value={searchText}
           onChangeText={handleTextChange} // Cập nhật text khi người dùng nhập
           maxLength={40} // Giới hạn số ký tự
+         
+          editable={false}
+          pointerEvents='none'
+          
         />
+        </TouchableOpacity>
       </View>
       <TouchableOpacity
         style={styles.notificationButton}
@@ -78,15 +111,78 @@ const CustomHomeHeader = () => {
           )}
         </View>
       </TouchableOpacity>
+      <SearchModal visible={isModalSearch} onClose={Onclose} onSearch={handleOnSearch}/>
+
     </View>
+  );
+};
+
+
+const SearchModal = ({ visible, onClose, onSearch }) => {
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const handleBackPress = () => {
+    if (searchKeyword) {
+      // Nếu có text thì xóa hết text
+      setSearchKeyword("");
+    } else {
+      // Nếu không có text thì thoát modal
+      onClose();
+    }
+  };
+
+  const handleClearText = () => {
+    setSearchKeyword("");
+  };
+
+
+  return (
+    <Modal visible={visible} animationType="slide" transparent={true} onRequestClose={onClose}>
+      <View style={styles.modalContainer}>
+        <View style={styles.headerModalContainer}>
+          <TouchableOpacity onPress={handleBackPress} style={styles.backButton}>
+            <MaterialCommunityIcons
+              name="arrow-left" // Icon quay lại
+              size={24} // Kích thước của icon
+              color="#00A65E" // Màu sắc của icon
+            />
+          </TouchableOpacity>
+          <View style={styles.searchInputContainer}>
+            <TextInput
+              style={styles.searchInputModal}
+              placeholder="Tìm kiếm sản phẩm..."
+              value={searchKeyword}
+              onChangeText={setSearchKeyword}
+              onSubmitEditing={() => onSearch(searchKeyword)}
+              autoFocus={true} 
+            />
+            {searchKeyword.length > 0 && (
+              <TouchableOpacity onPress={handleClearText} style={styles.clearIcon}>
+                <MaterialCommunityIcons name="close-circle" size={20} color="#00A65E" />
+              </TouchableOpacity>
+            )}
+               <TouchableOpacity
+            style={styles.searchButton}
+            onPress={() => onSearch(searchKeyword)}
+          >
+            <MaterialCommunityIcons
+              name="magnify" // Icon tìm kiếm
+              size={24} // Kích thước của icon
+              color="white" // Màu sắc của icon
+            />
+          </TouchableOpacity>
+          </View>
+       
+        </View>
+      </View>
+    </Modal>
   );
 };
 
 const BottomTabNavigator = () => {
   return (
     <Tab.Navigator
-      screenOptions={({route}) => ({
-        tabBarIcon: ({color, size, focused}) => {
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size, focused }) => {
           let iconName;
 
           if (route.name === 'Trang chủ') {
@@ -129,17 +225,17 @@ const BottomTabNavigator = () => {
       <Tab.Screen
         name="Yêu thích"
         component={Favotires}
-        options={{title: 'Yêu thích', headerTitleAlign: 'center'}}
+        options={{ title: 'Yêu thích', headerTitleAlign: 'center' }}
       />
       <Tab.Screen
         name="Thông báo"
         component={Nofication}
-        options={{title: 'Thông báo', headerTitleAlign: 'center'}}
+        options={{ title: 'Thông báo', headerTitleAlign: 'center' }}
       />
       <Tab.Screen
         name="Cá nhân"
         component={Personal}
-        options={{title: 'Cá nhân', headerTitleAlign: 'center'}}
+        options={{ title: 'Cá nhân', headerTitleAlign: 'center' }}
       />
     </Tab.Navigator>
   );
@@ -159,10 +255,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     borderRadius: 20,
     paddingHorizontal: 15,
+    zIndex:1
   },
   searchInput: {
     flex: 1,
-    height: 40,
+    height: '100%',
   },
   notificationButton: {
     padding: 10,
@@ -195,6 +292,53 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 12,
     fontWeight: 'bold',
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+    justifyContent: 'flex-start',
+  },
+  headerModalContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingTop: 40, // Đặt padding trên để thanh tìm kiếm nằm ở phía trên cùng
+  },
+  backButton: {
+    paddingRight: 10,
+  },
+  searchInputModal: {
+    flex: 1,
+    backgroundColor: '#fff',
+    borderWidth: 2,
+    borderColor: '#00A65E',
+    borderRadius: 8,
+    padding: 10,
+  },
+  searchButton: {
+    backgroundColor: '#00A65E',
+    padding: 10,
+    
+    marginLeft: 10,
+
+  },
+  searchInputContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderWidth: 2,
+    borderColor: '#00A65E',
+    borderRadius: 8,
+    paddingLeft: 10,
+    marginLeft: 10,
+  },
+  searchInputModal: {
+    flex: 1,
+    height: 40,
+  },
+  clearIcon: {
+    marginLeft: 5,
   },
 });
 

@@ -26,266 +26,302 @@ import AddAddress from './src/screens/ShippingAddressScreen/AddAddressScreen';
 import store from './src/redux/store/store';
 import DeliveredOrders from './src/screens/DeliveredOrders/DeliveredOrders';
 import AddReview from './src/screens/AddReview/AddReview';
+import SearchScreen from './src/screens/SearchScreen/SearchScreen';
+import StartSearch from './src/screens/SearchScreen/StartSearch';
 const Stack = createStackNavigator();
 
 const App = () => {
   return (
     <Provider store={store}>
-        <NavigationContainer>
-          <Stack.Navigator
-            initialRouteName="Welcom"
-            screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Welcom" component={Welcom} />
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Registered" component={Registered} />
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Welcom"
+          screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Welcom" component={Welcom} />
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Registered" component={Registered} />
 
-            <Stack.Screen name="Home" component={BottomTabNavigator} />
+          <Stack.Screen name="Home" component={BottomTabNavigator} />
 
-            <Stack.Screen
-              name="CategoriesScreen"
-              component={CategoriesScreen}
-              options={{
-                headerStyle: {
-                  backgroundColor: '#00A65E', // Màu nền xanh
-                },
-                headerTintColor: '#fff', // Màu chữ trắng
-                headerTitleStyle: {
-                  fontWeight: 'bold', // Kiểu chữ tiêu đề
-                },
-              }}
-            />
+          <Stack.Screen
+            name="CategoriesScreen"
+            component={CategoriesScreen}
+            options={{
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
 
-            <Stack.Screen
-              name="InvoicesScreen"
-              component={InvoicesScreen}
-              options={{
-                headerShown: true,
-                headerTitleAlign: 'center',
-                title: 'Hóa đơn',
-                headerStyle: {
-                  backgroundColor: '#00A65E', // Màu nền xanh
-                },
-                headerTintColor: '#fff', // Màu chữ trắng
-                headerTitleStyle: {
-                  fontWeight: 'bold', // Kiểu chữ tiêu đề
-                },
-              }}
-            />
+          <Stack.Screen
+            name="InvoicesScreen"
+            component={InvoicesScreen}
+            options={{
+              headerShown: true,
+              headerTitleAlign: 'center',
+              title: 'Hóa đơn',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
 
-            <Stack.Screen
-              name="ReviewsScreen"
-              component={ReviewsScreen}
-              options={{
-                headerShown: true,
-                title: 'Nhận xét',
-                headerTitleAlign: 'center',
-                headerStyle: {
-                  backgroundColor: '#00A65E', // Màu nền xanh
-                },
-                headerTintColor: '#fff', // Màu chữ trắng
-                headerTitleStyle: {
-                  fontWeight: 'bold', // Kiểu chữ tiêu đề
-                },
-              }}
-            />
+          <Stack.Screen
+            name="SearchScreen"
+            component={SearchScreen}
+            options={{
+              headerShown: false,
+              headerTitleAlign: 'center',
+              title: 'Hóa đơn',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
 
-            <Stack.Screen
-              name="CateClother"
-              component={CateClother}
-              options={{
-                headerTitleAlign: 'center',
-                headerStyle: {
-                  backgroundColor: '#00A65E', // Màu nền xanh
-                },
-                headerTintColor: '#fff', // Màu chữ trắng
-                headerTitleStyle: {
-                  fontWeight: 'bold', // Kiểu chữ tiêu đề
-                },
-              }}
-            />
-            <Stack.Screen
-              name="Cart"
-              component={Cart}
-              options={{
-                headerShown: true,
-                title: 'Giỏ hàng',
-                headerTitleAlign: 'center',
-                headerStyle: {
-                  backgroundColor: '#00A65E', // Màu nền xanh
-                },
-                headerTintColor: '#fff', // Màu chữ trắng
-                headerTitleStyle: {
-                  fontWeight: 'bold', // Kiểu chữ tiêu đề
-                },
-              }}
-            />
-            <Stack.Screen
-              name="Checkout"
-              component={Checkout}
-              options={{
-                headerShown: true,
-                title: 'Thanh toán',
-                headerTitleAlign: 'center',
-                headerStyle: {
-                  backgroundColor: '#00A65E', // Màu nền xanh
-                },
-                headerTintColor: '#fff', // Màu chữ trắng
-                headerTitleStyle: {
-                  fontWeight: 'bold', // Kiểu chữ tiêu đề
-                },
-              }}
-            />
+          <Stack.Screen
+            name="ReviewsScreen"
+            component={ReviewsScreen}
+            options={{
+              headerShown: true,
+              title: 'Nhận xét',
+              headerTitleAlign: 'center',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
+          
+          <Stack.Screen
+            name="StartSearch"
+            component={StartSearch}
+            options={{
+              headerShown: false,
+              title: 'Nhận xét',
+              headerTitleAlign: 'center',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
 
-            <Stack.Screen
-              name="Favorites"
-              component={Favorites}
-              options={{
-                headerShown: true,
-                title: 'Favorites',
-                headerTitleAlign: 'center',
-                headerStyle: {
-                  backgroundColor: '#00A65E', // Màu nền xanh
-                },
-                headerTintColor: '#fff', // Màu chữ trắng
-                headerTitleStyle: {
-                  fontWeight: 'bold', // Kiểu chữ tiêu đề
-                },
-              }}
-            />
+          <Stack.Screen
+            name="CateClother"
+            component={CateClother}
+            options={{
+              headerTitleAlign: 'center',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
+          <Stack.Screen
+            name="Cart"
+            component={Cart}
+            options={{
+              headerShown: true,
+              title: 'Giỏ hàng',
+              headerTitleAlign: 'center',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
+          <Stack.Screen
+            name="Checkout"
+            component={Checkout}
+            options={{
+              headerShown: true,
+              title: 'Thanh toán',
+              headerTitleAlign: 'center',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
 
-            <Stack.Screen
-              name="Notification"
-              component={Notification}
-              options={{
-                headerShown: true,
-                title: 'Notification',
-                headerTitleAlign: 'center',
-                headerStyle: {
-                  backgroundColor: '#00A65E', // Màu nền xanh
-                },
-                headerTintColor: '#fff', // Màu chữ trắng
-                headerTitleStyle: {
-                  fontWeight: 'bold', // Kiểu chữ tiêu đề
-                },
-              }}
-            />
-            <Stack.Screen
-              name="DetailedOrders"
-              component={DetailedOrders}
-              options={{
-                headerShown: true,
-                headerTitleAlign: 'center',
-                title: 'Chi tiết đơn hàng',
-                headerStyle: {
-                  backgroundColor: '#00A65E', // Màu nền xanh
-                },
-                headerTintColor: '#fff', // Màu chữ trắng
-                headerTitleStyle: {
-                  fontWeight: 'bold', // Kiểu chữ tiêu đề
-                },
-              }}
-            />
+          <Stack.Screen
+            name="Favorites"
+            component={Favorites}
+            options={{
+              headerShown: true,
+              title: 'Favorites',
+              headerTitleAlign: 'center',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
 
-            <Stack.Screen
-              name="ProductDetailScreen"
-              component={ProductDetailScreen}
-              options={{
-                headerShown: true,
-                title: 'Chi tiết sản phẩm',
-                headerTitleAlign: 'center',
-                headerStyle: {
-                  backgroundColor: '#00A65E', // Màu nền xanh
-                },
-                headerTintColor: '#fff', // Màu chữ trắng
-                headerTitleStyle: {
-                  fontWeight: 'bold', // Kiểu chữ tiêu đề
-                },
-              }}
-            />
-            <Stack.Screen
-              name="Congrats"
-              component={Congrats}
-              options={{
-                headerShown: false,
-                title: 'Congrats',
-                headerTitleAlign: 'center',
-                headerStyle: {
-                  backgroundColor: '#00A65E', // Màu nền xanh
-                },
-                headerTintColor: '#fff', // Màu chữ trắng
-                headerTitleStyle: {
-                  fontWeight: 'bold', // Kiểu chữ tiêu đề
-                },
-              }}
-            />
+          <Stack.Screen
+            name="Notification"
+            component={Notification}
+            options={{
+              headerShown: true,
+              title: 'Notification',
+              headerTitleAlign: 'center',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
+          <Stack.Screen
+            name="DetailedOrders"
+            component={DetailedOrders}
+            options={{
+              headerShown: true,
+              headerTitleAlign: 'center',
+              title: 'Chi tiết đơn hàng',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
 
-            <Stack.Screen
-              name="AllProductScreen"
-              component={AllProductScreen}
-              options={{
-                headerShown: true,
-                title: 'Tất cả sản phẩm',
-                headerTitleAlign: 'center',
-                headerStyle: {
-                  backgroundColor: '#00A65E', // Màu nền xanh
-                },
-                headerTintColor: '#fff', // Màu chữ trắng
-                headerTitleStyle: {
-                  fontWeight: 'bold', // Kiểu chữ tiêu đề
-                },
-              }}
-            />
+          <Stack.Screen
+            name="ProductDetailScreen"
+            component={ProductDetailScreen}
+            options={{
+              headerShown: true,
+              title: 'Chi tiết sản phẩm',
+              headerTitleAlign: 'center',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
+          <Stack.Screen
+            name="Congrats"
+            component={Congrats}
+            options={{
+              headerShown: false,
+              title: 'Congrats',
+              headerTitleAlign: 'center',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
 
-            <Stack.Screen
-              name="ShippingAddressScreen"
-              component={ShippingAddressScreen}
-              options={{
-                headerShown: true,
-                title: 'Địa chỉ',
-                headerTitleAlign: 'center',
-                headerStyle: {
-                  backgroundColor: '#00A65E', // Màu nền xanh
-                },
-                headerTintColor: '#fff', // Màu chữ trắng
-                headerTitleStyle: {
-                  fontWeight: 'bold', // Kiểu chữ tiêu đề
-                },
-              }}
-            />
-            <Stack.Screen
-              name="AddAddress"
-              component={AddAddress}
-              options={{
-                headerShown: true,
-                title: 'Thêm Địa chỉ',
-                headerTitleAlign: 'center',
-                headerStyle: {
-                  backgroundColor: '#00A65E', // Màu nền xanh
-                },
-                headerTintColor: '#fff', // Màu chữ trắng
-                headerTitleStyle: {
-                  fontWeight: 'bold', // Kiểu chữ tiêu đề
-                },
-              }}
-            />
-            <Stack.Screen
-              name="SettingScreen"
-              component={SettingScreen}
-              options={{
-                headerShown: true,
-                title: 'Cài đặt',
-                headerTitleAlign: 'center',
-                headerStyle: {
-                  backgroundColor: '#00A65E', // Màu nền xanh
-                },
-                headerTintColor: '#fff', // Màu chữ trắng
-                headerTitleStyle: {
-                  fontWeight: 'bold', // Kiểu chữ tiêu đề
-                },
-              }}
-            />
+          <Stack.Screen
+            name="AllProductScreen"
+            component={AllProductScreen}
+            options={{
+              headerShown: true,
+              title: 'Tất cả sản phẩm',
+              headerTitleAlign: 'center',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
 
-            <Stack.Screen
+          <Stack.Screen
+            name="ShippingAddressScreen"
+            component={ShippingAddressScreen}
+            options={{
+              headerShown: true,
+              title: 'Địa chỉ',
+              headerTitleAlign: 'center',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
+          <Stack.Screen
+            name="AddAddress"
+            component={AddAddress}
+            options={{
+              headerShown: true,
+              title: 'Thêm Địa chỉ',
+              headerTitleAlign: 'center',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
+          <Stack.Screen
+            name="SettingScreen"
+            component={SettingScreen}
+            options={{
+              headerShown: true,
+              title: 'Cài đặt',
+              headerTitleAlign: 'center',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
+
+          <Stack.Screen
             name="DeliveredOrders"
             component={DeliveredOrders}
             options={{
@@ -302,25 +338,25 @@ const App = () => {
             }}
           />
           <Stack.Screen
-          name="AddReview"
-          component={AddReview}
-          options={{
-            headerShown: true,
-            title: 'Viết đánh giá ',
-            headerTitleAlign: 'center',
-            headerStyle: {
-              backgroundColor: '#00A65E', // Màu nền xanh
-            },
-            headerTintColor: '#fff', // Màu chữ trắng
-            headerTitleStyle: {
-              fontWeight: 'bold', // Kiểu chữ tiêu đề
-            },
-          }}
-        />
+            name="AddReview"
+            component={AddReview}
+            options={{
+              headerShown: true,
+              title: 'Viết đánh giá ',
+              headerTitleAlign: 'center',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
 
-           
-          </Stack.Navigator>
-        </NavigationContainer>
+
+        </Stack.Navigator>
+      </NavigationContainer>
     </Provider>
   );
 };
