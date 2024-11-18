@@ -13,11 +13,12 @@ import CategoryItem from '../../components/Categories/renderCategory'; // Đổi
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchSubCategoriesByParent} from '../../redux/actions/actionCategory';
 import {useNavigation} from '@react-navigation/native'; // Import hook điều hướng
+import StatusView from '../../components/StatusView';
 
 const CategoriesScreen = ({route}) => {
   const {category} = route.params; // Nhận dữ liệu danh mục cha từ route.params
   const dispatch = useDispatch();
-  const {subCategories, isLoading} = useSelector(state => state.categories);
+  const {subCategories, isLoading,error} = useSelector(state => state.categories);
   
   const navigation = useNavigation(); // Hook điều hướng
 
@@ -26,11 +27,14 @@ const CategoriesScreen = ({route}) => {
   }, [category._id, dispatch]);
 
   if (isLoading) {
-    return <ActivityIndicator size="large" color="#00ff00" />;
+    return <StatusView isLoading={true} />;
   }
 
   if (!subCategories || subCategories.length === 0) {
-    return <Text>Không có danh mục con</Text>;
+    return <StatusView emptyText="Không có yeu thich nao." />;
+  }
+  if (error) {
+    return <StatusView error={error} />;
   }
 
   return (

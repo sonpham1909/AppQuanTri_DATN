@@ -523,7 +523,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
         <Text style={styles.reviewComment}>Size: {review.size}</Text>
         <Text style={styles.reviewComment}>Màu: {review.color}</Text>
         <Text style={styles.reviewComment}>{review.comment}</Text>
-
+       
         {review.responses?.map(response => (
           <Text key={response._id} style={styles.responseText}>
             Phản hồi từ người bán: {response.comment}

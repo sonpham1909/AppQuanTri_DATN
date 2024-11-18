@@ -23,9 +23,9 @@ import AllProductScreen from './src/screens/AllProductScreen/AllProductScreen'
 import SettingScreen from './src/screens/SettingScreen/SettingScreen';
 import ShippingAddressScreen from './src/screens/ShippingAddressScreen/ShippingAddressScreen';
 import AddAddress from './src/screens/ShippingAddressScreen/AddAddressScreen';
-import CartItem from './src/components/Cart/CartItem';
 import store from './src/redux/store/store';
-
+import DeliveredOrders from './src/screens/DeliveredOrders/DeliveredOrders';
+import AddReview from './src/screens/AddReview/AddReview';
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -284,6 +284,39 @@ const App = () => {
                 },
               }}
             />
+
+            <Stack.Screen
+            name="DeliveredOrders"
+            component={DeliveredOrders}
+            options={{
+              headerShown: true,
+              title: 'Lịch sử mua hàng',
+              headerTitleAlign: 'center',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
+          <Stack.Screen
+          name="AddReview"
+          component={AddReview}
+          options={{
+            headerShown: true,
+            title: 'Viết đánh giá ',
+            headerTitleAlign: 'center',
+            headerStyle: {
+              backgroundColor: '#00A65E', // Màu nền xanh
+            },
+            headerTintColor: '#fff', // Màu chữ trắng
+            headerTitleStyle: {
+              fontWeight: 'bold', // Kiểu chữ tiêu đề
+            },
+          }}
+        />
 
            
           </Stack.Navigator>

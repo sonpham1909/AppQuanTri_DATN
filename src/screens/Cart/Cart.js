@@ -1,25 +1,27 @@
-import React, { useEffect, useCallback } from 'react';
+import React, {useEffect, useCallback} from 'react';
 import {
   View,
   FlatList,
   StyleSheet,
   ActivityIndicator,
   Text,
+  Alert,
 } from 'react-native';
 import CartItem from '../../components/Cart/CartItem';
 import TotalAmount from '../../components/Cart/TotalAmount';
 import CheckoutButton from '../../components/Cart/CheckoutButton';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {
   deleteCartItem,
   fetchCart,
   updatequantity,
 } from '../../redux/actions/actionCart';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import StatusView from '../../components/StatusView';
 
-const CartScreen = ({ navigation }) => {
+const CartScreen = ({navigation}) => {
   const dispatch = useDispatch();
-  const { cart, isLoading } = useSelector(state => state.cart);
+  const {cart, isLoading, error} = useSelector(state => state.cart);
 
   // Load giỏ hàng khi mở màn hình
   useEffect(() => {
@@ -36,6 +38,7 @@ const CartScreen = ({ navigation }) => {
   const totalAmount = calculateTotalAmount();
 
   // Xử lý tăng/giảm số lượng sản phẩm
+  // Xử lý tăng/giảm số lượng sản phẩm
   const handleQuantityChange = useCallback(
     (id, action) => {
       const cartItem = cart.find(item => item._id === id);
@@ -45,9 +48,18 @@ const CartScreen = ({ navigation }) => {
         action === 'increase' ? cartItem.quantity + 1 : cartItem.quantity - 1;
       newQuantity = Math.max(newQuantity, 1); // Không cho phép số lượng nhỏ hơn 1
 
-      dispatch(updatequantity({ cartItemId: id, quantity: newQuantity }));
+      dispatch(updatequantity({cartItemId: id, quantity: newQuantity}))
+        .unwrap()
+        .catch(error => {
+          // Xử lý lỗi từ API
+          if (error.message === 'Quantity not available') {
+            Alert.alert('Thông báo', 'Số lượng không đủ cho sản phẩm này.');
+          } else {
+            Alert.alert('Lỗi', 'Có lỗi xảy ra, vui lòng thử lại.');
+          }
+        });
     },
-    [cart, dispatch]
+    [cart, dispatch],
   );
 
   // Xử lý xóa sản phẩm khỏi giỏ hàng
@@ -57,14 +69,12 @@ const CartScreen = ({ navigation }) => {
         dispatch(fetchCart());
       });
     },
-    [dispatch]
+    [dispatch],
   );
 
-  // Hiển thị trạng thái đang tải
   if (isLoading) {
-    return <ActivityIndicator size="large" color="#00ff00" />;
+    return <StatusView isLoading={true} />;
   }
-
   // Hiển thị thông báo nếu giỏ hàng trống
   if (!cart || cart.length === 0) {
     return (
@@ -75,12 +85,15 @@ const CartScreen = ({ navigation }) => {
     );
   }
 
+  // if (error) {
+  //   return <StatusView error={error} />;
+  // }
   // Render giỏ hàng khi có sản phẩm
   return (
     <View style={styles.container}>
       <FlatList
         data={cart}
-        renderItem={({ item }) => (
+        renderItem={({item}) => (
           <CartItem
             item={item}
             onIncrease={() => handleQuantityChange(item._id, 'increase')}

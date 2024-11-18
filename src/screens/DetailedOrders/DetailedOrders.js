@@ -1,20 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ScrollView,
+} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchOrderDetails } from '../../redux/actions/actionOder';
-import { useRoute } from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {fetchOrderDetails} from '../../redux/actions/actionOder';
+import {useRoute} from '@react-navigation/native';
+import StatusView from '../../components/StatusView';
 
 const DetailedOrders = () => {
   const dispatch = useDispatch();
   const route = useRoute();
   const { orderId } = route.params;
 
-  const { orderDetails, isLoading, error } = useSelector((state) => state.order);
-// Tính tổng tiền của các item trong đơn hàng
-const totalAmount = orderDetails.items
-  ? orderDetails.items.reduce((acc, item) => acc + item.total_amount, 0)
-  : 0;
+  const { orderDetails, isLoading, error } = useSelector(state => state.order);
+  
+  // Tính tổng tiền của các item trong đơn hàng
+  const totalAmount = orderDetails.items
+    ? orderDetails.items.reduce((acc, item) => acc + item.total_amount, 0)
+    : 0;
 
   useEffect(() => {
     if (orderId) {
@@ -23,18 +31,19 @@ const totalAmount = orderDetails.items
   }, [dispatch, orderId]);
 
   if (isLoading) {
-    return <ActivityIndicator size="large" color="#00A65E" />;
+    return <StatusView isLoading={true} />;
   }
-
+    
+  if (!orderDetails || orderDetails.length === 0) {
+    return <StatusView emptyText="Không có sản phẩm nào đã mua." />;
+  }
   if (error) {
-    return <Text style={styles.errorText}>Đã có lỗi xảy ra: {error}</Text>;
+    return <StatusView error={error} />;
   }
 
-  if (!orderDetails) {
-    return <Text style={styles.emptyText}>Không tìm thấy đơn hàng.</Text>;
-  }
 
-  const formatAddress = (addressDetail) => {
+
+  const formatAddress = addressDetail => {
     if (!addressDetail) return 'Chưa có địa chỉ';
     const { street, ward, district, city } = addressDetail;
     return [street, ward, district, city].filter(Boolean).join(', ');
@@ -46,56 +55,61 @@ const totalAmount = orderDetails.items
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Đơn hàng: </Text>
         <Text style={styles.headerDate}>
-          {orderDetails?.order?.createdAt ? new Date(orderDetails.order.createdAt).toLocaleDateString('vi-VN') : 'Chưa xác định'}
+          {orderDetails?.order?.createdAt
+            ? new Date(orderDetails.order.createdAt).toLocaleDateString('vi-VN')
+            : 'Chưa xác định'}
         </Text>
       </View>
-{/* Hàng hóa */}
-{/* Hàng hóa */}
-<View style={styles.section}>
-  <View style={styles.sectionHeader}>
-    <MaterialCommunityIcons name="package-variant-closed" size={20} color="#00A65E" />
-    <Text style={styles.sectionTitle}>Hàng hóa</Text>
-  </View>
 
-  {/* Danh sách sản phẩm */}
-  <View style={styles.groupedProducts}>
-    {orderDetails?.items?.length > 0 ? (
-      orderDetails.items.map((item, index) => {
-        const product = item.product_id; // Lấy thông tin sản phẩm từ item
-        return (
-          <View style={styles.productItem} key={index}>
-            <Image source={{ uri: item.image_variant || product?.imageUrls?.[0] }} style={styles.productImage} />
-            <View style={styles.productInfo}>
-              <Text style={styles.productName}>
-                {index + 1}. Sản phẩm: {product?.name || 'N/A'}
-              </Text>
-              <Text style={styles.productColor}>
-                Màu sắc: {item.color || 'N/A'}
-              </Text>
-              <Text style={styles.productPrice}>
-                {item.quantity} x {Number(item.price).toLocaleString('vi-VN')} Đ ={' '}
-                {Number(item.total_amount).toLocaleString('vi-VN')} Đ
-              </Text>
-            </View>
-          </View>
-        );
-      })
-    ) : (
-      <Text>Không có sản phẩm nào.</Text>
-    )}
-  </View>
+      {/* Hàng hóa */}
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <MaterialCommunityIcons name="package-variant-closed" size={20} color="#00A65E" />
+          <Text style={styles.sectionTitle}>Hàng hóa</Text>
+        </View>
 
-{/* Tổng tiền của đơn hàng */}
-<View style={styles.totalAmountContainer}>
-  <Text style={styles.totalAmountText}>
-    Tổng giá trị đơn hàng: {totalAmount ? totalAmount.toLocaleString('vi-VN') : 'N/A'} Đ
-  </Text>
-</View>
+        {/* Danh sách sản phẩm */}
+        <View style={styles.groupedProducts}>
+          {orderDetails?.items?.length > 0 ? (
+            orderDetails.items.map((item, index) => {
+              const product = item.product_id; // Lấy thông tin sản phẩm từ item
+              return (
+                <View style={styles.productItem} key={index}>
+                  <Image
+                    source={{
+                      uri: item.image_variant || product?.imageUrls?.[0],
+                    }}
+                    style={styles.productImage}
+                  />
+                  <View style={styles.productInfo}>
+                    <Text style={styles.productName}>
+                      {index + 1}. Sản phẩm: {product?.name || 'N/A'}
+                    </Text>
+                    <Text style={styles.productColor}>
+                      Màu sắc: {item.color || 'N/A' }
+                      {' || '}
+                      Size : {item.size}
+                    </Text>
+                    <Text style={styles.productPrice}>
+                      {item.quantity} x {Number(item.price).toLocaleString('vi-VN')} Đ ={' '}
+                      {Number(item.total_amount).toLocaleString('vi-VN')} Đ
+                    </Text>
+                  </View>
+                </View>
+              );
+            })
+          ) : (
+            <Text>Không có sản phẩm nào.</Text>
+          )}
+        </View>
 
-
-
-</View>
-
+        {/* Tổng tiền của đơn hàng */}
+        <View style={styles.totalAmountContainer}>
+          <Text style={styles.totalAmountText}>
+            Tổng giá trị đơn hàng: {totalAmount ? totalAmount.toLocaleString('vi-VN') : 'N/A'} Đ
+          </Text>
+        </View>
+      </View>
 
       {/* Khách hàng */}
       <View style={styles.section}>
@@ -104,21 +118,22 @@ const totalAmount = orderDetails.items
           <Text style={styles.sectionTitle}>Khách hàng</Text>
         </View>
         <View style={styles.customerInfo}>
-        <View style={styles.customerRow}>
-      <MaterialCommunityIcons name="account-outline" size={20} color="#00A65E" />
-      <Text style={styles.customerText}>   {orderDetails?.order?.address_id?.recipientName || 'Không có tên người nhận'}
- </Text>
-    </View>
-    <View style={styles.customerRow}>
-      <MaterialCommunityIcons name="phone" size={20} color="#00A65E" />
-      <Text style={styles.customerText}>
-        {orderDetails?.order?.address_id?.recipientPhone || 'Không có số điện thoại'}
-      </Text>
-    </View>
+          <View style={styles.customerRow}>
+            <MaterialCommunityIcons name="account-outline" size={20} color="#00A65E" />
+            <Text style={styles.customerText}>
+              {orderDetails?.order?.recipientName || 'Không có tên người nhận'}
+            </Text>
+          </View>
+          <View style={styles.customerRow}>
+            <MaterialCommunityIcons name="phone" size={20} color="#00A65E" />
+            <Text style={styles.customerText}>
+              {orderDetails?.order?.recipientPhone || 'Không có số điện thoại'}
+            </Text>
+          </View>
           <View style={styles.customerRow}>
             <MaterialCommunityIcons name="map-marker" size={20} color="#00A65E" />
             <Text style={styles.customerText}>
-              {formatAddress(orderDetails?.order?.address_id?.addressDetail)}
+              {formatAddress(orderDetails?.order?.addressDetail)}
             </Text>
           </View>
         </View>
@@ -140,6 +155,8 @@ const totalAmount = orderDetails.items
   );
 };
 
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -159,7 +176,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: '#fff',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 1,
@@ -172,7 +189,7 @@ const styles = StyleSheet.create({
     borderColor: '#E0E0E0',
     backgroundColor: '#fff',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 1,
@@ -211,7 +228,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: '#fff',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 1,

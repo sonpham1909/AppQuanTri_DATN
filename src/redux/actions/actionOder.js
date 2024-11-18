@@ -63,3 +63,24 @@ export const fetchOrdersByStatus = createAsyncThunk(
       }
     }
   );
+  export const fetchPurchasedProducts = createAsyncThunk(
+    'order/fetchPurchasedProducts',
+    async (_, thunkAPI) => {
+      try {
+        const token = await tokenService.getToken();
+        const response = await axios.get(`${API_URL}/orders/purchased`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        return response.data;
+      } catch (error) {
+        return thunkAPI.rejectWithValue(
+          error.response ? error.response.data.message : error.message
+        );
+      }
+    }
+  );
+  
+
+  

@@ -56,6 +56,7 @@ const cartSlice = createSlice({
         state.isLoadingQuantity = true;
         state.error = null;
       })
+      
       .addCase(updatequantity.fulfilled, (state, action) => {
         state.isLoadingQuantity = false;
         const updatedCart = state.cart.map(item =>

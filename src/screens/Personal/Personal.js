@@ -8,6 +8,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {fetchUserInfoVS1} from '../../redux/actions/actionUser';
 import {fetchAllAddresses} from '../../redux/actions/actionAddress'; // Import action để lấy danh sách địa chỉ
 import {fetchUserReviews} from '../../redux/actions/actionsReview'; // Import action để lấy danh sách địa chỉ
+import {fetchPurchasedProducts} from '../../redux/actions/actionOder'; // Import action để lấy danh sách địa chỉ
 
 const Personal = () => {
   const dispatch = useDispatch();
@@ -17,7 +18,9 @@ const Personal = () => {
   // Sử dụng useSelector để lấy thông tin người dùng và địa chỉ từ Redux store
   const userInfovs1 = useSelector(state => state.user.userInfovs1);
   const addressesList = useSelector(state => state.addresses.addressesList); // Lấy danh sách địa chỉ từ store
-  const userReviews = useSelector(state => state.reviewResponses.userReviews);
+  const userReviews = useSelector((state) => state.reviewResponses.userReviews);
+  const  purchasedProducts= useSelector((state) => state.order.purchasedProducts);
+
   // Lấy thông tin người dùng từ userInfovs1.user
   const user = userInfovs1?.user;
 
@@ -25,6 +28,7 @@ const Personal = () => {
   useEffect(() => {
     dispatch(fetchUserInfoVS1());
     dispatch(fetchAllAddresses());
+    dispatch(fetchPurchasedProducts());
     dispatch(fetchUserReviews()); // Lấy danh sách địa chỉ khi mở màn hình
     // Lấy danh sách địa chỉ khi mở màn hình
   }, [dispatch]);
@@ -112,6 +116,13 @@ const Personal = () => {
           navigation.navigate('ReviewsScreen');
         }}
         preview={'Đã đánh giá ' + userReviews.length + ' mục'}
+      />
+       <CardProfile
+        title={'Lịch sử mua hàng'}
+        onpress={() => {
+          navigation.navigate('DeliveredOrders');
+        }}
+        preview={'Đã mua ' + purchasedProducts.length + ' sản phẩm'}
       />
       <CardProfile
         title={'Cài đặt'}
