@@ -50,6 +50,7 @@ const CheckoutScreen = () => {
   useEffect(() => {
     dispatch(fetchShippingMethods());
     dispatch(fetchPaymentMethods());
+    dispatch(fetchDefaultAddress());
     dispatch(fetchCart());
   }, [dispatch]);
 

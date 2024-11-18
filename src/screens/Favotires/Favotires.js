@@ -4,10 +4,11 @@ import { View, FlatList, StyleSheet, Text } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchFavoriteList, toggleFavorite } from '../../redux/actions/favoriteActions';
 import FavoriteItem from '../../components/Favotires/ProductItem';
+import StatusView from '../../components/StatusView';
 
 const Favorites = ({ navigation }) => {
   const dispatch = useDispatch();
-  const favoriteList = useSelector(state => state.favorites.favoriteList);
+  const {favoriteList,isLoading,error} = useSelector(state => state.favorites);
 
  
   useEffect(() => {
@@ -18,14 +19,16 @@ const Favorites = ({ navigation }) => {
     dispatch(toggleFavorite(productId));
   };
 
-  if (!favoriteList || favoriteList.length === 0) {
-    return (
-      <View style={styles.emptyContainer}>
-        <Text>Không có sản phẩm yêu thích nào</Text>
-      </View>
-    );
+  if (isLoading) {
+    return <StatusView isLoading={true} />;
   }
 
+  if (!favoriteList || favoriteList.length === 0) {
+    return <StatusView emptyText="Không có yeu thich nao." />;
+  }
+  if (error) {
+    return <StatusView error={error} />;
+  }
   return (
     <View style={styles.container}>
       <FlatList

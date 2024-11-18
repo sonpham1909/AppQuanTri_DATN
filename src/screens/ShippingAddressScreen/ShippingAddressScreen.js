@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import {
   FlatList,
   View,
@@ -9,13 +9,12 @@ import {
   StyleSheet,
 } from 'react-native';
 import globalStyles from '../../styles/globalStyles';
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
-import { fetchAllAddresses, updateDefaultAddress,deleteAddress } from '../../redux/actions/actionAddress';
-
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAllAddresses, updateDefaultAddress, deleteAddress } from '../../redux/actions/actionAddress';
+import StatusView from '../../components/StatusView';
 
 const ShippingAddressScreen = () => {
-  // Hàm xử lý khi nhấn vào một điều hướnga
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { addressesList, isLoading, error } = useSelector(state => state.addresses);
@@ -61,35 +60,34 @@ const ShippingAddressScreen = () => {
             <Text style={styles.unchecked}>○</Text> // Dấu chưa chọn
           )}
         </TouchableOpacity>
-        {/* Nút xóa địa chỉ (không cho phép xóa địa chỉ mặc định) */}
-       
       </View>
       <View style={styles.separator}></View>
-      <Text style={styles.address}>{'Địa chỉ: '}{item.addressDetail.street}, {item.addressDetail.ward}, {item.addressDetail.district}, {item.addressDetail.city}{'\n'}{'\n'}{'Điện thoại: '}{item.recipientPhone}{'\n'}{'\n'}{'Ghi chú: '}{item.notes}</Text>
-       {/* nếu isDefault = true hiển thị text mặc định */} 
+      <Text style={styles.address}>
+        {'Địa chỉ: '}{item.addressDetail.street}, {item.addressDetail.ward}, {item.addressDetail.district}, {item.addressDetail.city}
+        {'\n'}{'\n'}{'Điện thoại: '}{item.recipientPhone}{'\n'}{'\n'}{'Ghi chú: '}{item.notes}
+      </Text>
       {item.isDefault && (
         <Text style={globalStyles.defaultLabel}>Mặc định</Text>
-      )} 
-       {!item.isDefault && (
-          <TouchableOpacity onPress={() => handleDeleteAddress(item._id)}>
-            <Image
-              style={styles.deleteIconAddress}
-              source={require('../../assets/images/icon_delete.png')}
-            />
-          </TouchableOpacity>
-        )}
+      )}
+      {!item.isDefault && (
+        <TouchableOpacity onPress={() => handleDeleteAddress(item._id)}>
+          <Image
+            style={styles.deleteIconAddress}
+            source={require('../../assets/images/icon_delete.png')}
+          />
+        </TouchableOpacity>
+      )}
     </View>
   );
-
- 
 
   return (
     <View style={globalStyles.ShippingAddressContainer}>
       <View style={globalStyles.ShippingAddressContent}>
-        {isLoading ? (
-          <Text>Loading...</Text>
-        ) : error ? (
-          <Text>Phiên bản hết hạn bạn cần đăng nhập lại</Text>
+        {isLoading || error ? (
+          <StatusView
+            isLoading={isLoading}
+            error={error}
+          />
         ) : (
           <FlatList
             data={addressesList}
@@ -97,12 +95,13 @@ const ShippingAddressScreen = () => {
             renderItem={renderItem}
             ListEmptyComponent={() => (
               <View style={styles.emptyContainer}>
-                <Text>Không có địa chỉ nào</Text>
+                <Text style={styles.emptyText}>Không có địa chỉ nào được thêm.</Text>
               </View>
             )}
           />
         )}
       </View>
+
       {/* Nút thêm địa chỉ luôn hiển thị */}
       <TouchableOpacity
         style={styles.addButton}
@@ -115,10 +114,7 @@ const ShippingAddressScreen = () => {
       </TouchableOpacity>
     </View>
   );
-  
 };
-
-
 
 export default ShippingAddressScreen;
 
@@ -127,7 +123,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 100, 
+    marginTop: 350,
+  },
+  emptyText: {
+    color: 'gray',
+    fontSize: 16,
+    textAlign: 'center',
   },
   addButton: {
     position: 'absolute',
@@ -137,13 +138,13 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     padding: 15,
     elevation: 5,
+    zIndex: 1, // Sử dụng zIndex để đảm bảo nút "Thêm" luôn ở trên cùng
   },
   addIcon: {
     width: 30,
     height: 30,
     tintColor: '#FFF',
   },
-  
   checked: {
     fontSize: 16,
     color: 'green',
@@ -156,23 +157,23 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     tintColor: '#000',
-    alignSelf:'flex-end',
-    margin:5
+    alignSelf: 'flex-end',
+    margin: 5,
   },
   card: {
-    width:'auto',
+    width: 'auto',
     backgroundColor: '#fff',
     borderRadius: 10,
-    padding:7,
+    padding: 7,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 3,
-    marginBottom:15
+    marginBottom: 15,
   },
   cardContent: {
-    padding:7,
+    padding: 7,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -181,23 +182,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-    
   },
   address: {
     fontSize: 14,
     color: '#666',
     marginTop: 4,
-    padding:7
+    padding: 7,
   },
   separator: {
     marginVertical: 5,
     height: 1,
     backgroundColor: '#E0E0E0',
-  },
-  address: {
-    fontSize: 14,
-    color: '#666',
-    marginTop: 4,
-    padding:7
   },
 });

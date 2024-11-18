@@ -51,3 +51,21 @@ export const fetchUserReviews = createAsyncThunk(
     }
   }
 );
+export const addProductReview = createAsyncThunk(
+  'reviews/addProductReview',
+    async (reviewData, thunkAPI) => {
+      try {
+        const token = await tokenService.getToken();
+        const response = await axios.post(`${API_URL}/Review/addReviewByApp`, reviewData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        return response.data;
+      } catch (error) {
+        return thunkAPI.rejectWithValue(
+          error.response ? error.response.data.message : error.message
+        );
+      }
+    }
+  );

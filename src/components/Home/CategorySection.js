@@ -4,6 +4,7 @@ import homeStyles from '../../styles/homeStyles';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchCategories} from '../../redux/actions/actionCategory';
+import StatusView from '../StatusView';
 
 const CategorySection = () => {
   const navigation = useNavigation();
@@ -19,11 +20,14 @@ const CategorySection = () => {
   };
 
   if (isLoading) {
-    return <Text>Loading...</Text>;
+    return <StatusView isLoading={true} />;
   }
 
+  if (!categories || categories.length === 0) {
+    return <StatusView emptyText="Không có yeu thich nao." />;
+  }
   if (error) {
-    return <Text>Error: {error}</Text>;
+    return <StatusView error={error} />;
   }
 
   return (

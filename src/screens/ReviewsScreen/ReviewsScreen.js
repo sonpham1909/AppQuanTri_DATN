@@ -4,6 +4,7 @@ import {fetchUserReviews} from '../../redux/actions/actionsReview';
 import {fetchProductById} from '../../redux/actions/actionProduct'; // Import action lấy thông tin sản phẩm
 import {StyleSheet, Text, View, Image, FlatList} from 'react-native';
 import renderStars from '../../components/Home/renderStars';
+import StatusView from '../../components/StatusView';
 
 const ReviewsScreen = ({navigation}) => {
   const dispatch = useDispatch();
@@ -81,20 +82,19 @@ const ReviewsScreen = ({navigation}) => {
     );
   };
 
-  if (isLoadingReviews || isLoadingProduct) {
-    return <Text>Loading...</Text>;
-  }
 
-  if (userReviews.length === 0) {
-    return (
-      <View style={styles.noReviewsContainer}>
-        <Text style={styles.noReviewsText}>Bạn chưa có đánh giá nào</Text>
-      </View>
-    );
+  if (isLoadingReviews || isLoadingProduct) {
+    return <StatusView isLoading={true} />;
   }
-  if (reviewError || productError) {
-    return <Text>Error: {reviewError || productError}</Text>;
+    
+  if (!userReviews || userReviews.length === 0) {
+    return <StatusView emptyText="Không có nhan xet nào ." />;
   }
+  // if (reviewError || productError) {
+  //   return <StatusView error={reviewError||productError} />;
+  // }
+
+
   return (
     <View style={styles.container}>
       <FlatList
