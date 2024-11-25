@@ -81,6 +81,28 @@ export const fetchOrdersByStatus = createAsyncThunk(
       }
     }
   );
+
+  export const cancelOrder = createAsyncThunk(
+    'order/cancelOrder',
+    async ({ orderId, cancelReason }, thunkAPI) => {
+      try {
+        const token = await tokenService.getToken();
+        const response = await axios.post(`${API_URL}/orders/cancelByApp/${orderId}`, { cancelReason }, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        return { orderId, ...response.data };
+      } catch (error) {
+        return thunkAPI.rejectWithValue(
+          error.response ? error.response.data.message : error.message
+        );
+      }
+    }
+  );
+  
+  
+
   
 
   

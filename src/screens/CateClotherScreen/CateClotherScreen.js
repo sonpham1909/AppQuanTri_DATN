@@ -114,7 +114,8 @@ const CateClotherScreen = ({route}) => {
         {loading ? (
           <ActivityIndicator size="large" color="#00A65E" />
         ) : filteredProducts && filteredProducts.length > 0 ? (
-          <ProductList navigation={navigation} products={filteredProducts} />
+          <ProductList navigation={navigation}
+           products={filteredProducts} />
         ) : (
           <Text>Không có sản phẩm phù hợp với bộ lọc</Text>
         )}

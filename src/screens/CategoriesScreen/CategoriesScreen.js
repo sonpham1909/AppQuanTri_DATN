@@ -31,7 +31,7 @@ const CategoriesScreen = ({route}) => {
   }
 
   if (!subCategories || subCategories.length === 0) {
-    return <StatusView emptyText="Không có yeu thich nao." />;
+    return <StatusView emptyText="Không có danh muc con nao." />;
   }
   if (error) {
     return <StatusView error={error} />;

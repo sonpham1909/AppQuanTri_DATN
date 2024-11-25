@@ -88,11 +88,11 @@ const ReviewsScreen = ({navigation}) => {
   }
     
   if (!userReviews || userReviews.length === 0) {
-    return <StatusView emptyText="Không có nhan xet nào ." />;
+    return <StatusView emptyText="Không có nhan xet nào đã mua." />;
   }
-  // if (reviewError || productError) {
-  //   return <StatusView error={reviewError||productError} />;
-  // }
+  if (reviewError || productError) {
+    return <StatusView error={reviewError||productError} />;
+  }
 
 
   return (
