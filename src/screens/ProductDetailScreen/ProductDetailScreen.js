@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   StyleSheet,
   Text,
@@ -12,38 +12,37 @@ import {
   Modal,
   Animated,
 } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchProductReviews } from '../../redux/actions/actionProduct';
+import {useDispatch, useSelector} from 'react-redux';
+import {fetchProductReviews} from '../../redux/actions/actionProduct';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { toggleFavorite } from '../../redux/actions/favoriteActions';
-import { fetchProductReviewResponses } from '../../redux/actions/actionsReview';
-import { fetchVariantsByProductId } from '../../redux/actions/actionsVariant';
+import {toggleFavorite} from '../../redux/actions/favoriteActions';
+import {fetchProductReviewResponses} from '../../redux/actions/actionsReview';
+import {fetchVariantsByProductId} from '../../redux/actions/actionsVariant';
 import renderStars from '../../components/Home/renderStars';
-import { fetchUserInfo } from '../../redux/actions/actionUser';
-import { addTocCart } from '../../redux/actions/actionCart';
-
+import {fetchUserInfo} from '../../redux/actions/actionUser';
+import {addTocCart} from '../../redux/actions/actionCart';
 
 // Component chính của màn hình chi tiết sản phẩm
-const ProductDetailScreen = ({ route, navigation }) => {
+const ProductDetailScreen = ({route, navigation}) => {
   // Lấy sản phẩm từ tham số route
-  const { product } = route.params;
+  const {product} = route.params;
 
   // Tạo dispatch để gửi action đến Redux store
   const dispatch = useDispatch();
-
-
-
 
   // Tham chiếu đến FlatList để có thể cuộn đến vị trí ảnh mong muốn
   const flatListRef = useRef();
 
   // Lấy thông tin từ Redux store, bao gồm đánh giá, phản hồi đánh giá, danh sách yêu thích, biến thể sản phẩm, và thông tin người dùng
   const reviews = useSelector(state => state.products.reviews) || {};
-  const { reviewResponses, isLoading, error } =
+  const {reviewResponses, isLoading, error} =
     useSelector(state => state.reviewResponses) || {};
   const favoriteList = useSelector(state => state.favorites.favoriteList) || [];
-  const variants = useSelector(state => state.variants.variants[product._id] || []);
+  const variants = useSelector(
+    state => state.variants.variants[product._id] || [],
+  );
   const userInfo = useSelector(state => state.user.userInfo) || {};
+  const [loading, setLoading] = useState(true);
 
   // Các biến trạng thái để quản lý trạng thái giao diện, như màu sắc, kích cỡ được chọn, số lượng sản phẩm, danh sách hình ảnh, v.v.
   const [selectedColor, setSelectedColor] = useState(null);
@@ -55,7 +54,6 @@ const ProductDetailScreen = ({ route, navigation }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isCollapsedMaterial, setIsCollapsedMaterial] = useState(true);
   const [isCollapsedDetails, setIsCollapsedDetails] = useState(true);
-  const [selectedColorM, setSelectedColorM] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const scaleValue = useRef(new Animated.Value(0)).current;
 
@@ -67,14 +65,17 @@ const ProductDetailScreen = ({ route, navigation }) => {
     ? totalReview.averageRating.toFixed(1)
     : '0.0';
 
-  // Sử dụng useEffect để lấy dữ liệu khi component được mount
   useEffect(() => {
-    // Lấy danh sách đánh giá của sản phẩm
-    dispatch(fetchProductReviews(product._id));
-    // Lấy phản hồi cho các đánh giá
-    dispatch(fetchProductReviewResponses(product._id));
-    // Lấy danh sách biến thể của sản phẩm (màu sắc, kích cỡ)
-    dispatch(fetchVariantsByProductId(product._id));
+    const loadData = async () => {
+      setLoading(true); // Đặt loading thành true khi bắt đầu tải
+      await Promise.all([
+        dispatch(fetchProductReviews(product._id)),
+        dispatch(fetchProductReviewResponses(product._id)),
+        dispatch(fetchVariantsByProductId(product._id)),
+      ]);
+      setLoading(false); // Đặt loading thành false khi dữ liệu được tải xong
+    };
+    loadData();
   }, [dispatch, product._id]);
 
   // Lấy thông tin người dùng cho các đánh giá chưa có thông tin
@@ -136,13 +137,17 @@ const ProductDetailScreen = ({ route, navigation }) => {
   const updateAllImages = (variants, color, defaultImages) => {
     // Cập nhật danh sách hình ảnh cho màu sắc đã chọn
     const selectedVariant = variants.find(v => v.color_code === color);
-    const newAllImages = [selectedVariant?.image, ...defaultImages].filter(Boolean);
+    const newAllImages = [selectedVariant?.image, ...defaultImages].filter(
+      Boolean,
+    );
     setAllImages(newAllImages);
 
     if (selectedVariant) {
-      const index = newAllImages.findIndex(image => image === selectedVariant.image);
+      const index = newAllImages.findIndex(
+        image => image === selectedVariant.image,
+      );
       if (index !== -1 && flatListRef.current) {
-        flatListRef.current.scrollToIndex({ index, animated: false });
+        flatListRef.current.scrollToIndex({index, animated: false});
       }
     }
   };
@@ -150,10 +155,11 @@ const ProductDetailScreen = ({ route, navigation }) => {
   // Xử lý khi người dùng muốn thêm hoặc bỏ sản phẩm khỏi danh sách yêu thích
   const handleToggleFavorite = () => dispatch(toggleFavorite(product._id));
 
-
   //Thêm sản phẩm vào giỏ hàng
   const handleAddToCart = () => {
-    const variant = variants.find(variant => variant.color_code === selectedColor);
+    const variant = variants.find(
+      variant => variant.color_code === selectedColor,
+    );
     const cartData = {
       productId: product._id,
       color: variant?.color,
@@ -179,22 +185,27 @@ const ProductDetailScreen = ({ route, navigation }) => {
         }, 2000);
       })
       .catch(error => {
-        Alert.alert('Lỗi', 'Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng, vui lòng thử lại.');
+        Alert.alert(
+          'Lỗi',
+          'Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng, vui lòng thử lại.',
+        );
         console.error('Error adding to cart:', error);
       });
   };
 
   // Kiểm tra xem kích cỡ có khả dụng không
   const isSizeAvailable = size => {
-    return availableSizes.some(sizeObj => sizeObj.size === size && sizeObj.quantity > 0);
+    return availableSizes.some(
+      sizeObj => sizeObj.size === size && sizeObj.quantity > 0,
+    );
   };
 
   // Xử lý khi người dùng chọn màu sắc, cập nhật màu đã chọn và danh sách hình ảnh
   const handleColorSelect = variant => {
     setSelectedColor(variant.color_code);
-    const color = variants.find(variant => variant.color_code === selectedColor)?.color;
-    setSelectedColorM(color);
-    console.log(color);
+    const color = variants.find(
+      variant => variant.color_code === selectedColor,
+    )?.color;
 
     updateAllImages(variants, variant.color_code, product.imageUrls);
   };
@@ -208,7 +219,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
   };
 
   // Cập nhật chỉ mục của hình ảnh hiện tại khi người dùng cuộn qua danh sách hình ảnh
-  const onViewableItemsChanged = useRef(({ viewableItems }) => {
+  const onViewableItemsChanged = useRef(({viewableItems}) => {
     if (viewableItems.length > 0) {
       setCurrentImageIndex(viewableItems[0].index);
     }
@@ -218,6 +229,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
   const viewabilityConfig = {
     itemVisiblePercentThreshold: 50,
   };
+
 
   // Render chính của màn hình chi tiết sản phẩm
   return (
@@ -240,14 +252,20 @@ const ProductDetailScreen = ({ route, navigation }) => {
           visible={modalVisible}
           onRequestClose={() => setModalVisible(false)}>
           <View style={styles.modalBackground}>
-            <Animated.View style={[styles.modalContainer, { transform: [{ scale: scaleValue }] }]}>
+            <Animated.View
+              style={[
+                styles.modalContainer,
+                {transform: [{scale: scaleValue}]},
+              ]}>
               <MaterialCommunityIcons
                 name="check-circle"
                 size={50}
                 color="#27ae60"
-                style={{ marginBottom: 10 }}
+                style={{marginBottom: 10}}
               />
-              <Text style={styles.modalText}>Sản phẩm đã được thêm vào giỏ hàng thành công!</Text>
+              <Text style={styles.modalText}>
+                Sản phẩm đã được thêm vào giỏ hàng thành công!
+              </Text>
               <TouchableOpacity
                 style={styles.viewCartButton}
                 onPress={() => {
@@ -273,9 +291,9 @@ const ProductDetailScreen = ({ route, navigation }) => {
           data={allImages}
           horizontal
           keyExtractor={(item, index) => `${item}-${index}`}
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <View style={styles.imageContainer}>
-              <Image source={{ uri: item }} style={styles.productImage} />
+              <Image source={{uri: item}} style={styles.productImage} />
             </View>
           )}
           pagingEnabled
@@ -297,8 +315,6 @@ const ProductDetailScreen = ({ route, navigation }) => {
     // Hàm render các tùy chọn màu sắc sản phẩm
     return (
       <View>
-        
-
         <View style={styles.colorContainer}>
           {variants.map((variant, i) => (
             <TouchableOpacity
@@ -369,7 +385,9 @@ const ProductDetailScreen = ({ route, navigation }) => {
             </TouchableOpacity>
             <Text style={styles.quantityText}>{quantity}</Text>
             <TouchableOpacity
-              onPress={() => setQuantity(Math.min(maxQuantity, quantity + 1, 10))}
+              onPress={() =>
+                setQuantity(Math.min(maxQuantity, quantity + 1, 10))
+              }
               style={styles.quantityButton}>
               <Text style={styles.quantityButtonText}>+</Text>
             </TouchableOpacity>
@@ -383,7 +401,9 @@ const ProductDetailScreen = ({ route, navigation }) => {
   function renderPrice() {
     // Hàm render giá sản phẩm
     return (
-      <Text style={styles.price}>{`${(product.price * quantity).toLocaleString()} VND`}</Text>
+      <Text style={styles.price}>{`${(
+        product.price * quantity
+      ).toLocaleString()} VND`}</Text>
     );
   }
 
@@ -496,7 +516,9 @@ const ProductDetailScreen = ({ route, navigation }) => {
 
   function renderReviewItem(review, index) {
     // Hàm render một mục đánh giá của sản phẩm
-    const formattedDate = new Date(review.createdAt).toLocaleDateString('vi-VN');
+    const formattedDate = new Date(review.createdAt).toLocaleDateString(
+      'vi-VN',
+    );
 
     return (
       <View
@@ -508,10 +530,12 @@ const ProductDetailScreen = ({ route, navigation }) => {
         {userInfo[review.user_id] ? (
           <View style={styles.userInfoContainer}>
             <Image
-              source={{ uri: userInfo[review.user_id].avatar }}
+              source={{uri: userInfo[review.user_id].avatar}}
               style={styles.userAvatar}
             />
-            <Text style={styles.userName}>{userInfo[review.user_id].full_name}</Text>
+            <Text style={styles.userName}>
+              {userInfo[review.user_id].full_name}
+            </Text>
           </View>
         ) : (
           <Text>Loading user info...</Text>
@@ -523,7 +547,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
         <Text style={styles.reviewComment}>Size: {review.size}</Text>
         <Text style={styles.reviewComment}>Màu: {review.color}</Text>
         <Text style={styles.reviewComment}>{review.comment}</Text>
-       
+
         {review.responses?.map(response => (
           <Text key={response._id} style={styles.responseText}>
             Phản hồi từ người bán: {response.comment}
@@ -536,19 +560,18 @@ const ProductDetailScreen = ({ route, navigation }) => {
 
 export default ProductDetailScreen;
 
-
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
-  detailsContainer: { padding: 16 },
+  container: {flex: 1, backgroundColor: '#fff'},
+  detailsContainer: {padding: 16},
   productTitle: {
     fontSize: 22,
     fontWeight: 'bold',
     color: '#303030',
     marginVertical: 5,
   },
-  reviewSection1: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
-  reviewCountBold: { fontSize: 14, color: '#808080' },
-  reviewCount: { fontSize: 12, color: '#27ae60', fontWeight: '500' },
+  reviewSection1: {flexDirection: 'row', alignItems: 'center', marginBottom: 4},
+  reviewCountBold: {fontSize: 14, color: '#808080'},
+  reviewCount: {fontSize: 12, color: '#27ae60', fontWeight: '500'},
   productImage: {
     width: 396,
     height: 248,
@@ -572,7 +595,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 8,
   },
-  row: { flexDirection: 'row', alignItems: 'center', marginBottom: 14 },
+  row: {flexDirection: 'row', alignItems: 'center', marginBottom: 14},
 
   sectionLabel: {
     fontSize: 15,
@@ -582,7 +605,7 @@ const styles = StyleSheet.create({
 
   colorContainer: {
     flexDirection: 'row',
-    marginBottom:5
+    marginBottom: 5,
   },
   colorCircleWrapper: {
     width: 36,
@@ -590,8 +613,8 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight:7,
-    marginLeft:-3
+    marginRight: 7,
+    marginLeft: -3,
   },
   selectedColorWrapper: {
     borderWidth: 2,
@@ -617,7 +640,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
-  sizeContainer: { flexDirection: 'row', marginLeft: 8 },
+  sizeContainer: {flexDirection: 'row', marginLeft: 8},
   sizeButton: {
     paddingVertical: 5,
     paddingHorizontal: 10,
@@ -626,8 +649,8 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     marginHorizontal: 4,
   },
-  selectedSize: { backgroundColor: '#ddd' },
-  price: { fontSize: 20, fontWeight: 'bold', color: '#27ae60', marginBottom: 15 },
+  selectedSize: {backgroundColor: '#ddd'},
+  price: {fontSize: 20, fontWeight: 'bold', color: '#27ae60', marginBottom: 15},
   quantityRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -649,7 +672,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
+    shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 1,
@@ -686,7 +709,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
+    shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2, // Thêm đổ bóng để nổi bật
@@ -700,7 +723,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 3,
@@ -794,7 +817,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.05,
     shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     paddingBottom: 15,
     borderBottomWidth: 1,
     borderColor: '#e0e0e0',
@@ -837,7 +860,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOpacity: 0.3,
     shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     elevation: 5,
   },
   modalText: {
@@ -863,8 +886,8 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight:7,
-    marginLeft:-3
+    marginRight: 7,
+    marginLeft: -3,
   },
   selectedColorName: {
     marginRights: 10,
