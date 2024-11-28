@@ -13,6 +13,7 @@ import { useDispatch } from 'react-redux';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { addProductReview } from '../../redux/actions/actionsReview'; // Hành động để thêm đánh giá
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { fetchProductById, fetchProductReviews } from '../../redux/actions/actionProduct';
 
 const AddReview = () => {
   const dispatch = useDispatch();
@@ -71,16 +72,19 @@ const AddReview = () => {
   
   
       // Gửi đánh giá lên server
-      dispatch(addProductReview(formData))
+      await dispatch(addProductReview(formData))
         .unwrap()
         .then(() => {
           alert('Đánh giá đã được thêm thành công!');
+          dispatch(fetchProductReviews(productId));
           navigation.goBack(); // Quay lại màn hình trước
         })
         .catch(error => {
           console.error('Error adding review:', error);
           alert('Lỗi khi thêm đánh giá, vui lòng thử lại.');
         });
+
+       
   
     } catch (error) {
       console.error('Error uploading images:', error);

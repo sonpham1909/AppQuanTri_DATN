@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import LoginScreen from './src/screens/LoginScreen/LoginScreen';
 import Welcom from './src/screens/Welcom/SplashScreen';
@@ -28,9 +28,33 @@ import DeliveredOrders from './src/screens/DeliveredOrders/DeliveredOrders';
 import AddReview from './src/screens/AddReview/AddReview';
 import SearchScreen from './src/screens/SearchScreen/SearchScreen';
 import StartSearch from './src/screens/SearchScreen/StartSearch';
+import PushNotification from "react-native-push-notification";
+import { Platform } from "react-native";
 const Stack = createStackNavigator();
 
 const App = () => {
+  useEffect(() => {
+    // Configure Push Notification khi ứng dụng khởi chạy
+    PushNotification.configure({
+      // (optional) Called when a remote or local notification is opened or received
+      onNotification: function (notification) {
+        console.log("NOTIFICATION:", notification);
+  
+        // Không cần gọi finish() vì không sử dụng iOS hoặc Hermes gây lỗi
+      },
+      // (optional) Called when Token is generated (iOS and Android)
+      onRegister: function (token) {
+        console.log("TOKEN:", token);
+      },
+      // Yêu cầu quyền trên iOS (nếu cần thiết)
+      requestPermissions: Platform.OS === 'ios',
+    });
+  
+    // Tạo kênh thông báo
+ 
+  }, []);
+  
+ 
   return (
     <Provider store={store}>
       <NavigationContainer>

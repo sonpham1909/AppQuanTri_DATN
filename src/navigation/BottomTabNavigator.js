@@ -19,6 +19,9 @@ import Personal from '../screens/Personal/Personal';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCart } from '../redux/actions/actionCart';
+import PushNotification from 'react-native-push-notification';
+import { socket } from '../services/sockerIo';
+
 
 const Tab = createBottomTabNavigator();
 
@@ -37,10 +40,10 @@ const CustomHomeHeader = () => {
   }
 
   //gửi text để tìm kiếm
-  handleOnSearch = (searchKeyword) =>{
- 
-    if(searchKeyword){
-      navigation.navigate('SearchScreen',{searchKeyWord: searchKeyword}, { merge: true });
+  handleOnSearch = (searchKeyword) => {
+
+    if (searchKeyword) {
+      navigation.navigate('SearchScreen', { searchKeyWord: searchKeyword }, { merge: true });
     }
 
   }
@@ -54,6 +57,67 @@ const CustomHomeHeader = () => {
       console.log('Cart:', cartLength);
     }
   }, [isLoading, cart]);
+
+
+  useEffect(() => {
+    async function setupNotificationChannel() {
+      if (Platform.OS === 'android' && Platform.Version >= 33) {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+          {
+            title: "Thông báo cần quyền",
+            message: "Ứng dụng cần quyền để gửi thông báo cho bạn",
+            buttonNeutral: "Hỏi sau",
+            buttonNegative: "Từ chối",
+            buttonPositive: "Đồng ý"
+          }
+        );
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          console.log("Quyền thông báo bị từ chối");
+        }
+      }
+
+      PushNotification.createChannel(
+        {
+          channelId: "order-channel", // ID của kênh này cần phải là duy nhất
+          channelName: "Order Notifications", // Tên kênh
+          channelDescription: "A channel to categorize your order notifications", // Miêu tả kênh
+          importance: PushNotification.Importance.HIGH, // Độ quan trọng của kênh (LOW, HIGH, DEFAULT)
+          vibrate: true, // Rung khi nhận thông báo
+        },
+        (created) => console.log(`createChannel returned '${created}'`) // Log kết quả tạo kênh
+      );
+    }
+
+    setupNotificationChannel();
+  }, []);
+
+  // Lắng nghe thông báo từ server thông qua socket
+  useEffect(() => {
+    socket.on('pushnotification', (data) => {
+      console.log('Notification received:', data);
+
+      // Hiển thị thông báo cục bộ
+      PushNotification.localNotification({
+        channelId: "order-channel", // Sử dụng kênh đã tạo
+        title: data.title || "Thông báo", // Tiêu đề của thông báo
+        message: data.message || "Bạn có một thông báo mới.", // Nội dung của thông báo
+        playSound: true, // Phát âm thanh khi có thông báo
+        soundName: 'default', // Sử dụng âm thanh mặc định
+        vibrate: true, // Rung khi có thông báo đến
+        vibration: 300, // Độ dài của rung
+        importance: 'high', // Độ quan trọng của thông báo
+        priority: "high", // Ưu tiên của thông báo
+      });
+    });
+
+    // Cleanup khi component bị unmount
+    return () => {
+      socket.off('pushnotification');
+      socket.off('connect');
+    };
+  }, []);
+
   const CountCart = cartLength ? cartLength : 0;
 
   const navigation = useNavigation();
@@ -76,23 +140,23 @@ const CustomHomeHeader = () => {
           style={styles.icon}
         />
         <TouchableOpacity
-        style={{
-          flex:1,
-          height:40,
-          zIndex:2
-        }}
-         onPress={handlePressSearchModal}>
-        <TextInput
-          placeholder="Tìm Kiếm..."
-          style={styles.searchInput}
-          value={searchText}
-          onChangeText={handleTextChange} // Cập nhật text khi người dùng nhập
-          maxLength={40} // Giới hạn số ký tự
-         
-          editable={false}
-          pointerEvents='none'
-          
-        />
+          style={{
+            flex: 1,
+            height: 40,
+            zIndex: 2
+          }}
+          onPress={handlePressSearchModal}>
+          <TextInput
+            placeholder="Tìm Kiếm..."
+            style={styles.searchInput}
+            value={searchText}
+            onChangeText={handleTextChange} // Cập nhật text khi người dùng nhập
+            maxLength={40} // Giới hạn số ký tự
+
+            editable={false}
+            pointerEvents='none'
+
+          />
         </TouchableOpacity>
       </View>
       <TouchableOpacity
@@ -111,7 +175,7 @@ const CustomHomeHeader = () => {
           )}
         </View>
       </TouchableOpacity>
-      <SearchModal visible={isModalSearch} onClose={Onclose} onSearch={handleOnSearch}/>
+      <SearchModal visible={isModalSearch} onClose={Onclose} onSearch={handleOnSearch} />
 
     </View>
   );
@@ -153,25 +217,25 @@ const SearchModal = ({ visible, onClose, onSearch }) => {
               value={searchKeyword}
               onChangeText={setSearchKeyword}
               onSubmitEditing={() => onSearch(searchKeyword)}
-              autoFocus={true} 
+              autoFocus={true}
             />
             {searchKeyword.length > 0 && (
               <TouchableOpacity onPress={handleClearText} style={styles.clearIcon}>
                 <MaterialCommunityIcons name="close-circle" size={20} color="#00A65E" />
               </TouchableOpacity>
             )}
-               <TouchableOpacity
-            style={styles.searchButton}
-            onPress={() => onSearch(searchKeyword)}
-          >
-            <MaterialCommunityIcons
-              name="magnify" // Icon tìm kiếm
-              size={24} // Kích thước của icon
-              color="white" // Màu sắc của icon
-            />
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.searchButton}
+              onPress={() => onSearch(searchKeyword)}
+            >
+              <MaterialCommunityIcons
+                name="magnify" // Icon tìm kiếm
+                size={24} // Kích thước của icon
+                color="white" // Màu sắc của icon
+              />
+            </TouchableOpacity>
           </View>
-       
+
         </View>
       </View>
     </Modal>
@@ -255,7 +319,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     borderRadius: 20,
     paddingHorizontal: 15,
-    zIndex:1
+    zIndex: 1
   },
   searchInput: {
     flex: 1,
@@ -318,7 +382,7 @@ const styles = StyleSheet.create({
   searchButton: {
     backgroundColor: '#00A65E',
     padding: 10,
-    
+
     marginLeft: 10,
 
   },

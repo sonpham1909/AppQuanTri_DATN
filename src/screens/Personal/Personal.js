@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity, Image, ScrollView} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {useNavigation} from '@react-navigation/native';
@@ -67,7 +67,8 @@ const Personal = () => {
   };
 
   return (
-    <View style={styles.container}>
+   <ScrollView>
+     <View style={styles.container}>
       <View style={styles.info}>
         <TouchableOpacity style={styles.boxAvatar} onPress={chooseImage}>
           {avatar ? (
@@ -132,6 +133,7 @@ const Personal = () => {
         preview={'Thông báo, Mật khẩu, FAQ, Liên hệ'}
       />
     </View>
+   </ScrollView>
   );
 };
 

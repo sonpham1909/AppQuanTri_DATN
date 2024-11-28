@@ -82,15 +82,17 @@ const ProductDetailScreen = ({ route, navigation }) => {
 
   // Lấy thông tin người dùng cho các đánh giá chưa có thông tin
   useEffect(() => {
-    const usersToFetch = productReviews
-      .map(review => review.user_id)
-      .filter(userId => userId && !userInfo[userId]);
-    // Lọc ra danh sách người dùng cần lấy thông tin, tránh lấy thông tin lặp lại
+    if (productReviews.length > 0) {
+      const usersToFetch = productReviews
+        .map(review => review.user_id)
+        .filter(userId => userId && !userInfo[userId]);
 
-    usersToFetch.forEach(userId => {
-      // Gửi action để lấy thông tin người dùng cho từng userId
-      dispatch(fetchUserInfo(userId));
-    });
+      if (usersToFetch.length > 0) {
+        usersToFetch.forEach(userId => {
+          dispatch(fetchUserInfo(userId));
+        });
+      }
+    }
   }, [dispatch, productReviews, userInfo]);
 
   // Cập nhật danh sách kích cỡ khả dụng và hình ảnh khi màu sắc hoặc biến thể thay đổi
@@ -551,13 +553,13 @@ const ProductDetailScreen = ({ route, navigation }) => {
   function renderReviewItem(review, index) {
     // Hàm render một mục đánh giá của sản phẩm
     const formattedDate = new Date(review.createdAt).toLocaleDateString('vi-VN');
-  
+
     // Tách danh sách hình ảnh thành các nhóm nhỏ mỗi nhóm chứa hai ảnh
     const groupedImages = [];
     for (let i = 0; i < review.img.length; i += 2) {
       groupedImages.push(review.img.slice(i, i + 2));
     }
-  
+
     return (
       <View
         key={review._id}
@@ -580,27 +582,31 @@ const ProductDetailScreen = ({ route, navigation }) => {
           {renderStars(review.rating)}
           <Text style={styles.reviewDate}>{formattedDate}</Text>
         </View>
-  
+
         {/* Sử dụng map để hiển thị ảnh theo hàng hai ảnh */}
         {groupedImages.map((imageGroup, groupIndex) => (
           <View key={groupIndex} style={{
-            flexDirection:'row',
-            alignItems:'center'
+            flexDirection: 'row',
+            alignItems: 'center'
           }}>
             {imageGroup.map((img, imgIndex) => (
               <TouchableOpacity
                 key={imgIndex}
                 onPress={() => handleImagePress(review.img, groupIndex * 2 + imgIndex)}>
-                <Image source={{ uri: img }}  />
+                <Image source={{ uri: img }} style={{
+                  width: 80,
+                  height: 80,
+                  margin: 10
+                }} />
               </TouchableOpacity>
             ))}
           </View>
         ))}
-  
+
         <Text style={styles.reviewComment}>Size: {review.size}</Text>
         <Text style={styles.reviewComment}>Màu: {review.color}</Text>
         <Text style={styles.reviewComment}>{review.comment}</Text>
-  
+
         {review.responses?.map(response => (
           <Text key={response._id} style={styles.responseText}>
             Phản hồi từ người bán: {response.comment}
@@ -609,7 +615,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
       </View>
     );
   }
-  
+
 };
 
 export default ProductDetailScreen;
@@ -982,5 +988,5 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     borderRadius: 10,
   },
-  
+
 });

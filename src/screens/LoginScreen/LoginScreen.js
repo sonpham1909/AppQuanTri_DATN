@@ -7,6 +7,9 @@ import Button from '../../components/Account/ButtonLogin';
 import Container from '../../components/Account/Container';
 import FormWrapper from '../../components/Account/FormWrapper';
 import globalStyles from '../../styles/globalStyles';
+import webSocketService from '../../services/websocket';
+import tokenService from '../../services/tokenService';
+import { connectSocket, socket } from '../../services/sockerIo';
 
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');  // Biến username thay vì email
@@ -14,7 +17,7 @@ const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch();  // Khởi tạo dispatch để gọi action login
   const { isLoading, isError, message } = useSelector((state) => state.user);  // Lấy trạng thái từ Redux store
   
-  const handleLogin = () => {
+  const handleLogin = async() => {
     console.log('Username:', username);  // Log giá trị username
     console.log('Password:', password);  // Log giá trị password
   
@@ -26,14 +29,21 @@ const LoginScreen = ({ navigation }) => {
     }
   
     // Gọi action login từ Redux
-    dispatch(login({ username, password }))
+    await dispatch(login({ username, password }))
       .unwrap()
       .then(() => {
+       tokenService.getUserIdFromToken();
         navigation.replace('Home');
       })
       .catch((error) => {
         Alert.alert('Lỗi đăng nhập', error.message || 'Đăng nhập không thành công');
       });
+
+
+    const userId = await tokenService.getUserIdFromToken();
+    socket.emit('registerUser', userId);
+    
+    // socket.connect();
   };
   
   return (
