@@ -4,6 +4,7 @@ import {
   fetchOrdersByStatus,
   fetchOrderDetails,
   fetchPurchasedProducts,
+  cancelOrder
 } from '../actions/actionOder';
 
 const initialState = {
@@ -67,6 +68,18 @@ const orderSlice = createSlice({
         state.purchasedProducts = action.payload;
       })
       .addCase(fetchPurchasedProducts.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      }).addCase(cancelOrder.pending, state => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(cancelOrder.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.orders = state.orders.filter(order => order._id !== action.meta.arg.orderId);
+        state.error = null;
+      })
+      .addCase(cancelOrder.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       })
