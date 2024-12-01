@@ -10,7 +10,11 @@ import cartReducer from '../slices/cartSlice';
 import shippingReducer from '../slices/shippingSlice';
 import paymentReducer from '../slices/paymentSlice';
 import oderReducer from '../slices/oderSlice';
+
 import searchReducer from '../slices/searchSlice';
+
+import momoPaymentReducer from '../slices/paymentmomoSlice'; // sửa tên để nhất quán
+
 
 const store = configureStore({
   reducer: {
@@ -25,7 +29,11 @@ const store = configureStore({
     shipping: shippingReducer,  // Thêm reducer này
     payment: paymentReducer,  // Thêm reducer này
     order: oderReducer,  // Thêm reducer này
-    search: searchReducer
+
+    search: searchReducer,
+
+
+    momoPayment: momoPaymentReducer, // đổi tên từ `momoPaymentUrl`
 
   },
  

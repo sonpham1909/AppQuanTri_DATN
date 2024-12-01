@@ -15,7 +15,7 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchProductReviews} from '../../redux/actions/actionProduct';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {toggleFavorite} from '../../redux/actions/favoriteActions';
+import {toggleFavorite} from '../../redux/actions/actionFavorite';
 import {fetchProductReviewResponses} from '../../redux/actions/actionsReview';
 import {fetchVariantsByProductId} from '../../redux/actions/actionsVariant';
 import renderStars from '../../components/Home/renderStars';
