@@ -1,4 +1,5 @@
-import React, {useEffect, useState} from 'react';
+
+import React, {useEffect} from 'react';
 import {
   View,
   Text,
@@ -8,7 +9,7 @@ import {
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useDispatch, useSelector} from 'react-redux';
-import {fetchOrderDetails} from '../../redux/actions/actionOder';
+import {fetchOrderDetails, fetchOrderPaymentStatus} from '../../redux/actions/actionOder';
 import {useRoute} from '@react-navigation/native';
 import StatusView from '../../components/StatusView';
 
@@ -17,22 +18,34 @@ const DetailedOrders = () => {
   const route = useRoute();
   const { orderId } = route.params;
 
-  const { orderDetails, isLoading, error } = useSelector(state => state.order);
-  
+  const {
+    orderDetails,
+    paymentStatus,
+    isLoadingOrderDetails,
+    isLoadingPaymentStatus,
+    error,
+  } = useSelector(state => state.order);
+
   // Tính tổng tiền của các item trong đơn hàng
   const totalAmount = orderDetails.items
     ? orderDetails.items.reduce((acc, item) => acc + item.total_amount, 0)
     : 0;
 
+
+
   useEffect(() => {
     if (orderId) {
       dispatch(fetchOrderDetails(orderId));
+      dispatch(fetchOrderPaymentStatus(orderId)); // Thêm dòng này để gọi thông tin thanh toán
     }
   }, [dispatch, orderId]);
 
-  if (isLoading) {
+ 
+
+  if (isLoadingOrderDetails || isLoadingPaymentStatus) {
     return <StatusView isLoading={true} />;
   }
+
     
   if (!orderDetails || orderDetails.length === 0) {
     return <StatusView emptyText="Không có sản phẩm nào đã mua." />;
@@ -41,13 +54,12 @@ const DetailedOrders = () => {
     return <StatusView error={error} />;
   }
 
-
-
   const formatAddress = addressDetail => {
     if (!addressDetail) return 'Chưa có địa chỉ';
     const { street, ward, district, city } = addressDetail;
     return [street, ward, district, city].filter(Boolean).join(', ');
   };
+
 
   return (
     <ScrollView style={styles.container}>
@@ -149,6 +161,18 @@ const DetailedOrders = () => {
           <Text style={styles.paymentText}>
             Method: {orderDetails?.order?.payment_method_id?.name || 'Chưa xác định'}
           </Text>
+
+          {paymentStatus?.paymentMethod === "MoMo" && (
+        <View style={styles.section}>
+
+          <Text style={styles.paymentText}>
+            Trạng thái: {paymentStatus.paymentStatus}
+          </Text>
+          <Text style={styles.paymentText}>
+            Thông báo: {paymentStatus.paymentMessage}
+          </Text>
+        </View>
+      )}
         </View>
       </View>
     </ScrollView>
