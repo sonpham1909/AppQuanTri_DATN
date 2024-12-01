@@ -94,9 +94,9 @@ const DeliveredOrders = () => {
   if (!purchasedProducts || purchasedProducts.length === 0) {
     return <StatusView emptyText="Không có sản phẩm nào đã mua." />;
   }
-  // if (error) {
-  //   return <StatusView error={error} />;
-  // }
+  if (error) {
+    return <StatusView error={error} />;
+  }
 
   return (
     <FlatList

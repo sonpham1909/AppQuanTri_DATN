@@ -19,7 +19,7 @@ const InvoiceCard = ({ order, onCancelSuccess = () => {} }) => {
     if (order.status === 'pending') {
       // Hiển thị modal để nhập lý do hủy đơn
       setModalVisible(true);
-    } else if (order.status === 'processing') {
+    } else if (order.status === 'ready_for_shipment') {
       // Hiển thị modal xác nhận yêu cầu hủy đơn
       setConfirmationVisible(true);
     }
@@ -78,7 +78,7 @@ const InvoiceCard = ({ order, onCancelSuccess = () => {} }) => {
           <TouchableOpacity style={styles.detailButton} onPress={handleDetailPress}>
             <Text style={styles.buttonText}>Chi tiết</Text>
           </TouchableOpacity>
-          {(order.status === 'pending' || order.status === 'processing') && (
+          {(order.status === 'pending' || order.status === 'ready_for_shipment') && (
             <TouchableOpacity onPress={handleCancelPress}>
               <Text style={styles.confirmText}>Hủy đơn</Text>
             </TouchableOpacity>
