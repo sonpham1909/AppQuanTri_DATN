@@ -99,33 +99,31 @@ const ProductDetailScreen = ({route, navigation}) => {
   // Cập nhật danh sách kích cỡ khả dụng và hình ảnh khi màu sắc hoặc biến thể thay đổi
   useEffect(() => {
     if (variants.length > 0) {
-      // Nếu có biến thể, chọn màu đầu tiên nếu chưa có màu nào được chọn
+      // Chọn màu đầu tiên nếu chưa có màu nào được chọn
       if (!selectedColor) {
         setSelectedColor(variants[0].color_code);
       }
-
-      // Lấy danh sách kích cỡ khả dụng cho màu sắc được chọn
+  
+      // Cập nhật danh sách kích cỡ khả dụng và hình ảnh ban đầu
       const sizesForColor = getSizesForColor(variants, selectedColor);
       setAvailableSizes(sizesForColor);
-
+  
       if (sizesForColor.length > 0) {
-        // Nếu chưa có kích cỡ nào được chọn, chọn kích cỡ đầu tiên
         setSelectedSize(selectedSize || sizesForColor[0].size);
         const selectedSizeObj = sizesForColor.find(
-          sizeObj => sizeObj.size === (selectedSize || sizesForColor[0].size),
+          sizeObj => sizeObj.size === (selectedSize || sizesForColor[0].size)
         );
-        // Cập nhật số lượng tối đa có thể mua của kích cỡ được chọn
         setMaxQuantity(selectedSizeObj ? selectedSizeObj.quantity : 0);
       } else {
         setMaxQuantity(0);
       }
-
-      // Nếu chưa có kích cỡ nào được chọn, cập nhật danh sách hình ảnh
-      if (!selectedSize) {
-        updateAllImages(variants, selectedColor, product.imageUrls);
-      }
+  
+      // Gọi updateAllImages để cập nhật tất cả ảnh
+      updateAllImages(variants, selectedColor, product.imageUrls);
     }
-  }, [selectedColor, variants]);
+  }, [variants]);
+  
+  
 
   // Các hàm trợ giúp để lấy kích cỡ cho màu sắc và cập nhật hình ảnh
   const getSizesForColor = (variants, color) => {
@@ -139,23 +137,30 @@ const ProductDetailScreen = ({route, navigation}) => {
       }));
   };
 
-  const updateAllImages = (variants, color, defaultImages) => {
-    // Cập nhật danh sách hình ảnh cho màu sắc đã chọn
-    const selectedVariant = variants.find(v => v.color_code === color);
-    const newAllImages = [selectedVariant?.image, ...defaultImages].filter(
-      Boolean,
-    );
+  const updateAllImages = (variants, selectedColor, defaultImages) => {
+    // Đảm bảo variants và defaultImages luôn là mảng hợp lệ
+    const variantImages = Array.isArray(variants)
+      ? variants.map(variant => variant.image).filter(Boolean)
+      : [];
+    const productImages = Array.isArray(defaultImages) ? defaultImages : [];
+  
+    // Kết hợp các ảnh từ các biến thể và ảnh mặc định
+    const newAllImages = [...variantImages, ...productImages].filter(Boolean);
     setAllImages(newAllImages);
-
-    if (selectedVariant) {
-      const index = newAllImages.findIndex(
-        image => image === selectedVariant.image,
-      );
+  
+    // Tìm vị trí của ảnh biến thể tương ứng với màu đã chọn
+    const selectedVariant = variants.find(variant => variant.color_code === selectedColor);
+    if (selectedVariant && selectedVariant.image) {
+      const index = newAllImages.findIndex(image => image === selectedVariant.image);
       if (index !== -1 && flatListRef.current) {
-        flatListRef.current.scrollToIndex({index, animated: false});
+        // Cuộn đến ảnh của biến thể đã chọn
+        flatListRef.current.scrollToIndex({ index, animated: true });
       }
     }
   };
+  
+  
+  
 
   // Xử lý khi người dùng muốn thêm hoặc bỏ sản phẩm khỏi danh sách yêu thích
   const handleToggleFavorite = () => dispatch(toggleFavorite(product._id));
@@ -206,14 +211,12 @@ const ProductDetailScreen = ({route, navigation}) => {
   };
 
   // Xử lý khi người dùng chọn màu sắc, cập nhật màu đã chọn và danh sách hình ảnh
-  const handleColorSelect = variant => {
+  const handleColorSelect = (variant) => {
     setSelectedColor(variant.color_code);
-    const color = variants.find(
-      variant => variant.color_code === selectedColor,
-    )?.color;
-
+    // Gọi updateAllImages với giá trị mới để cập nhật và cuộn đến đúng vị trí
     updateAllImages(variants, variant.color_code, product.imageUrls);
   };
+  
 
   // Xử lý khi người dùng chọn kích cỡ, cập nhật kích cỡ và số lượng tối đa
   const handleSizeSelect = sizeObj => {

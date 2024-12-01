@@ -1,6 +1,8 @@
 import { io } from 'socket.io-client';
 
-const SERVER_URL = 'http://192.168.51.106:3000'; // Địa chỉ server của bạn
+import {IP_ADDRESS} from '@env'
+
+const SERVER_URL = `http://${IP_ADDRESS}:3000`; // Địa chỉ server của bạn
 
 // Khởi tạo socket với URL của server
 const socket = io(SERVER_URL, {
@@ -16,15 +18,14 @@ socket.on('connect', () => {
 });
 
 // Lắng nghe sự kiện nhận tin nhắn từ server
-const notificationIO = socket.on('pushnotification', (data) => {
+socket.on('pushnotification', (data) => {
   console.log('Message received:', data);
-  return data;
+  // Bạn có thể sử dụng logic khác để lưu thông báo hoặc cập nhật UI ở đây.
 });
-
 
 // Hàm gửi tin nhắn lên server
 const sendMessage = (message) => {
   socket.emit('send_message', message);
 };
 
-export { socket, sendMessage, notificationIO};
+export { socket, sendMessage };
