@@ -78,6 +78,24 @@ const CheckoutScreen = () => {
       return;
     }
   
+    // Hiển thị hộp thoại xác nhận
+    Alert.alert(
+      'Xác nhận đặt hàng',
+      `Tổng tiền: ${formattedTotal}\nBạn có chắc chắn muốn đặt hàng không?`,
+      [
+        {
+          text: 'Hủy',
+          style: 'cancel',
+        },
+        {
+          text: 'Xác nhận',
+          onPress: () => confirmAndPlaceOrder(),
+        },
+      ]
+    );
+  };
+  
+  const confirmAndPlaceOrder = () => {
     const orderData = {
       address_id: defaultAddress._id,
       shipping_method_id: selectedShippingMethod,
@@ -85,6 +103,7 @@ const CheckoutScreen = () => {
       cartItems: cart,
       total_amount: totalAmount,
     };
+  
     dispatch(createOrder(orderData))
       .unwrap()
       .then((orderResponse) => {
@@ -100,7 +119,7 @@ const CheckoutScreen = () => {
                 Linking.openURL(paymentResponse.payUrl).catch(err =>
                   console.error('Failed to open MoMo payment URL:', err),
                 );
-                dispatch(deleteAllCartItems());
+                // dispatch(deleteAllCartItems());
               }
             })
             .catch((err) => {
@@ -128,6 +147,7 @@ const CheckoutScreen = () => {
         Alert.alert('Lỗi', 'Đặt hàng không thành công. Vui lòng thử lại.');
       });
   };
+  
   
   const shippingFee =
     shippingMethods.find(method => method._id === selectedShippingMethod)

@@ -43,11 +43,11 @@ const App = () => {
       // Xử lý URL để điều hướng đến trang phù hợp
       if (url.includes('payment-success')) {
         navigationRef.current?.navigate('Congrats');
-      }
+      
 
-    // } else if (url.includes('payment-failure')) {
-    //   navigationRef.current?.navigate('PaymentFailed');
-    // }
+    } else if (url.includes('payment-failure')) {
+      navigationRef.current?.navigate('Home');
+    }
     };
 
     const linkingSubscription = Linking.addListener('url', handleDeepLink);

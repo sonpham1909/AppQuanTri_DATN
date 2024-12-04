@@ -6,9 +6,11 @@ import {
   fetchPurchasedProducts,
   cancelOrder,
   fetchOrderPaymentStatus,
+  fetchOrders
 } from '../actions/actionOder';
 
 const initialState = {
+  oderTotal:[],
   orders: [],
   orderDetails: [],
   purchasedProducts: [],
@@ -102,6 +104,20 @@ const orderSlice = createSlice({
       })
       .addCase(fetchOrderPaymentStatus.rejected, (state, action) => {
         state.isLoadingPaymentStatus = false;
+        state.error = action.payload;
+      })
+
+      .addCase(fetchOrders.pending, state => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchOrders.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.oderTotal = action.payload;
+        state.error = null;
+      })
+      .addCase(fetchOrders.rejected, (state, action) => {
+        state.isLoading = false;
         state.error = action.payload;
       });
   },
