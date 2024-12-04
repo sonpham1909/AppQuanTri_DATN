@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity, Image, ScrollView} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {useNavigation} from '@react-navigation/native';
@@ -71,13 +71,13 @@ const Personal = () => {
   };
 
   return (
-    <View style={styles.container}>
+   <ScrollView>
+     <View style={styles.container}>
       <View style={styles.info}>
         <TouchableOpacity style={styles.boxAvatar} onPress={chooseImage}>
           {avatar ? (
             <Image source={avatar} style={styles.avatar} />
-          ) : (
-            // Sử dụng ảnh avatar từ Redux nếu có, nếu không sẽ hiển thị ảnh mặc định
+          ) : (// Sử dụng ảnh avatar từ Redux nếu có, nếu không sẽ hiển thị ảnh mặc định
             <Image
               source={
                 user?.avatar
@@ -128,6 +128,13 @@ const Personal = () => {
         }}
         preview={'Đã mua ' + purchasedProducts.length + ' sản phẩm'}
       />
+       <CardProfile
+        title={'Liên hệ với chủ shop'}
+        onpress={() => {
+          navigation.navigate('MessageScreen');
+        }}
+       
+      />
       <CardProfile
         title={'Cài đặt'}
         onpress={() => {
@@ -136,6 +143,7 @@ const Personal = () => {
         preview={'Thông báo, Mật khẩu, FAQ, Liên hệ'}
       />
     </View>
+   </ScrollView>
   );
 };
 
