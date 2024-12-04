@@ -14,6 +14,7 @@ import oderReducer from '../slices/oderSlice';
 import searchReducer from '../slices/searchSlice';
 
 import momoPaymentReducer from '../slices/paymentmomoSlice'; // sửa tên để nhất quán
+import notificationReducer from '../slices/notificationSlice'
 
 
 const store = configureStore({
@@ -34,6 +35,7 @@ const store = configureStore({
 
 
     momoPayment: momoPaymentReducer, // đổi tên từ `momoPaymentUrl`
+    notification:notificationReducer
 
   },
  

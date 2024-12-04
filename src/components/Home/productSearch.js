@@ -7,7 +7,7 @@ import { fetchProductReviews } from '../../redux/actions/actionProduct';
 import {
     toggleFavorite,
     fetchFavoriteList,
-} from '../../redux/actions/favoriteActions';
+} from '../../redux/actions/actionFavorite';
 import { fetchVariantsByProductId } from '../../redux/actions/actionsVariant';
 
 const SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'XXL']; // Thứ tự size

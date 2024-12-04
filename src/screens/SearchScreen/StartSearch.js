@@ -61,10 +61,11 @@ const StartSearch = ({ navigation }) => {
 
     //xử lí khi người dùng click vào lịch sử tìm kiếm
     const handleClickHistorySearch = async (searchTerm) => {
-        await setSearchText(searchTerm);
+       
         dispatch(addSearch(searchTerm)).then(() => {
+            
             dispatch(fetchSearchHistories());
-            navigation.navigate('SearchScreen', { searchKeyWord: searchText }, { merge: true });
+            navigation.navigate('SearchScreen', { searchKeyWord: searchTerm }, { merge: true });
         });
 
 

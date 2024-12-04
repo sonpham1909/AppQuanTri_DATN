@@ -717,7 +717,7 @@ const styles = StyleSheet.create({
   },
 
   disabled: {
-    opacity: 1.5,
+    opacity: 0.5,
     textDecorationLine: 'line-through',
   },
   selectedColorName: {

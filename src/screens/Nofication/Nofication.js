@@ -1,14 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { socket } from '../../services/sockerIo';
+import NotificationList from '../../components/Nofication/NotificationList';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchNotification } from '../../redux/actions/actionNotification';
 
 const Notification = () => {
-  const [notification, setNotification] = useState([]);
+  const dispatch = useDispatch();
+  const { isLoading, notification: reduxNotifications } = useSelector((state) => state.notification);
+  const [notifications, setNotifications] = useState([]);
 
+  // Lấy danh sách thông báo từ Redux khi component mount
   useEffect(() => {
-    // Lắng nghe sự kiện 'pushnotification' từ server và cập nhật state
+    dispatch(fetchNotification());
+  }, [dispatch]);
+
+  // Đồng bộ dữ liệu thông báo từ Redux vào state local
+  useEffect(() => {
+    setNotifications(reduxNotifications);
+  }, [reduxNotifications]);
+
+  // Lắng nghe thông báo mới từ socket và cập nhật state local
+  useEffect(() => {
     socket.on('pushnotification', (data) => {
-      setNotification((prev) => [...prev, data]);
+      setNotifications((prev) => [data, ...prev]); // Thêm thông báo mới vào đầu danh sách
       console.log('Received notification:', data);
     });
 
@@ -16,20 +31,16 @@ const Notification = () => {
     return () => {
       socket.off('pushnotification');
     };
-  }, []); // [] để đảm bảo chỉ thiết lập listener một lần
+  }, []);
 
   return (
     <View style={styles.container}>
-      {notification.length === 0 ? (
+      {isLoading ? (
+        <Text>Đang tải thông báo...</Text>
+      ) : notifications.length === 0 ? (
         <Text>Chưa có thông báo nào.</Text>
       ) : (
-        notification.map((notifi, index) => (
-          <View key={index} style={styles.notificationBox}>
-            <Text style={styles.notificationText}>
-              {notifi.title || 'Không có tiêu đề'}: {notifi.message || 'Không có thông báo cụ thể'}
-            </Text>
-          </View>
-        ))
+        <NotificationList notifications={notifications} />
       )}
     </View>
   );
@@ -40,15 +51,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFF',
     padding: 20,
-  },
-  notificationBox: {
-    padding: 10,
-    backgroundColor: '#f0f0f0',
-    marginVertical: 5,
-    borderRadius: 5,
-  },
-  notificationText: {
-    fontSize: 16,
   },
 });
 
