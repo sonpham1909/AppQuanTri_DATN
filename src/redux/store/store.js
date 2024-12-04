@@ -11,6 +11,7 @@ import shippingReducer from '../slices/shippingSlice';
 import paymentReducer from '../slices/paymentSlice';
 import oderReducer from '../slices/oderSlice';
 import momoPaymentReducer from '../slices/paymentmomoSlice'; // sửa tên để nhất quán
+import messageRepliesReducer from '../slices/messageSlice';
 
 const store = configureStore({
   reducer: {
@@ -26,8 +27,8 @@ const store = configureStore({
     payment: paymentReducer,  // Thêm reducer này
     order: oderReducer,  // Thêm reducer này
     momoPayment: momoPaymentReducer, // đổi tên từ `momoPaymentUrl`
+    messageReplies: messageRepliesReducer,  // Đảm bảo tên này đồng nhất
   },
- 
 });
 
 export default store;
