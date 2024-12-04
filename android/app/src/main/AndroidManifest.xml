@@ -31,9 +31,9 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 
                 <!-- Cấu hình Deep Link URL với scheme và host phù hợp -->
-                <data
-                    android:scheme="yourapp"
-                    android:host="payment-success" />
+                   <data android:scheme="yourapp" android:host="payment-success" />
+        <data android:scheme="yourapp" android:host="payment-failure" />
+                    
             </intent-filter>
         </activity>
     </application>

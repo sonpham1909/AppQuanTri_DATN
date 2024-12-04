@@ -46,7 +46,7 @@ const ProductList = ({navigation, title, products}) => {
           onPress={() =>
             navigation.navigate('AllProductScreen', {category: products})
           }>
-          <Text style={styles.viewAll}>Tất Cả</Text>
+          {/* <Text style={styles.viewAll}>Tất Cả</Text> */}
         </TouchableOpacity>
       </View>
       <FlatList
