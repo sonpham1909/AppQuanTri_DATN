@@ -28,16 +28,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!-- Intent Filter cho xử lý Deep Linking -->
+            <!-- Intent Filter cho deep linking -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                
+
                 <!-- Cấu hình Deep Link URL với scheme và host phù hợp -->
-                <data
-                    android:scheme="yourapp"
-                    android:host="payment-success" />
+                   <data android:scheme="yourapp" android:host="payment-success" />
+        <data android:scheme="yourapp" android:host="payment-failure" />
+                    
+
             </intent-filter>
         </activity>
 

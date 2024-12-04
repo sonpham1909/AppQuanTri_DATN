@@ -3,12 +3,10 @@ import {
   FlatList,
   View,
   Text,
-  ActivityIndicator,
   StyleSheet,
   TouchableOpacity,
   Image,
 } from 'react-native';
-import cateStyles from '../../styles/cateStyles';
 import CategoryItem from '../../components/Categories/renderCategory'; // Đổi tên renderCategory thành CategoryItem
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchSubCategoriesByParent} from '../../redux/actions/actionCategory';
@@ -38,7 +36,7 @@ const CategoriesScreen = ({route}) => {
   }
 
   return (
-    <View style={cateStyles.container}>
+    <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
@@ -69,6 +67,12 @@ const CategoriesScreen = ({route}) => {
   );
 };
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+    padding: 16,
+    justifyContent: 'center',
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Dimensions, ScrollView } from 'react-native';
+import {  StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { TabView, TabBar } from 'react-native-tab-view';
 import InvoiceCard from '../../components/Invoices/InvoiceCard';
 import { useDispatch, useSelector } from 'react-redux';

@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   },
   methodImage: {
     width: 50,
-    height: 30,
+    height: 50,
   },
 });
 

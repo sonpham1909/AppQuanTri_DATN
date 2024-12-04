@@ -12,11 +12,10 @@ import {
   Modal,
 } from 'react-native';
 import HomeScreen from '../screens/HomeScreen/HomeScreen';
-import colors from '../constants/colors';
 import Nofication from '../screens/Nofication/Nofication';
 import Favotires from '../screens/Favotires/Favotires';
 import Personal from '../screens/Personal/Personal';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCart } from '../redux/actions/actionCart';
 import PushNotification from 'react-native-push-notification';
@@ -47,7 +46,11 @@ const CustomHomeHeader = () => {
     }
 
   }
-
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(fetchCart());
+    }, [dispatch])
+  );
 
   useEffect(() => {
     dispatch(fetchCart());
