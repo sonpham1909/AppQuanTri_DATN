@@ -87,7 +87,7 @@ const ReviewsScreen = ({navigation}) => {
     return <StatusView isLoading={true} />;
   }
     
-  if (!userReviews || userReviews.length === 0) {
+  if (!userReviews || userReviews.length === 0 && !productDetails || productDetails.length=== 0) {
     return <StatusView emptyText="Không có nhan xet nào đã mua." />;
   }
   if (reviewError || productError) {

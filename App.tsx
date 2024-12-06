@@ -28,6 +28,7 @@ import AddAddress from './src/screens/ShippingAddressScreen/AddAddressScreen';
 import store from './src/redux/store/store';
 import DeliveredOrders from './src/screens/DeliveredOrders/DeliveredOrders';
 import AddReview from './src/screens/AddReview/AddReview';
+import MessageScreen from './src/screens/MessageScreen/MessageScreen';
 
 const Stack = createStackNavigator();
 export const navigationRef = createRef();
@@ -42,11 +43,11 @@ const App = () => {
       // Xử lý URL để điều hướng đến trang phù hợp
       if (url.includes('payment-success')) {
         navigationRef.current?.navigate('Congrats');
-      }
+      
 
-    // } else if (url.includes('payment-failure')) {
-    //   navigationRef.current?.navigate('PaymentFailed');
-    // }
+    } else if (url.includes('payment-failure')) {
+      navigationRef.current?.navigate('Home');
+    }
     };
 
     const linkingSubscription = Linking.addListener('url', handleDeepLink);
@@ -89,6 +90,23 @@ const App = () => {
               headerShown: true,
               headerTitleAlign: 'center',
               title: 'Hóa đơn',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
+
+<Stack.Screen
+            name="MessageScreen"
+            component={MessageScreen}
+            options={{
+              headerShown: true,
+              headerTitleAlign: 'center',
+              title: 'Liên hệ với chủ shop',
               headerStyle: {
                 backgroundColor: '#00A65E', // Màu nền xanh
               },

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState,useCallback} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
@@ -11,13 +11,13 @@ import {
   Alert,
 } from 'react-native';
 import HomeScreen from '../screens/HomeScreen/HomeScreen';
-import colors from '../constants/colors';
 import Nofication from '../screens/Nofication/Nofication';
 import Favotires from '../screens/Favotires/Favotires';
 import Personal from '../screens/Personal/Personal';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchCart} from '../redux/actions/actionCart';
+import { useFocusEffect } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 
@@ -25,6 +25,11 @@ const CustomHomeHeader = () => {
   const dispatch = useDispatch();
   const {cart, cartLength, isLoading} = useSelector(state => state.cart);
 
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(fetchCart());
+    }, [dispatch])
+  );
   useEffect(() => {
     dispatch(fetchCart());
   }, [dispatch]);
