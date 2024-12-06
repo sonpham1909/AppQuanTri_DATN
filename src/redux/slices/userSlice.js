@@ -4,6 +4,7 @@ import {
   login,
   fetchUserInfo,
   fetchUserInfoVS1,
+  updateAvatar
 } from '../actions/actionUser';
 
 const initialState = {
@@ -15,6 +16,7 @@ const initialState = {
   message: '',
   userInfo: {},
   userInfovs1: {},
+  avatar: null
 };
 
 const userSlice = createSlice({
@@ -81,7 +83,21 @@ const userSlice = createSlice({
         state.message =
           action.payload?.message ||
           'Lấy thông tin người dùng không thành công';
-      });
+      })
+        .addCase(updateAvatar.pending, state => {
+          state.isLoading = true;
+        })
+        .addCase(updateAvatar.fulfilled, (state, action) => {
+          state.isLoading = false;
+          state.isSuccess = true;
+          state.avatar = action.payload.avatar; 
+          console.log('Avatar updated successfully:', state.avatar); 
+        })
+        .addCase(updateAvatar.rejected, (state, action) => {
+          state.isLoading = false;
+          state.isError = true;
+          state.message = action.payload?.message || 'Cập nhật avatar không thành công';
+        });
   },
 });
 

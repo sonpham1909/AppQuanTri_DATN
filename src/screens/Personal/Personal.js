@@ -5,7 +5,7 @@ import {useNavigation} from '@react-navigation/native';
 import colors from '../../constants/colors';
 import CardProfile from '../../components/ShippingAddress/CardProfile';
 import {useDispatch, useSelector} from 'react-redux';
-import {fetchUserInfoVS1} from '../../redux/actions/actionUser';
+import {fetchUserInfoVS1,updateAvatar} from '../../redux/actions/actionUser';
 import {fetchAllAddresses} from '../../redux/actions/actionAddress'; // Import action để lấy danh sách địa chỉ
 import {fetchUserReviews} from '../../redux/actions/actionsReview'; // Import action để lấy danh sách địa chỉ
 import {fetchPurchasedProducts,fetchOrders} from '../../redux/actions/actionOder'; // Import action để lấy danh sách địa chỉ
@@ -24,7 +24,6 @@ const Personal = () => {
 
   // Lấy thông tin người dùng từ userInfovs1.user
   const user = userInfovs1?.user;
-
   // Load thông tin người dùng và danh sách địa chỉ khi mở màn hình
   useEffect(() => {
     dispatch(fetchUserInfoVS1());
@@ -62,10 +61,15 @@ const Personal = () => {
       if (response.didCancel) {
         console.log('Người dùng không chọn ảnh');
       } else if (response.errorMessage) {
-        console.log('ImagePicker Error: ', response.errorMessage);
+        console.log('Lỗi ImagePicker: ', response.errorMessage);
       } else {
-        const source = {uri: response.assets[0].uri};
-        setAvatar(source);
+        const selectedAvatar = response.assets[0];  // Lấy avatar đã chọn
+        setAvatar({ uri: selectedAvatar.uri });    // Cập nhật avatar vào state local
+  
+        // Dispatch action để cập nhật avatar cho người dùng
+        if (user?._id) {
+          dispatch(updateAvatar({ userId: user._id, avatarData: selectedAvatar }));
+        }
       }
     });
   };

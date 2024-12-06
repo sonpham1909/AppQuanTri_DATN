@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View, TextInput, Switch} from 'react-native';
+import {StyleSheet, Text, View, TextInput, Switch,Alert,TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'; // For pencil icon
 import globalStyles from '../../styles/globalStyles';
@@ -14,6 +14,30 @@ const SettingScreen = () => {
     setIsSalesEnabled(previousState => !previousState);
   const toggleBackgroundSwitch = () =>
     setIsBackgroundEnabled(previousState => !previousState);
+
+  // Đăng xuất
+  const handleLogout = () => {
+    Alert.alert(
+      'Xác nhận',
+      'Bạn có chắc chắn muốn đăng xuất không?',
+      [
+        {
+          text: 'Hủy',
+          style: 'cancel',
+        },
+        {
+          text: 'Đồng ý',
+          onPress: () => {
+            console.log('User logged out');
+          
+            navigation.navigate('Login');
+          },
+        },
+      ],
+      {cancelable: true},
+    );
+  };
+  
 
   return (
     <View style={globalStyles.containerSetting}>
@@ -53,6 +77,10 @@ const SettingScreen = () => {
           value={isBackgroundEnabled}
         />
       </View>
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+  <Text style={styles.logoutText}>Đăng xuất</Text>
+</TouchableOpacity>
+
     </View>
   );
 };
@@ -130,6 +158,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#333',
   },
+  logoutButton: {
+    backgroundColor: '#FF3B30',
+    borderRadius: 10,
+    paddingVertical: 15,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  logoutText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  
 });
 
 export default SettingScreen;
