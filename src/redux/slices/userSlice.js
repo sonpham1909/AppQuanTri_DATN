@@ -4,7 +4,8 @@ import {
   login,
   fetchUserInfo,
   fetchUserInfoVS1,
-  updateAvatar
+  updateAvatar,
+  changePassword,
 } from '../actions/actionUser';
 
 const initialState = {
@@ -97,6 +98,21 @@ const userSlice = createSlice({
           state.isLoading = false;
           state.isError = true;
           state.message = action.payload?.message || 'Cập nhật avatar không thành công';
+        })
+        .addCase(changePassword.pending, (state) => {
+          state.isLoading = true;
+        })
+        .addCase(changePassword.fulfilled, (state, action) => {
+          state.isLoading = false;
+          state.isSuccess = true;
+          state.message = 'Mật khẩu đã được thay đổi thành công!';
+          console.log('Password changed successfully');
+        })
+        .addCase(changePassword.rejected, (state, action) => {
+          state.isLoading = false;
+          state.isError = true;
+          state.message =
+            action.payload?.message || 'Đổi mật khẩu không thành công';
         });
   },
 });

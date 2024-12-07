@@ -142,7 +142,7 @@ const Personal = () => {
       <CardProfile
         title={'Cài đặt'}
         onpress={() => {
-          navigation.navigate('SettingScreen');
+          navigation.navigate('SettingScreen', { userId: user._id });
         }}
         preview={'Thông báo, Mật khẩu, FAQ, Liên hệ'}
       />

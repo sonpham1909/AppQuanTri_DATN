@@ -95,3 +95,28 @@ export const updateAvatar = createAsyncThunk(
     }
   }
 );
+// Action đổi mật khẩu
+export const changePassword = createAsyncThunk(
+  'user/updateUser',
+  async ({ userId, oldPassword, newPassword }, thunkAPI) => {
+    try {
+      const token = await tokenService.getToken();
+      const response = await axios.put(
+        `${API_URL}/users/${userId}/update_user`,
+        { oldPassword, password:newPassword },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      console.error('Lỗi khi đổi mật khẩu:', error);
+      return thunkAPI.rejectWithValue(
+        error.response ? error.response.data.message : error.message
+      );
+    }
+  }
+);
