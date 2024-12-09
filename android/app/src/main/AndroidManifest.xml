@@ -29,7 +29,7 @@
             </intent-filter>
 
             <!-- Intent Filter cho deep linking -->
-            <intent-filter>
+            <intent-filter >
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -38,7 +38,8 @@
                    <data android:scheme="yourapp" android:host="payment-success" />
         <data android:scheme="yourapp" android:host="payment-failure" />
                     
-
+ <!-- <data android:scheme="yourapp" android:host="reset-password" /> -->
+ 
             </intent-filter>
         </activity>
     </application>
