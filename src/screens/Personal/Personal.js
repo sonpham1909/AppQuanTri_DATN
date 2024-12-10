@@ -9,11 +9,15 @@ import {fetchUserInfoVS1,updateAvatar} from '../../redux/actions/actionUser';
 import {fetchAllAddresses} from '../../redux/actions/actionAddress'; // Import action để lấy danh sách địa chỉ
 import {fetchUserReviews} from '../../redux/actions/actionsReview'; // Import action để lấy danh sách địa chỉ
 import {fetchPurchasedProducts,fetchOrders} from '../../redux/actions/actionOder'; // Import action để lấy danh sách địa chỉ
+import { useTheme } from '../../utils/ThemeContact';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 const Personal = () => {
   const dispatch = useDispatch();
 
   const [avatar, setAvatar] = useState(null);
+  //lấy trang thái theme
+  const isDarkMode = useTheme()
 
   // Sử dụng useSelector để lấy thông tin người dùng và địa chỉ từ Redux store
   const userInfovs1 = useSelector(state => state.user.userInfovs1);
@@ -94,10 +98,10 @@ const Personal = () => {
         </TouchableOpacity>
         <View>
           {/* Hiển thị tên và email từ Redux */}
-          <Text style={styles.text}>
+          <Text style={[styles.text,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>
             {user?.full_name || 'Tên không xác định'}
           </Text>
-          <Text style={styles.email}>
+          <Text style={[styles.email,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>
             {user?.email || 'Email không xác định'}
           </Text>
         </View>

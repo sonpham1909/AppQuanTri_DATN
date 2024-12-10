@@ -9,6 +9,8 @@ import {
   fetchFavoriteList,
 } from '../../redux/actions/actionFavorite';
 import {fetchVariantsByProductId} from '../../redux/actions/actionsVariant';
+import { useTheme } from '@react-navigation/native';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 const SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'XXL']; // Thứ tự size
 
@@ -17,6 +19,9 @@ const ProductList = ({navigation, title, products}) => {
   const reviews = useSelector(state => state.products.reviews);
   const variants = useSelector(state => state.variants.variants);
   const favoriteList = useSelector(state => state.favorites.favoriteList);
+
+  //lấy trạng thái theme
+  const isDarkMode = useTheme()
 
   useEffect(() => {
     if (favoriteList.length === 0) {
@@ -41,7 +46,7 @@ const ProductList = ({navigation, title, products}) => {
   return (
     <View style={styles.productSection}>
       <View style={styles.header}>
-        <Text style={styles.title}>{title}</Text>
+        <Text style={[styles.title,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{title}</Text>
         <TouchableOpacity
           onPress={() =>
             navigation.navigate('AllProductScreen', {category: products})

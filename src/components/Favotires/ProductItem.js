@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 5,
     borderRadius: 10,
+    backgroundColor:'#ffff'
   },
   loveIconContainer: {
     justifyContent: 'center',

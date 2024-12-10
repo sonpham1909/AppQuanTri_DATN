@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { changePassword } from '../../redux/actions/actionUser'; 
 import { useTheme } from '../../utils/ThemeContact';
+import { lightTheme,darkTheme } from '../../utils/theme';
 
 const SettingScreen = ({route}) => {
   const navigation = useNavigation();
@@ -88,23 +89,23 @@ const SettingScreen = ({route}) => {
       });
   };
   return (
-    <View style={[globalStyles.containerSetting, isDarkMode ? styles.darkContainer : styles.lightContainer]}>
+    <View style={globalStyles.containerSetting}>
       <View style={styles.header}>
-        <Text style={[styles.headerText1,isDarkMode ? styles.darkText : styles.lightText]}>Password</Text>
+        <Text style={[styles.headerText1,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Password</Text>
         <TouchableOpacity onPress={() => setModalVisible(true)}>
           <MaterialCommunityIcons name="pencil" size={24} color="#C4C4C4" />
         </TouchableOpacity>
       </View>
 
-      <View style={styles.section}>
-        <Text style={styles.label}>Name</Text>
+      <View style={[styles.section]}>
+        <Text style={styles.label}>Password</Text>
         <Text style={styles.label1}>*************</Text>
       </View>
 
-      <Text style={[styles.notificationHeader,isDarkMode ? styles.darkText : styles.lightText]}>Thông Báo</Text>
+      <Text style={[styles.notificationHeader,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Thông Báo</Text>
 
       <View style={styles.switchContainer}>
-        <Text style={[styles.switchLabel,isDarkMode ? styles.darkText : styles.lightText]}>Sales</Text>
+        <Text style={[styles.switchLabel,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Sales</Text>
         <Switch
           trackColor={{ false: '#767577', true: '#81b0ff' }}
           thumbColor={isSalesEnabled ? '#4CAF50' : '#f4f3f4'}
@@ -114,7 +115,7 @@ const SettingScreen = ({route}) => {
       </View>
 
       <View style={styles.switchContainer}>
-        <Text style={[styles.switchLabel, isDarkMode ? styles.darkText : styles.lightText]}>
+        <Text style={[styles.switchLabel, { color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>
           Chế độ tối
         </Text>
         <Switch
@@ -336,12 +337,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 15,
   },
-  lightContainer: {
-    backgroundColor: '#fff',
-  },
-  darkContainer: {
-    backgroundColor: '#121212',
-  },
   switchContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -350,12 +345,6 @@ const styles = StyleSheet.create({
   },
   switchLabel: {
     fontSize: 16,
-  },
-  darkText: {
-    color: '#fff',
-  },
-  lightText: {
-    color: '#000',
   },
 });
 

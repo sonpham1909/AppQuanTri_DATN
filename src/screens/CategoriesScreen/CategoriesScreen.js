@@ -12,6 +12,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {fetchSubCategoriesByParent} from '../../redux/actions/actionCategory';
 import {useNavigation} from '@react-navigation/native'; // Import hook điều hướng
 import StatusView from '../../components/StatusView';
+import { useTheme } from '../../utils/ThemeContact';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 const CategoriesScreen = ({route}) => {
   const {category} = route.params; // Nhận dữ liệu danh mục cha từ route.params

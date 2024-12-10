@@ -5,12 +5,16 @@ import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchCategories} from '../../redux/actions/actionCategory';
 import StatusView from '../StatusView';
+import { useTheme } from '../../utils/ThemeContact';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 const CategorySection = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const {categories, isLoading, error} = useSelector(state => state.categories);
 
+  //lấy trạng thái theme
+  const isDarkMode = useTheme()
   useEffect(() => {
     dispatch(fetchCategories()); // Lấy danh mục cha khi component được render
   }, [dispatch]);
@@ -32,10 +36,11 @@ const CategorySection = () => {
 
   return (
     <View style={homeStyles.categorySection}>
-      <Text style={homeStyles.sectionTitle1}>Danh Mục</Text>
+      <Text style={[homeStyles.sectionTitle1,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Danh Mục</Text>
       <FlatList
         horizontal
         data={categories}
+        showsHorizontalScrollIndicator={false} // Ẩn thanh trượt ngang
         keyExtractor={item => item._id}
         renderItem={({item}) => (
           <TouchableOpacity
@@ -47,7 +52,7 @@ const CategorySection = () => {
                 style={{width: 30, height: 30}}
               />
             </View>
-            <Text style={homeStyles.clother}>{item.namecategory}</Text>
+            <Text style={[homeStyles.clother,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{item.namecategory}</Text>
           </TouchableOpacity>
         )}
       />

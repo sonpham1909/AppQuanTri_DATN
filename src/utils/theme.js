@@ -1,12 +1,12 @@
 export const lightTheme = {
     dark: false,
     colors: {
-      primary: '#6200ee',
-      background: '#ffffff', // Bắt buộc
-      card: '#f8f8f8', // Màu nền của header, bottom tabs, v.v.
-      text: '#000000',
+      primary: '#00A65E',
+      background: '#f5f5f5', // Bắt buộc
+      card: '#F0F0F0', // Màu nền của header, bottom tabs, v.v.
+      text: '#909191',
       border: '#c7c7c7',
-      notification: '#ff80ab',
+      notification: '#ff80ab', 
     },
   };
   
@@ -14,9 +14,9 @@ export const lightTheme = {
     dark: true,
     colors: {
       primary: '#bb86fc',
-      background: '#121212', // Bắt buộc
-      card: '#1f1f1f', // Màu nền của header, bottom tabs, v.v.
-      text: '#ffffff',
+      background: '#22262B', // Bắt buộc
+      card: '#1E1E1E', // Màu nền của header, bottom tabs, v.v.
+      text: '#ffff',
       border: '#272727',
       notification: '#ff80ab',
     },
