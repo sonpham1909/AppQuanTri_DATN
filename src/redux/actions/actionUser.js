@@ -64,7 +64,7 @@ export const fetchUserInfoVS1 = createAsyncThunk(
       );
     }
   }
-);// Action gửi email đặt lại mật khẩu
+);
 export const resetPasswordRequest = createAsyncThunk(
   'v1/users/sendresetpasswordemail',
   async ({ email }, thunkAPI) => {
@@ -72,13 +72,14 @@ export const resetPasswordRequest = createAsyncThunk(
       const response = await axios.post(`${API_URL}/users/sendresetpasswordemail`, { email });
       return response.data.message || 'Email đặt lại mật khẩu đã được gửi';
     } catch (error) {
-      console.error('Lỗi gửi email đặt lại mật khẩu:', error);
-      return thunkAPI.rejectWithValue(
-        error.response?.data.message || 'Gửi email đặt lại mật khẩu thất bại'
-      );
+      const errorMessage = 
+        error.response?.data?.message || 'Gửi email đặt lại mật khẩu thất bại';
+      return thunkAPI.rejectWithValue(errorMessage);
     }
   }
-)
+);
+
+
 export const verifyOtpRequest = createAsyncThunk(
   'v1/users/verifyOtp',
   async ({ email, otp }, thunkAPI) => {
