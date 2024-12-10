@@ -7,9 +7,13 @@ import Button from '../../components/Account/ButtonLogin';
 import Container from '../../components/Account/Container';
 import FormWrapper from '../../components/Account/FormWrapper';
 import globalStyles from '../../styles/globalStyles';
+import webSocketService from '../../services/websocket';
+import tokenService from '../../services/tokenService';
+import { connectSocket, socket } from '../../services/sockerIo';
 
 
 const LoginScreen = ({ navigation }) => {
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
@@ -28,13 +32,21 @@ const LoginScreen = ({ navigation }) => {
     }
 
     dispatch(login({ username, password }))
+
       .unwrap()
       .then(() => {
+       tokenService.getUserIdFromToken();
         navigation.replace('Home');
       })
       .catch((error) => {
         Alert.alert('Lỗi đăng nhập', error.message || 'Đăng nhập không thành công');
       });
+
+
+    const userId = await tokenService.getUserIdFromToken();
+    socket.emit('registerUser', userId);
+    
+    // socket.connect();
   };
 
   const handleForgotPassword = () => {

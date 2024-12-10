@@ -1,5 +1,7 @@
-import React, { useEffect } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+
+import React, {useEffect} from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+
 import LoginScreen from './src/screens/LoginScreen/LoginScreen';
 import Welcom from './src/screens/Welcom/SplashScreen';
 import Registered from './src/screens/Registered/Registered';
@@ -29,12 +31,41 @@ import store from './src/redux/store/store';
 import DeliveredOrders from './src/screens/DeliveredOrders/DeliveredOrders';
 import AddReview from './src/screens/AddReview/AddReview';
 import MessageScreen from './src/screens/MessageScreen/MessageScreen';
+
 import ResetPassword from './src/screens/LoginScreen/ResetPasswordScreen'
+
+import SearchScreen from './src/screens/SearchScreen/SearchScreen';
+import StartSearch from './src/screens/SearchScreen/StartSearch';
+import PushNotification from "react-native-push-notification";
+import { Platform } from "react-native";
+
 const Stack = createStackNavigator();
 export const navigationRef = createRef();
 // import queryString from 'query-string';
 
 const App = () => {
+  useEffect(() => {
+    // Configure Push Notification khi ứng dụng khởi chạy
+    PushNotification.configure({
+      // (optional) Called when a remote or local notification is opened or received
+      onNotification: function (notification) {
+        console.log("NOTIFICATION:", notification);
+  
+        // Không cần gọi finish() vì không sử dụng iOS hoặc Hermes gây lỗi
+      },
+      // (optional) Called when Token is generated (iOS and Android)
+      onRegister: function (token) {
+        console.log("TOKEN:", token);
+      },
+      // Yêu cầu quyền trên iOS (nếu cần thiết)
+      requestPermissions: Platform.OS === 'ios',
+    });
+  
+    // Tạo kênh thông báo
+ 
+  }, []);
+  
+ 
   useEffect(() => {
     // Lắng nghe sự kiện deep link
     const handleDeepLink = event => {
@@ -92,6 +123,7 @@ const App = () => {
   return (
     <Provider store={store}>
       <NavigationContainer ref={navigationRef}>
+        
         <Stack.Navigator
           initialRouteName="Welcom"
           screenOptions={{ headerShown: false }}>
@@ -100,7 +132,9 @@ const App = () => {
           <Stack.Screen name="Registered" component={Registered} />
 
           <Stack.Screen name="Home" component={BottomTabNavigator} />
+         
 
+          
           <Stack.Screen
             name="CategoriesScreen"
             component={CategoriesScreen}
@@ -133,6 +167,26 @@ const App = () => {
           />
 
           <Stack.Screen
+
+            name="SearchScreen"
+            component={SearchScreen}
+            options={{
+              headerShown: false,
+              headerTitleAlign: 'center',
+              title: 'Hóa đơn',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
+         
+
+<Stack.Screen
+
             name="MessageScreen"
             component={MessageScreen}
             options={{
@@ -165,6 +219,24 @@ const App = () => {
               },
             }}
           />
+          
+          <Stack.Screen
+            name="StartSearch"
+            component={StartSearch}
+            options={{
+              headerShown: false,
+              title: 'Nhận xét',
+              headerTitleAlign: 'center',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
+        
 
           <Stack.Screen
             name="CateClother"
@@ -212,7 +284,10 @@ const App = () => {
               },
             }}
           />
+        
+       
 
+        
           <Stack.Screen
             name="Favorites"
             component={Favorites}
@@ -262,7 +337,7 @@ const App = () => {
               },
             }}
           />
-
+          
           <Stack.Screen
             name="ProductDetailScreen"
             component={ProductDetailScreen}
@@ -295,6 +370,7 @@ const App = () => {
               },
             }}
           />
+         
 
           <Stack.Screen
             name="AllProductScreen"
@@ -312,6 +388,7 @@ const App = () => {
               },
             }}
           />
+         
 
           <Stack.Screen
             name="ShippingAddressScreen"
@@ -345,6 +422,10 @@ const App = () => {
               },
             }}
           />
+        
+          
+         
+     
           <Stack.Screen
             name="SettingScreen"
             component={SettingScreen}
@@ -363,6 +444,7 @@ const App = () => {
           />
 
           <Stack.Screen
+        
             name="DeliveredOrders"
             component={DeliveredOrders}
             options={{
@@ -394,6 +476,7 @@ const App = () => {
               },
             }}
           />
+
           <Stack.Screen
             name="ResetPassword"
             component={ResetPassword}
@@ -410,8 +493,11 @@ const App = () => {
               },
             }}
           />
+
         </Stack.Navigator>
       </NavigationContainer>
+           
+       
     </Provider>
   );
 };

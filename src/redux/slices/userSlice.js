@@ -4,9 +4,13 @@ import {
   login,
   fetchUserInfo,
   fetchUserInfoVS1,
+
   resetPasswordRequest,
   resetPassword,
   verifyOtpRequest
+
+  sendOTPtoEmail,
+
 } from '../actions/actionUser';
 
 const initialState = {
@@ -85,6 +89,7 @@ const userSlice = createSlice({
           action.payload?.message ||
           'Lấy thông tin người dùng không thành công';
       })
+
       // Gửi email đặt lại mật khẩu
       .addCase(resetPasswordRequest.pending, state => {
         state.isLoading = true;
@@ -126,8 +131,25 @@ const userSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
-      });
+      })
 
+
+
+      .addCase(sendOTPtoEmail.pending, state => {
+        state.isLoading = true;
+      })
+      .addCase(sendOTPtoEmail.fulfilled, (state, action) => {
+      
+        state.isLoading = false;
+        state.isSuccess = true;
+      
+      })
+      .addCase(sendOTPtoEmail.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload?.message || 'Gửi mã xác thực không thành công';
+      })
+     
 
   },
 });

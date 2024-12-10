@@ -19,6 +19,7 @@ export const login = createAsyncThunk('v1/auth/login', async (userData, thunkAPI
   try {
     const response = await axios.post(`${API_URL}/auth/login`, userData);
     await tokenService.setToken(response.data.accessToken);
+    
     return response.data;
   } catch (error) {
     return thunkAPI.rejectWithValue(error.response?.data || 'Đã xảy ra lỗi trong quá trình đăng nhập');
@@ -113,4 +114,23 @@ export const resetPassword = createAsyncThunk(
   }
 );
 
+
+export const sendOTPtoEmail = createAsyncThunk(
+  'user/sendOTPtoEmail',
+  async (email, thunkAPI) => {
+    try {
+      const token = await tokenService.getToken();
+      const response = await axios.post(`${API_URL}/verifi/sendVerifiEmail`,{email: email}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response ? error.response.data.message : error.message
+      );
+    }
+  }
+);
 
