@@ -5,6 +5,7 @@ import globalStyles from '../../styles/globalStyles';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { changePassword } from '../../redux/actions/actionUser'; 
+import { useTheme } from '../../utils/ThemeContact';
 
 const SettingScreen = ({route}) => {
   const navigation = useNavigation();
@@ -27,7 +28,9 @@ const SettingScreen = ({route}) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const toggleSalesSwitch = () => setIsSalesEnabled(previousState => !previousState);
-  const toggleBackgroundSwitch = () => setIsBackgroundEnabled(previousState => !previousState);
+
+  //Lấy trạng thái chuyển đổi theme
+  const { isDarkMode, toggleTheme } = useTheme(); 
 
   // Logout
   const handleLogout = () => {
@@ -85,9 +88,9 @@ const SettingScreen = ({route}) => {
       });
   };
   return (
-    <View style={globalStyles.containerSetting}>
+    <View style={[globalStyles.containerSetting, isDarkMode ? styles.darkContainer : styles.lightContainer]}>
       <View style={styles.header}>
-        <Text style={styles.headerText1}>Password</Text>
+        <Text style={[styles.headerText1,isDarkMode ? styles.darkText : styles.lightText]}>Password</Text>
         <TouchableOpacity onPress={() => setModalVisible(true)}>
           <MaterialCommunityIcons name="pencil" size={24} color="#C4C4C4" />
         </TouchableOpacity>
@@ -98,10 +101,10 @@ const SettingScreen = ({route}) => {
         <Text style={styles.label1}>*************</Text>
       </View>
 
-      <Text style={styles.notificationHeader}>Thông Báo</Text>
+      <Text style={[styles.notificationHeader,isDarkMode ? styles.darkText : styles.lightText]}>Thông Báo</Text>
 
       <View style={styles.switchContainer}>
-        <Text style={styles.switchLabel}>Sales</Text>
+        <Text style={[styles.switchLabel,isDarkMode ? styles.darkText : styles.lightText]}>Sales</Text>
         <Switch
           trackColor={{ false: '#767577', true: '#81b0ff' }}
           thumbColor={isSalesEnabled ? '#4CAF50' : '#f4f3f4'}
@@ -111,12 +114,14 @@ const SettingScreen = ({route}) => {
       </View>
 
       <View style={styles.switchContainer}>
-        <Text style={styles.switchLabel}>Màu nền</Text>
+        <Text style={[styles.switchLabel, isDarkMode ? styles.darkText : styles.lightText]}>
+          Chế độ tối
+        </Text>
         <Switch
           trackColor={{ false: '#767577', true: '#81b0ff' }}
-          thumbColor={isBackgroundEnabled ? '#4CAF50' : '#f4f3f4'}
-          onValueChange={toggleBackgroundSwitch}
-          value={isBackgroundEnabled}
+          thumbColor={isDarkMode ? '#4CAF50' : '#f4f3f4'}
+          onValueChange={toggleTheme}
+          value={isDarkMode}
         />
       </View>
 
@@ -330,6 +335,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 15,
+  },
+  lightContainer: {
+    backgroundColor: '#fff',
+  },
+  darkContainer: {
+    backgroundColor: '#121212',
+  },
+  switchContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+  },
+  switchLabel: {
+    fontSize: 16,
+  },
+  darkText: {
+    color: '#fff',
+  },
+  lightText: {
+    color: '#000',
   },
 });
 

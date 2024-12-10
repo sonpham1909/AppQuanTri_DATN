@@ -80,7 +80,6 @@ const globalStyles = StyleSheet.create({
   },
   ShippingAddressContainer: {
     flex: 1,
-    backgroundColor: colors.background,
   },
   ShippingAddressContent: {
     padding: spacing.medium,
@@ -156,6 +155,16 @@ const globalStyles = StyleSheet.create({
     shadowOpacity: 0.1,//độ mờ
     shadowRadius: 8,//độ lan
     elevation: 1,//chiều cao của phần tử so với nền bóng đổ
+  },
+  textLight: {
+    color: '#000',
+  },
+  textDark: {
+    color: '#fff',
+  },
+   containerSetting: {
+    flex: 1,
+    padding: 20,
   },
  
 

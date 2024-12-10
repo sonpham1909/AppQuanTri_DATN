@@ -561,7 +561,7 @@ const ProductDetailScreen = ({route, navigation}) => {
 export default ProductDetailScreen;
 
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: '#fff'},
+  container: {flex: 1,},
   detailsContainer: {padding: 16},
   productTitle: {
     fontSize: 22,

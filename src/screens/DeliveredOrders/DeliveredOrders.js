@@ -116,7 +116,6 @@ export default DeliveredOrders;
 const styles = StyleSheet.create({
   container: {
     padding: 15,
-    backgroundColor: '#FFF',
   },
   productItem: {
     flexDirection: 'row',
@@ -125,7 +124,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#DDD',
     marginBottom: 10,
-    backgroundColor: '#F9F9F9',
     borderRadius: 8,
   },
   productImage: {

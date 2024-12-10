@@ -89,7 +89,6 @@ const renderOrderList = () => {
 const styles = StyleSheet.create({
   scene: {
     flex: 1,
-    backgroundColor: '#fff',
     padding: 10,
   },
   tabBar: {

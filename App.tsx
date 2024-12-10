@@ -29,11 +29,17 @@ import store from './src/redux/store/store';
 import DeliveredOrders from './src/screens/DeliveredOrders/DeliveredOrders';
 import AddReview from './src/screens/AddReview/AddReview';
 import MessageScreen from './src/screens/MessageScreen/MessageScreen';
-
+//theme
+import { ThemeProvider ,useTheme} from './src/utils/ThemeContact';
+import { lightTheme, darkTheme } from './src/utils/theme';
 const Stack = createStackNavigator();
 export const navigationRef = createRef();
 
-const App = () => {
+const AppContent = () => {
+  //Lấy trạng thái theme
+  const { isDarkMode } = useTheme();
+// Chọn theme tương ứng
+const theme = isDarkMode ? darkTheme : lightTheme;
   useEffect(() => {
     // Lắng nghe sự kiện deep link
     const handleDeepLink = event => {
@@ -58,8 +64,7 @@ const App = () => {
     };
   }, []);
   return (
-    <Provider store={store}>
-      <NavigationContainer ref={navigationRef}>
+      <NavigationContainer ref={navigationRef} theme={theme}>
         <Stack.Navigator
           initialRouteName="Welcom"
           screenOptions={{headerShown: false}}>
@@ -364,8 +369,16 @@ const App = () => {
           />
         </Stack.Navigator>
       </NavigationContainer>
-    </Provider>
   );
 };
+const App = ()=>{
+  return(
+    <Provider store={store}>
+      <ThemeProvider>
+        <AppContent/>
+      </ThemeProvider>
+    </Provider>
+  )
+}
 
 export default App;
