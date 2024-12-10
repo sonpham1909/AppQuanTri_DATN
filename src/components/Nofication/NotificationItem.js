@@ -1,17 +1,28 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
+import { useTheme } from '@react-navigation/native';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 const NotificationItem = ({ item }) => {
+  //lấy trạng thái theme
+  const {isDarkMode} = useTheme()
   return (
     <View style={styles.container}>
-      <Image source={item.image} style={styles.image} />
+      {item.imgNotifi && item.imgNotifi.length > 0 ? (
+        <Image source={{ uri: item.imgNotifi[0] }} style={styles.image} />
+      ) : (
+        <Image source={require('../../assets/images/icon_shoping.png')} style={styles.image} />
+      )}
       <View style={styles.textContainer}>
-        <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.description}>{item.description}</Text>
-        {item.status && <Text style={[styles.status, item.status === 'New' ? styles.newStatus : styles.defaultStatus]}>{item.status}</Text>}
+        <Text style={[styles.title,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{item.title}</Text>
+        <Text style={[styles.description,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{item.message}</Text>
+        {item.status && (
+          <Text style={item.status === 'unread' ? styles.newStatus : styles.defaultStatus}>
+            {item.status}
+          </Text>
+        )}
       </View>
       <View style={styles.separator}></View>
-
     </View>
   );
 };
@@ -26,6 +37,7 @@ const styles = StyleSheet.create({
     height: 90,
     borderRadius: 8,
     marginRight: 10,
+    backgroundColor: '#f0f0f0', // Background khi không có ảnh
   },
   textContainer: {
     flex: 1,
@@ -54,9 +66,9 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    marginHorizontal:10,
-    height: 1,  // Adjust the thickness of the line
-    backgroundColor: '#E0E0E0',  // Light grey color to resemble the white line in the image
+    marginHorizontal: 10,
+    height: 1,
+    backgroundColor: '#E0E0E0',
   },
 });
 

@@ -16,7 +16,9 @@ const InvoicesScreen = () => {
   const [routes] = useState([
     { key: 'pending', title: 'Chờ xác nhận' },
     { key: 'ready_for_shipment', title: 'Đang xử lý' },
-    { key: 'shipping', title: 'Đang giao' },
+
+    { key: 'shipping', title: 'Đang giao hàng' },
+
     { key: 'canceled', title: 'Đã hủy' },
     { key: 'delivered', title: 'Thành công' },
     { key: 'waiting_cancel', title: 'Đang chờ hủy' },

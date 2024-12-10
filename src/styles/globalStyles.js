@@ -143,7 +143,6 @@ const globalStyles = StyleSheet.create({
   
   containerSetting:{
     padding: 20,
-    backgroundColor: '#f8f8f8',
   },
   sectionSetting:{
     marginBottom: 10,
@@ -156,17 +155,13 @@ const globalStyles = StyleSheet.create({
     shadowRadius: 8,//độ lan
     elevation: 1,//chiều cao của phần tử so với nền bóng đổ
   },
-  textLight: {
-    color: '#000',
+
+  instructionText: {
+    fontSize: 18, // Kích thước chữ
+    color: '#333', // Màu chữ
+    fontWeight: '600', // Đậm vừa
+    textAlign: 'center', // Căn giữa văn bản
   },
-  textDark: {
-    color: '#fff',
-  },
-   containerSetting: {
-    flex: 1,
-    padding: 20,
-  },
- 
 
 
 

@@ -14,7 +14,7 @@ export const lightTheme = {
     dark: true,
     colors: {
       primary: '#bb86fc',
-      background: '#22262B', // Bắt buộc
+      background: '#2C2C2C', // Bắt buộc
       card: '#1E1E1E', // Màu nền của header, bottom tabs, v.v.
       text: '#ffff',
       border: '#272727',

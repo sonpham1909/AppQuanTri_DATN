@@ -1,18 +1,20 @@
+
 import React, {useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
+
 import LoginScreen from './src/screens/LoginScreen/LoginScreen';
 import Welcom from './src/screens/Welcom/SplashScreen';
 import Registered from './src/screens/Registered/Registered';
-import {createStackNavigator} from '@react-navigation/stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import BottomTabNavigator from './src/navigation/BottomTabNavigator';
-import {Linking} from 'react-native';
-import {createRef} from 'react';
+import { Linking } from 'react-native';
+import { createRef } from 'react';
 
 import CategoriesScreen from './src/screens/CategoriesScreen/CategoriesScreen';
 import InvoicesScreen from './src/screens/InvoicesScreen/InvoicesScreen';
 import ReviewsScreen from './src/screens/ReviewsScreen/ReviewsScreen';
 // Đường dẫn tới store.js
-import {Provider} from 'react-redux'; // Thêm import Provider từ react-redux
+import { Provider } from 'react-redux'; // Thêm import Provider từ react-redux
 import CateClother from './src/screens/CateClotherScreen/CateClotherScreen';
 import Cart from './src/screens/Cart/Cart';
 import Checkout from './src/screens/CheckOut/Checkout';
@@ -32,14 +34,45 @@ import MessageScreen from './src/screens/MessageScreen/MessageScreen';
 //theme
 import { ThemeProvider ,useTheme} from './src/utils/ThemeContact';
 import { lightTheme, darkTheme } from './src/utils/theme';
+
+import ResetPassword from './src/screens/LoginScreen/ResetPasswordScreen'
+
+import SearchScreen from './src/screens/SearchScreen/SearchScreen';
+import StartSearch from './src/screens/SearchScreen/StartSearch';
+import PushNotification from "react-native-push-notification";
+import { Platform } from "react-native";
+
 const Stack = createStackNavigator();
 export const navigationRef = createRef();
+// import queryString from 'query-string';
 
 const AppContent = () => {
   //Lấy trạng thái theme
   const { isDarkMode } = useTheme();
 // Chọn theme tương ứng
 const theme = isDarkMode ? darkTheme : lightTheme;
+  useEffect(() => {
+    // Configure Push Notification khi ứng dụng khởi chạy
+    PushNotification.configure({
+      // (optional) Called when a remote or local notification is opened or received
+      onNotification: function (notification) {
+        console.log("NOTIFICATION:", notification);
+  
+        // Không cần gọi finish() vì không sử dụng iOS hoặc Hermes gây lỗi
+      },
+      // (optional) Called when Token is generated (iOS and Android)
+      onRegister: function (token) {
+        console.log("TOKEN:", token);
+      },
+      // Yêu cầu quyền trên iOS (nếu cần thiết)
+      requestPermissions: Platform.OS === 'ios',
+    });
+  
+    // Tạo kênh thông báo
+ 
+  }, []);
+  
+ 
   useEffect(() => {
     // Lắng nghe sự kiện deep link
     const handleDeepLink = event => {
@@ -49,11 +82,11 @@ const theme = isDarkMode ? darkTheme : lightTheme;
       // Xử lý URL để điều hướng đến trang phù hợp
       if (url.includes('payment-success')) {
         navigationRef.current?.navigate('Congrats');
-      
 
-    } else if (url.includes('payment-failure')) {
-      navigationRef.current?.navigate('Home');
-    }
+
+      } else if (url.includes('payment-failure')) {
+        navigationRef.current?.navigate('Home');
+      }
     };
 
     const linkingSubscription = Linking.addListener('url', handleDeepLink);
@@ -63,17 +96,50 @@ const theme = isDarkMode ? darkTheme : lightTheme;
       linkingSubscription.remove();
     };
   }, []);
+  //   } else if (url.includes('reset-password')) {
+  //     const parsedUrl = queryString.parseUrl(url);
+  //     const token = parsedUrl.query.token;
+
+  //     console.log('Received token:', token);
+
+  //     navigationRef.current?.navigate('ResetPassword', { token });
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   // Xử lý deep link khi app đã được mở
+  //   const subscription = Linking.addEventListener('url', (event) => {
+  //     handleDeepLink(event.url);
+  //   });
+
+  //   // Xử lý deep link khi app chưa mở
+  //   const getInitialURL = async () => {
+  //     const initialUrl = await Linking.getInitialURL();
+  //     if (initialUrl) {
+  //       handleDeepLink(initialUrl);
+  //     }
+  //   };
+
+  //   getInitialURL();
+
+  //   return () => subscription.remove();
+  // }, []);
+
+
+
   return (
       <NavigationContainer ref={navigationRef} theme={theme}>
         <Stack.Navigator
           initialRouteName="Welcom"
-          screenOptions={{headerShown: false}}>
+          screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Welcom" component={Welcom} />
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Registered" component={Registered} />
 
           <Stack.Screen name="Home" component={BottomTabNavigator} />
+         
 
+          
           <Stack.Screen
             name="CategoriesScreen"
             component={CategoriesScreen}
@@ -105,7 +171,27 @@ const theme = isDarkMode ? darkTheme : lightTheme;
             }}
           />
 
+          <Stack.Screen
+
+            name="SearchScreen"
+            component={SearchScreen}
+            options={{
+              headerShown: false,
+              headerTitleAlign: 'center',
+              title: 'Hóa đơn',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
+         
+
 <Stack.Screen
+
             name="MessageScreen"
             component={MessageScreen}
             options={{
@@ -138,6 +224,24 @@ const theme = isDarkMode ? darkTheme : lightTheme;
               },
             }}
           />
+          
+          <Stack.Screen
+            name="StartSearch"
+            component={StartSearch}
+            options={{
+              headerShown: false,
+              title: 'Nhận xét',
+              headerTitleAlign: 'center',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
+        
 
           <Stack.Screen
             name="CateClother"
@@ -185,7 +289,10 @@ const theme = isDarkMode ? darkTheme : lightTheme;
               },
             }}
           />
+        
+       
 
+        
           <Stack.Screen
             name="Favorites"
             component={Favorites}
@@ -235,7 +342,7 @@ const theme = isDarkMode ? darkTheme : lightTheme;
               },
             }}
           />
-
+          
           <Stack.Screen
             name="ProductDetailScreen"
             component={ProductDetailScreen}
@@ -268,6 +375,7 @@ const theme = isDarkMode ? darkTheme : lightTheme;
               },
             }}
           />
+         
 
           <Stack.Screen
             name="AllProductScreen"
@@ -285,6 +393,7 @@ const theme = isDarkMode ? darkTheme : lightTheme;
               },
             }}
           />
+         
 
           <Stack.Screen
             name="ShippingAddressScreen"
@@ -318,6 +427,10 @@ const theme = isDarkMode ? darkTheme : lightTheme;
               },
             }}
           />
+        
+          
+         
+     
           <Stack.Screen
             name="SettingScreen"
             component={SettingScreen}
@@ -336,6 +449,7 @@ const theme = isDarkMode ? darkTheme : lightTheme;
           />
 
           <Stack.Screen
+        
             name="DeliveredOrders"
             component={DeliveredOrders}
             options={{
@@ -367,6 +481,24 @@ const theme = isDarkMode ? darkTheme : lightTheme;
               },
             }}
           />
+
+          <Stack.Screen
+            name="ResetPassword"
+            component={ResetPassword}
+            options={{
+              headerShown: true,
+              title: 'Đặt lại mật khẩu ',
+              headerTitleAlign: 'center',
+              headerStyle: {
+                backgroundColor: '#00A65E', // Màu nền xanh
+              },
+              headerTintColor: '#fff', // Màu chữ trắng
+              headerTitleStyle: {
+                fontWeight: 'bold', // Kiểu chữ tiêu đề
+              },
+            }}
+          />
+
         </Stack.Navigator>
       </NavigationContainer>
   );

@@ -1,4 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import {
   register,
   login,
@@ -6,6 +6,12 @@ import {
   fetchUserInfoVS1,
   updateAvatar,
   changePassword,
+  resetPasswordRequest,
+  resetPassword,
+  verifyOtpRequest,
+  sendOTPtoEmail,
+
+
 } from '../actions/actionUser';
 
 const initialState = {
@@ -113,9 +119,69 @@ const userSlice = createSlice({
           state.isError = true;
           state.message =
             action.payload?.message || 'Đổi mật khẩu không thành công';
-        });
+        })
+      // Gửi email đặt lại mật khẩu
+      .addCase(resetPasswordRequest.pending, state => {
+        state.isLoading = true;
+        state.message = '';
+      })
+      .addCase(resetPasswordRequest.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.message = action.payload;
+      })
+      .addCase(resetPasswordRequest.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      .addCase(verifyOtpRequest.pending, state => {
+        state.isLoading = true;
+      })
+      .addCase(verifyOtpRequest.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.message = action.payload;
+      })
+      .addCase(verifyOtpRequest.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      // Đặt lại mật khẩu
+      .addCase(resetPassword.pending, state => {
+        state.isLoading = true;
+      })
+      .addCase(resetPassword.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.message = action.payload;
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+
+
+
+      .addCase(sendOTPtoEmail.pending, state => {
+        state.isLoading = true;
+      })
+      .addCase(sendOTPtoEmail.fulfilled, (state, action) => {
+      
+        state.isLoading = false;
+        state.isSuccess = true;
+      
+      })
+      .addCase(sendOTPtoEmail.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload?.message || 'Gửi mã xác thực không thành công';
+      })
+    
   },
 });
 
-export const {reset} = userSlice.actions;
+export const { reset } = userSlice.actions;
 export default userSlice.reducer;

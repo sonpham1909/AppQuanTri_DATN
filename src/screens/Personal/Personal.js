@@ -17,7 +17,7 @@ const Personal = () => {
 
   const [avatar, setAvatar] = useState(null);
   //lấy trang thái theme
-  const isDarkMode = useTheme()
+  const {isDarkMode} = useTheme()
 
   // Sử dụng useSelector để lấy thông tin người dùng và địa chỉ từ Redux store
   const userInfovs1 = useSelector(state => state.user.userInfovs1);

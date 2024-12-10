@@ -14,7 +14,7 @@ import { darkTheme,lightTheme } from '../../utils/theme';
 
 const SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'XXL']; // Thứ tự size
 
-const ProductList = ({navigation, title, products}) => {
+const ProductList = ({navigation, title, products, horizontal, numCo}) => {
   const dispatch = useDispatch();
   const reviews = useSelector(state => state.products.reviews);
   const variants = useSelector(state => state.variants.variants);
@@ -57,6 +57,7 @@ const ProductList = ({navigation, title, products}) => {
       <FlatList
         data={products}
         keyExtractor={item => item._id}
+        numColumns={numCo}
         renderItem={({item}) => {
           const variantsItem = variants[item._id] || [];
           const productReviews = reviews[item._id] || {};
@@ -131,7 +132,7 @@ const ProductList = ({navigation, title, products}) => {
             </TouchableOpacity>
           );
         }}
-        horizontal
+        horizontal={horizontal}
         showsHorizontalScrollIndicator={false}
       />
     </View>
@@ -165,6 +166,8 @@ const styles = {
     height: 300,
     borderWidth: 1,
     borderColor: '#e0e0e0',
+    marginBottom:14
+    
   },
   imageContainer: {
     position: 'relative',
