@@ -47,10 +47,11 @@ const AddReview = () => {
     try {
       // Upload từng ảnh và lấy các URL trả về từ backend
     
+  console.log(productId);
   
    
       const formData = new FormData();
-      formData.append('product_id', productId);
+      formData.append('product_id', productId._id);
       formData.append('rating', rating);
       formData.append('comment', comment);
       formData.append('color', color);

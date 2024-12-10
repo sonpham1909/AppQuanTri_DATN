@@ -67,3 +67,22 @@ export const fetchUserInfoVS1 = createAsyncThunk(
   }
 );
 
+export const sendOTPtoEmail = createAsyncThunk(
+  'user/sendOTPtoEmail',
+  async (email, thunkAPI) => {
+    try {
+      const token = await tokenService.getToken();
+      const response = await axios.post(`${API_URL}/verifi/sendVerifiEmail`,{email: email}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response ? error.response.data.message : error.message
+      );
+    }
+  }
+);
+
