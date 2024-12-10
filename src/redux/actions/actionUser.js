@@ -66,6 +66,54 @@ export const fetchUserInfoVS1 = createAsyncThunk(
     }
   }
 );
+export const resetPasswordRequest = createAsyncThunk(
+  'v1/users/sendresetpasswordemail',
+  async ({ email }, thunkAPI) => {
+    try {
+      const response = await axios.post(`${API_URL}/users/sendresetpasswordemail`, { email });
+      return response.data.message || 'Email đặt lại mật khẩu đã được gửi';
+    } catch (error) {
+      const errorMessage = 
+        error.response?.data?.message || 'Gửi email đặt lại mật khẩu thất bại';
+      return thunkAPI.rejectWithValue(errorMessage);
+    }
+  }
+);
+
+
+export const verifyOtpRequest = createAsyncThunk(
+  'v1/users/verifyOtp',
+  async ({ email, otp }, thunkAPI) => {
+    try {
+      const response = await axios.post(`${API_URL}/users/verify-otp`, { email, otp });
+
+      return response.data.message || 'OTP xác thực thành công';
+    } catch (error) {
+      console.error('Lỗi xác thực OTP:', error);
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || 'Xác thực OTP thất bại'
+      );
+    }
+  });
+export const resetPassword = createAsyncThunk(
+  'users/reset-password',
+  async ({ email, otp, newPassword }, thunkAPI) => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/users/reset-password`,
+        { email, otp, newPassword }
+      );
+
+      return response.data.message;
+    } catch (error) {
+      console.error('Lỗi backend:', error.response?.data);
+      return thunkAPI.rejectWithValue(
+        error.response?.data.message || 'Đặt lại mật khẩu thất bại'
+      );
+    }
+  }
+);
+
 
 export const sendOTPtoEmail = createAsyncThunk(
   'user/sendOTPtoEmail',
