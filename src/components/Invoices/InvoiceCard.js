@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert, TextInput, Modal } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { useDispatch } from 'react-redux';
-import { cancelOrder } from '../../redux/actions/actionOder';
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  TextInput,
+  Modal,
+} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch} from 'react-redux';
+import {cancelOrder} from '../../redux/actions/actionOder';
 
-const InvoiceCard = ({ order, onCancelSuccess = () => {} }) => {
+const InvoiceCard = ({order, onCancelSuccess = () => {}}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [cancelReason, setCancelReason] = useState('');
@@ -12,7 +20,7 @@ const InvoiceCard = ({ order, onCancelSuccess = () => {} }) => {
   const [isConfirmationVisible, setConfirmationVisible] = useState(false); // State để điều khiển modal xác nhận
 
   const handleDetailPress = () => {
-    navigation.navigate('DetailedOrders', { orderId: order._id });
+    navigation.navigate('DetailedOrders', {orderId: order._id});
   };
 
   const handleCancelPress = () => {
@@ -30,13 +38,13 @@ const InvoiceCard = ({ order, onCancelSuccess = () => {} }) => {
       Alert.alert('Lỗi', 'Bạn cần nhập lý do để hủy đơn hàng.');
       return;
     }
-    dispatch(cancelOrder({ orderId: order._id, cancelReason }))
+    dispatch(cancelOrder({orderId: order._id, cancelReason}))
       .unwrap()
       .then(() => {
         onCancelSuccess(order._id);
       })
-      .catch((error) => {
-        console.error("Error while cancelling the order:", error);
+      .catch(error => {
+        console.error('Error while cancelling the order:', error);
       });
     setModalVisible(false);
     setCancelReason('');
@@ -44,41 +52,68 @@ const InvoiceCard = ({ order, onCancelSuccess = () => {} }) => {
 
   const handleConfirmProcessingCancel = () => {
     // Xác nhận hủy đơn hàng ở trạng thái "processing"
-    dispatch(cancelOrder({ orderId: order._id, cancelReason: "" }))
+    dispatch(cancelOrder({orderId: order._id, cancelReason: ''}))
       .unwrap()
       .then(() => {
         onCancelSuccess(order._id);
       })
-      .catch((error) => {
-        console.error("Error while cancelling the order:", error);
+      .catch(error => {
+        console.error('Error while cancelling the order:', error);
       });
     setConfirmationVisible(false);
   };
 
   return (
     <View style={styles.invoiceCard}>
-      <View style={{ paddingHorizontal: 20, paddingTop: 20 }}>
+      <View style={{paddingHorizontal: 20, paddingTop: 20}}>
         <View style={styles.invoiceHeader}>
           <Text style={styles.invoiceText}>Order {order._id}</Text>
-          <Text style={styles.detailText}>{new Date(order.createdAt).toLocaleDateString()}</Text>
+          <Text style={styles.detailText}>
+            {new Date(order.createdAt).toLocaleDateString()}
+          </Text>
         </View>
       </View>
       <View style={styles.divider} />
-      <View style={{ paddingHorizontal: 40, paddingBottom: 20 }}>
+      <View style={{paddingHorizontal: 40, paddingBottom: 20}}>
         <View style={styles.invoiceDetails}>
           <Text style={styles.detailText}>
-            Số lượng: <Text style={styles.invoiceText}>{order.total_products}</Text>
+            Số lượng:{' '}
+            <Text style={styles.invoiceText}>{order.total_products}</Text>
           </Text>
           <Text style={styles.detailText}>
-            Tổng tiền: <Text style={styles.boldText}>{Number(order.total_amount).toLocaleString('vi-VN')} $
+            Tổng tiền:{' '}
+            <Text style={styles.boldText}>
+              {Number(order.total_amount).toLocaleString('vi-VN')} $
             </Text>
           </Text>
         </View>
+        <View style={styles.invoiceDetails}>
+          <Text style={styles.detailText}>
+            Trạng thái thanh toán: <Text style={styles.invoiceText}></Text>
+          </Text>
+          <Text style={styles.boldText}>
+            {order.payment_status === 'pending'
+              ? 'Đang chờ xử lý'
+              : order.payment_status === 'paid'
+              ? 'Đã thanh toán'
+              : order.payment_status === 'unpaid'
+              ? 'Thanh toán khi \n nhận hàng'
+              : order.payment_status === 'failed'
+              ? 'Thanh toán thất bại'
+              : order.payment_status === 'cancelled'
+              ? 'Thanh toán bị từ chối'
+              : 'Không xác định'}
+          </Text>
+        </View>
+
         <View style={styles.invoiceActions}>
-          <TouchableOpacity style={styles.detailButton} onPress={handleDetailPress}>
+          <TouchableOpacity
+            style={styles.detailButton}
+            onPress={handleDetailPress}>
             <Text style={styles.buttonText}>Chi tiết</Text>
           </TouchableOpacity>
-          {(order.status === 'pending' || order.status === 'ready_for_shipment') && (
+          {(order.status === 'pending' ||
+            order.status === 'ready_for_shipment') && (
             <TouchableOpacity onPress={handleCancelPress}>
               <Text style={styles.confirmText}>Hủy đơn</Text>
             </TouchableOpacity>
@@ -95,8 +130,7 @@ const InvoiceCard = ({ order, onCancelSuccess = () => {} }) => {
         visible={isModalVisible}
         transparent={true}
         animationType="slide"
-        onRequestClose={() => setModalVisible(false)}
-      >
+        onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Lý do hủy đơn hàng</Text>
@@ -109,14 +143,12 @@ const InvoiceCard = ({ order, onCancelSuccess = () => {} }) => {
             <View style={styles.modalActions}>
               <TouchableOpacity
                 style={styles.cancelButton}
-                onPress={() => setModalVisible(false)}
-              >
+                onPress={() => setModalVisible(false)}>
                 <Text style={styles.buttonText}>Hủy</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.confirmButton}
-                onPress={handleConfirmCancel}
-              >
+                onPress={handleConfirmCancel}>
                 <Text style={styles.buttonText}>Xác nhận</Text>
               </TouchableOpacity>
             </View>
@@ -129,15 +161,13 @@ const InvoiceCard = ({ order, onCancelSuccess = () => {} }) => {
         visible={isConfirmationVisible}
         transparent={true}
         animationType="slide"
-        onRequestClose={() => setConfirmationVisible(false)}
-      >
+        onRequestClose={() => setConfirmationVisible(false)}>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Yêu cầu hủy đơn hàng</Text>
             <TouchableOpacity
               style={styles.confirmButton}
-              onPress={handleConfirmProcessingCancel}
-            >
+              onPress={handleConfirmProcessingCancel}>
               <Text style={styles.buttonText}>Yêu cầu hủy đơn</Text>
             </TouchableOpacity>
           </View>
@@ -152,7 +182,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 10,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
+    shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.3,
     shadowRadius: 2,
     elevation: 5,

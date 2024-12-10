@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Dimensions, ScrollView } from 'react-native';
+import {  StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { TabView, TabBar } from 'react-native-tab-view';
 import InvoiceCard from '../../components/Invoices/InvoiceCard';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,7 +16,9 @@ const InvoicesScreen = () => {
   const [routes] = useState([
     { key: 'pending', title: 'Chờ xác nhận' },
     { key: 'ready_for_shipment', title: 'Đang xử lý' },
-    { key: 'shipping', title: 'Đang giao' },
+
+    { key: 'shipping', title: 'Đang giao hàng' },
+
     { key: 'canceled', title: 'Đã hủy' },
     { key: 'delivered', title: 'Thành công' },
     { key: 'waiting_cancel', title: 'Đang chờ hủy' },

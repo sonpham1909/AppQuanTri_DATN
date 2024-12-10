@@ -8,7 +8,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {fetchUserInfoVS1} from '../../redux/actions/actionUser';
 import {fetchAllAddresses} from '../../redux/actions/actionAddress'; // Import action để lấy danh sách địa chỉ
 import {fetchUserReviews} from '../../redux/actions/actionsReview'; // Import action để lấy danh sách địa chỉ
-import {fetchPurchasedProducts} from '../../redux/actions/actionOder'; // Import action để lấy danh sách địa chỉ
+import {fetchPurchasedProducts,fetchOrders} from '../../redux/actions/actionOder'; // Import action để lấy danh sách địa chỉ
 
 const Personal = () => {
   const dispatch = useDispatch();
@@ -20,6 +20,7 @@ const Personal = () => {
   const addressesList = useSelector(state => state.addresses.addressesList); // Lấy danh sách địa chỉ từ store
   const userReviews = useSelector((state) => state.reviewResponses.userReviews);
   const  purchasedProducts= useSelector((state) => state.order.purchasedProducts);
+  const  oderTotal= useSelector((state) => state.order.oderTotal);
 
   // Lấy thông tin người dùng từ userInfovs1.user
   const user = userInfovs1?.user;
@@ -29,7 +30,10 @@ const Personal = () => {
     dispatch(fetchUserInfoVS1());
     dispatch(fetchAllAddresses());
     dispatch(fetchPurchasedProducts());
-    dispatch(fetchUserReviews()); // Lấy danh sách địa chỉ khi mở màn hình
+    dispatch(fetchUserReviews());
+    dispatch(fetchOrders());
+
+    // Lấy danh sách địa chỉ khi mở màn hình
     // Lấy danh sách địa chỉ khi mở màn hình
   }, [dispatch]);
 
@@ -101,7 +105,7 @@ const Personal = () => {
         onpress={() => {
           navigation.navigate('InvoicesScreen');
         }}
-        preview={'Đã có ' + orders.length + ' đơn hàng'}
+        preview={'Đã có ' + oderTotal.length + ' đơn hàng'}
       />
       <CardProfile
         title={'Địa chỉ giao hàng'}
