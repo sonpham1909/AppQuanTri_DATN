@@ -2,9 +2,14 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '../../utils/ThemeContact';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 const ShippingInfo = ({ recipientName, addressDetail, recipientPhone, notes }) => {
   const navigation = useNavigation();
+
+  //lấy trạng thái theme
+  const {isDarkMode} = useTheme()
 
   const handleEditPress = () => {
     navigation.navigate('ShippingAddressScreen'); // Điều hướng đến màn hình chỉnh sửa địa chỉ
@@ -13,9 +18,9 @@ const ShippingInfo = ({ recipientName, addressDetail, recipientPhone, notes }) =
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Địa chỉ giao hàng</Text>
+        <Text style={[styles.title,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Địa chỉ giao hàng</Text>
         <TouchableOpacity onPress={handleEditPress}>
-          <Text style={styles.editText}>✎</Text>
+          <Text style={[styles.editText,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>✎</Text>
         </TouchableOpacity>
       </View>
       {recipientName ? (
@@ -29,7 +34,7 @@ const ShippingInfo = ({ recipientName, addressDetail, recipientPhone, notes }) =
           </Text>
         </View>
       ) : (
-        <Text style={styles.noAddressText}>Chưa có địa chỉ mặc định</Text>
+        <Text style={[styles.noAddressText,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Chưa có địa chỉ mặc định</Text>
       )}
     </View>
   );

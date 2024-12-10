@@ -14,7 +14,7 @@ const CategorySection = () => {
   const {categories, isLoading, error} = useSelector(state => state.categories);
 
   //lấy trạng thái theme
-  const isDarkMode = useTheme()
+  const {isDarkMode} = useTheme()
   useEffect(() => {
     dispatch(fetchCategories()); // Lấy danh mục cha khi component được render
   }, [dispatch]);

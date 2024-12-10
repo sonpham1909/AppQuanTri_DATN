@@ -20,6 +20,8 @@ import {fetchProductsBySubCategory} from '../../redux/actions/actionCategory';
 import {LogBox} from 'react-native';
 import {fetchProductsByVariant} from '../../redux/actions/actionProduct';
 import PriceFilterModal from '../../components/CateClother/PriceFilterModal'; // Import thêm PriceFilterModal
+import { useTheme } from '../../utils/ThemeContact';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 LogBox.ignoreLogs(['Warning: ...']); // Cảnh báo cụ thể
 LogBox.ignoreAllLogs(); // Nếu muốn bỏ qua tất cả các log
@@ -42,6 +44,9 @@ const CateClotherScreen = ({route}) => {
 
   const {products} = useSelector(state => state.categories);
   const {colorsAndSizesBySubCategoryId} = useSelector(state => state.variants);
+
+  //lấy trạng thái theme
+  const {isDarkMode} = useTheme()
 
   useEffect(() => {
     if (subCategories[index] && !filteredProductsState[index]) {
@@ -116,7 +121,7 @@ const CateClotherScreen = ({route}) => {
           <ProductList navigation={navigation}
            products={filteredProducts} />
         ) : (
-          <Text>Không có sản phẩm phù hợp với bộ lọc</Text>
+          <Text style={{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }}>Không có sản phẩm phù hợp với bộ lọc</Text>
         )}
       </View>
     );
@@ -133,7 +138,7 @@ const CateClotherScreen = ({route}) => {
             style={styles.backIcon}
           />
         </TouchableOpacity>
-        <Text style={styles.categoryNameText}>{categoryName}</Text>
+        <Text style={[styles.categoryNameText,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{categoryName}</Text>
       </View>
       <View style={styles.filterContainer}>
         <Text style={styles.filterLabel}>Bộ lọc</Text>
@@ -141,7 +146,7 @@ const CateClotherScreen = ({route}) => {
           <TouchableOpacity
             style={styles.filterButton}
             onPress={() => setSizeFilterVisible(true)}>
-            <Text>
+            <Text style={{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }}>
               {filterState[index]?.size?.length > 0
                 ? renderTextWithEllipsis(filterState[index].size)
                 : 'Kích cỡ'}
@@ -156,7 +161,7 @@ const CateClotherScreen = ({route}) => {
           <TouchableOpacity
             style={styles.filterButton}
             onPress={() => setColorFilterVisible(true)}>
-            <Text>
+            <Text style={{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }}>
               {filterState[index]?.color?.length > 0
                 ? renderTextWithEllipsis(filterState[index].color)
                 : 'Màu sắc'}
@@ -171,7 +176,7 @@ const CateClotherScreen = ({route}) => {
           <TouchableOpacity
             style={styles.filterButton1}
             onPress={() => setPriceFilterVisible(true)}>
-            <Text>
+            <Text style={{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }}>
               {filterState[index]?.minPrice != null &&
               filterState[index]?.maxPrice != null
                 ? `Giá: ${filterState[index].minPrice.toLocaleString(

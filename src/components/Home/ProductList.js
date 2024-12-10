@@ -21,7 +21,7 @@ const ProductList = ({navigation, title, products}) => {
   const favoriteList = useSelector(state => state.favorites.favoriteList);
 
   //lấy trạng thái theme
-  const isDarkMode = useTheme()
+  const {isDarkMode} = useTheme()
 
   useEffect(() => {
     if (favoriteList.length === 0) {

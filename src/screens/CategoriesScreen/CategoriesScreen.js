@@ -22,6 +22,9 @@ const CategoriesScreen = ({route}) => {
   
   const navigation = useNavigation(); // Hook điều hướng
 
+  //lấy trạng thái theme
+  const {isDarkMode} = useTheme()
+
   useEffect(() => {
     dispatch(fetchSubCategoriesByParent(category._id)); // Lấy danh mục con khi có category cha
   }, [category._id, dispatch]);
@@ -51,7 +54,7 @@ const CategoriesScreen = ({route}) => {
         </TouchableOpacity>
 
         {/* Hiển thị tên danh mục cha ở giữa */}
-        <Text style={styles.categoryNameText}>{category.namecategory}</Text>
+        <Text style={[styles.categoryNameText,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{category.namecategory}</Text>
       </View>
 
       <FlatList

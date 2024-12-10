@@ -1,9 +1,13 @@
 import React from 'react';
 import { Image, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '../../utils/ThemeContact';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 const CategoryItem = ({ item, subCategories, categoryName }) => {
   const navigation = useNavigation();
+  //lấy trạng thái theme
+  const {isDarkMode} = useTheme()
 
   const handlePressCategory = () => {
     if (!item || !item.name || !item.image) {
@@ -23,9 +27,9 @@ const CategoryItem = ({ item, subCategories, categoryName }) => {
       {item.image ? (
         <Image source={{ uri: item.image }} style={styles.categoryImage} />
       ) : (
-        <Text>No Image</Text>
+        <Text style={{color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }}>No Image</Text>
       )}
-      <Text style={styles.categoryName}>{item.name}</Text>
+      <Text style={[styles.categoryName,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{item.name}</Text>
     </TouchableOpacity>
   );
 };
