@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, TextInput, Button, Text, StyleSheet, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { resetPassword } from '../../redux/actions/actionUser';
@@ -42,9 +42,18 @@ const ResetPasswordScreen = ({ route }) => {
       setPassword('');
       setConfirmPassword('');
 
-      setTimeout(() => {
-        navigation.navigate('Login');
-      }, 1500);
+      // Hiển thị thông báo thành công
+      Alert.alert(
+        'Thành công',
+        'Mật khẩu đã được đặt lại thành công',
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              navigation.navigate('Login'); // Điều hướng sau khi nhấn OK
+            },
+          },
+        ]);
     } catch (err) {
       setError(err.message || 'Đã có lỗi xảy ra');
     } finally {
