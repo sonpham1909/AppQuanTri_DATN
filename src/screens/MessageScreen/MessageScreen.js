@@ -5,6 +5,8 @@ import { fetchMessageById, fetchRepliesByMessage, createMessage } from '../../re
 import { launchImageLibrary } from 'react-native-image-picker';
 import RNFS from 'react-native-fs';
 import ImageResizer from 'react-native-image-resizer';
+import { useTheme } from '@react-navigation/native';
+import { darkTheme,lightTheme } from '../../utils/theme';
 const MessageComponent = () => {
   const dispatch = useDispatch();
   const { userMessages, messageReplies, isLoading, error } = useSelector(state => state.messageReplies);
@@ -13,6 +15,9 @@ const MessageComponent = () => {
   const [selectedImages, setSelectedImages] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+
+  //lấy trạng thái theme
+  const isDarkMode = useTheme()
 
   useEffect(() => {
     dispatch(fetchMessageById());
@@ -89,25 +94,25 @@ const MessageComponent = () => {
   renderItem={({ item }) => (
     <View>
       <View style={[styles.messageContainer, item.isSentByUser ? styles.userMessage : styles.receivedMessage]}>
-        <Text style={styles.message}>{item.content}</Text>
+        <Text style={[styles.message]}>{item.content}</Text>
         {item.img && item.img.length > 0 && item.img.map((img, index) => (
           <TouchableOpacity key={index} onPress={() => handleImagePress(img)}>
             <Image source={{ uri: img }} style={styles.sentImage} onError={() => console.log('Image failed to load:', img)} />
           </TouchableOpacity>
         ))}
-        <Text style={styles.timestamp}>{formatDate(item.createdAt)}</Text>
+        <Text style={[styles.timestamp]}>{formatDate(item.createdAt)}</Text>
       </View>
       {messageReplies[item._id]?.length > 0 && (
         <View style={styles.repliesContainer}>
           {messageReplies[item._id].map(reply => (
             <View key={reply._id} style={styles.replyContainer}>
-              <Text style={styles.reply}>{reply.content}</Text>
+              <Text style={[styles.reply,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{reply.content}</Text>
               {reply.img && reply.img.length > 0 && reply.img.map((img, index) => (
                 <TouchableOpacity key={index} onPress={() => handleImagePress(img)}>
                   <Image source={{ uri: img }} style={styles.sentImage} onError={() => console.log('Image failed to load:', img)} />
                 </TouchableOpacity>
               ))}
-              <Text style={styles.timestamp}>{formatDate(reply.createdAt)}</Text>
+              <Text style={[styles.timestamp,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{formatDate(reply.createdAt)}</Text>
             </View>
           ))}
         </View>
@@ -118,7 +123,7 @@ const MessageComponent = () => {
 
       <View style={styles.inputContainer}>
         <TextInput
-          style={styles.input}
+          style={[styles.input,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}
           placeholder="Nhập  nội dung tin nhắn..."
           value={messageContent}
           onChangeText={setMessageContent}

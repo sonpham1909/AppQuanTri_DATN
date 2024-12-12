@@ -27,7 +27,7 @@ import { useTheme } from '@react-navigation/native';
 // Component chính của màn hình chi tiết sản phẩm
 const ProductDetailScreen = ({route, navigation}) => {
   //Lấy trạng thái darkmode
-  const isDarkMode = useTheme()
+  const {isDarkMode} = useTheme()
   // Lấy sản phẩm từ tham số route
   const {product} = route.params;
 
