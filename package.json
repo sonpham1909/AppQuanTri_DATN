@@ -60,7 +60,7 @@
     "react-redux": "^9.1.2",
     "redux-persist": "^6.0.0",
 
-    "url-parse": "^1.5.10"
+    "url-parse": "^1.5.10",
 
     "socket.io-client": "^4.8.1"
 

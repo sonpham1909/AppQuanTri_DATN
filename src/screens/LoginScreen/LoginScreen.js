@@ -25,13 +25,13 @@ const LoginScreen = ({ navigation }) => {
   const [isLoadingOtp, setIsLoadingOtp] = useState(false);
   const [countdown, setCountdown] = useState(0);
   // Xử lý đăng nhập
-  const handleLogin = () => {
+  const handleLogin = async() => {
     if (!username || !password) {
       Alert.alert('Lỗi', 'Vui lòng nhập tên đăng nhập và mật khẩu');
       return;
     }
 
-    dispatch(login({ username, password }))
+   await dispatch(login({ username, password }))
 
       .unwrap()
       .then(() => {
