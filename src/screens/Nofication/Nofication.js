@@ -1,29 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { socket } from '../../services/sockerIo';
 import NotificationList from '../../components/Nofication/NotificationList';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchNotification } from '../../redux/actions/actionNotification';
+import { fetchNotification, addNotification } from '../../redux/actions/actionNotification'; // Thêm action addNotification
+import { useFocusEffect } from '@react-navigation/native';
 
 const Notification = () => {
   const dispatch = useDispatch();
-  const { isLoading, notification: reduxNotifications } = useSelector((state) => state.notification);
-  const [notifications, setNotifications] = useState([]);
+  const { isLoading, notification } = useSelector((state) => state.notification);
 
   // Lấy danh sách thông báo từ Redux khi component mount
   useEffect(() => {
     dispatch(fetchNotification());
   }, [dispatch]);
 
-  // Đồng bộ dữ liệu thông báo từ Redux vào state local
-  useEffect(() => {
-    setNotifications(reduxNotifications);
-  }, [reduxNotifications]);
-
-  // Lắng nghe thông báo mới từ socket và cập nhật state local
+  // Lắng nghe thông báo mới từ socket và cập nhật Redux state (nếu cần)
   useEffect(() => {
     socket.on('pushnotification', (data) => {
-      setNotifications((prev) => [data, ...prev]); // Thêm thông báo mới vào đầu danh sách
+      // Dispatch action để thêm thông báo mới vào Redux
+      dispatch(addNotification(data)); 
       console.log('Received notification:', data);
     });
 
@@ -31,16 +27,24 @@ const Notification = () => {
     return () => {
       socket.off('pushnotification');
     };
-  }, []);
+  }, [dispatch]);
+
+  // Lấy lại thông báo khi quay lại màn hình
+  useFocusEffect(
+    React.useCallback(() => {
+      dispatch(fetchNotification());
+      console.log('Received notifi:', notification);
+    }, [dispatch])
+  );
 
   return (
     <View style={styles.container}>
       {isLoading ? (
         <Text>Đang tải thông báo...</Text>
-      ) : notifications.length === 0 ? (
+      ) : notification.length === 0 ? (
         <Text>Chưa có thông báo nào.</Text>
       ) : (
-        <NotificationList notifications={notifications} />
+        <NotificationList notifications={notification} />
       )}
     </View>
   );

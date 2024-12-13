@@ -138,6 +138,9 @@ const ProductDetailScreen = ({route, navigation}) => {
   };
 
   const updateAllImages = (variants, selectedColor, defaultImages) => {
+
+    const sizesForColor = getSizesForColor(variants, selectedColor);
+      setAvailableSizes(sizesForColor);
     // Đảm bảo variants và defaultImages luôn là mảng hợp lệ
     const variantImages = Array.isArray(variants)
       ? variants.map(variant => variant.image).filter(Boolean)

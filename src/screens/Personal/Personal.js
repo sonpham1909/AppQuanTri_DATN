@@ -1,7 +1,7 @@
 import {StyleSheet, Text, View, TouchableOpacity, Image, ScrollView} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {launchImageLibrary} from 'react-native-image-picker';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import colors from '../../constants/colors';
 import CardProfile from '../../components/ShippingAddress/CardProfile';
 import {useDispatch, useSelector} from 'react-redux';
@@ -36,6 +36,16 @@ const Personal = () => {
     // Lấy danh sách địa chỉ khi mở màn hình
     // Lấy danh sách địa chỉ khi mở màn hình
   }, [dispatch]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      dispatch(fetchOrders());
+      // Code để cập nhật hoặc load lại dữ liệu
+      console.log('Tab Orders được focus, số lượng đơn hàng:', oderTotal);
+    }, [dispatch])
+  );
+
+ 
 
   // Điều hướng
   const navigation = useNavigation();

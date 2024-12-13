@@ -319,6 +319,7 @@ const App = () => {
               headerTitleStyle: {
                 fontWeight: 'bold', // Kiểu chữ tiêu đề
               },
+             
             }}
           />
           <Stack.Screen

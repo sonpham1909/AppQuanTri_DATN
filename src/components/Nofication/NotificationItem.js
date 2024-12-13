@@ -1,7 +1,22 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
+import moment from 'moment'; // Sử dụng thư viện moment.js hoặc tự viết hàm
 
 const NotificationItem = ({ item }) => {
+  const formatTime = (time) => {
+    const now = new Date();
+    const createdAt = new Date(time);
+
+    const diffMs = now - createdAt; // Khoảng cách thời gian tính bằng ms
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMinutes / 60);
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffMinutes < 60) return `${diffMinutes} phút trước`;
+    if (diffHours < 24) return `${diffHours} giờ trước`;
+    return moment(createdAt).format('HH:mm DD/MM/YYYY'); // Định dạng thời gian cụ thể nếu quá 1 ngày
+  };
+
   return (
     <View style={styles.container}>
       {item.imgNotifi && item.imgNotifi.length > 0 ? (
@@ -11,6 +26,7 @@ const NotificationItem = ({ item }) => {
       )}
       <View style={styles.textContainer}>
         <Text style={styles.title}>{item.title}</Text>
+        <Text style={styles.description}>{formatTime(item.createdAt)}</Text>
         <Text style={styles.description}>{item.message}</Text>
         {item.status && (
           <Text style={item.status === 'unread' ? styles.newStatus : styles.defaultStatus}>
