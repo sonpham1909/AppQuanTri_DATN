@@ -2,11 +2,14 @@ import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { fetchtProductById1 } from '../../redux/actions/actionProduct';
+import { useTheme } from '@react-navigation/native';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 const CartItem = ({ item, onIncrease, onDecrease, onRemove, navigation }) => {
   const dispatch = useDispatch();
 
-
+//lấy trạng thái theme
+const {isDarkMode} = useTheme()
   // Hàm điều hướng tới màn hình chi tiết sản phẩm
   const handleNavigateToProductDetail = () => {
     dispatch(fetchtProductById1(item.product_id._id))
@@ -25,21 +28,21 @@ const CartItem = ({ item, onIncrease, onDecrease, onRemove, navigation }) => {
       <View style={styles.cartItem}>
         <Image source={{ uri: item.image_variant }} style={styles.itemImage} />
         <View style={styles.itemInfo}>
-          <Text style={styles.itemName}>{item.product_id?.name || 'Sản phẩm không xác định'} - ({item.color})</Text>
-          <Text style={styles.itemPrice}>{item.price.toLocaleString()} VND</Text>
-          <Text style={styles.itemSize}>Size - {item.size}</Text>
+          <Text style={[styles.itemName,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{item.product_id?.name || 'Sản phẩm không xác định'} - ({item.color})</Text>
+          <Text style={[styles.itemPrice,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{item.price.toLocaleString()} VND</Text>
+          <Text style={[styles.itemSize,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Size - {item.size}</Text>
           <View style={styles.quantityContainer}>
             <TouchableOpacity onPress={() => onDecrease(item._id)} style={styles.quantityButton}>
               <Text style={styles.quantityText}>-</Text>
             </TouchableOpacity>
-            <Text style={styles.quantityValue}>{item.quantity}</Text>
+            <Text style={[styles.quantityValue,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{item.quantity}</Text>
             <TouchableOpacity onPress={() => onIncrease(item._id)} style={styles.quantityButton}>
               <Text style={styles.quantityText}>+</Text>
             </TouchableOpacity>
           </View>
         </View>
         <View style={styles.buttonsContainer}>
-          <TouchableOpacity onPress={onRemove}>
+          <TouchableOpacity style={{ backgroundColor: isDarkMode ? darkTheme.colors.card : lightTheme.colors.card }} onPress={onRemove}>
             <Image source={require('../../assets/images/icon_delete.png')} />
           </TouchableOpacity>
         </View>

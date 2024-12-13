@@ -31,6 +31,9 @@ import store from './src/redux/store/store';
 import DeliveredOrders from './src/screens/DeliveredOrders/DeliveredOrders';
 import AddReview from './src/screens/AddReview/AddReview';
 import MessageScreen from './src/screens/MessageScreen/MessageScreen';
+//theme
+import { ThemeProvider ,useTheme} from './src/utils/ThemeContact';
+import { lightTheme, darkTheme } from './src/utils/theme';
 
 import ResetPassword from './src/screens/LoginScreen/ResetPasswordScreen'
 
@@ -43,7 +46,11 @@ const Stack = createStackNavigator();
 export const navigationRef = createRef();
 // import queryString from 'query-string';
 
-const App = () => {
+const AppContent = () => {
+  //Lấy trạng thái theme
+  const { isDarkMode } = useTheme();
+// Chọn theme tương ứng
+const theme = isDarkMode ? darkTheme : lightTheme;
   useEffect(() => {
     // Configure Push Notification khi ứng dụng khởi chạy
     PushNotification.configure({
@@ -121,9 +128,7 @@ const App = () => {
 
 
   return (
-    <Provider store={store}>
-      <NavigationContainer ref={navigationRef}>
-        
+      <NavigationContainer ref={navigationRef} theme={theme}>
         <Stack.Navigator
           initialRouteName="Welcom"
           screenOptions={{ headerShown: false }}>
@@ -497,10 +502,16 @@ const App = () => {
 
         </Stack.Navigator>
       </NavigationContainer>
-           
-       
-    </Provider>
   );
 };
+const App = ()=>{
+  return(
+    <Provider store={store}>
+      <ThemeProvider>
+        <AppContent/>
+      </ThemeProvider>
+    </Provider>
+  )
+}
 
 export default App;

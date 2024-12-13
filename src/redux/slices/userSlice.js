@@ -4,12 +4,15 @@ import {
   login,
   fetchUserInfo,
   fetchUserInfoVS1,
-
+  updateAvatar,
+  changePassword,
   resetPasswordRequest,
   resetPassword,
   verifyOtpRequest,
 
+
   sendOTPtoEmail,
+
 
 } from '../actions/actionUser';
 
@@ -22,6 +25,7 @@ const initialState = {
   message: '',
   userInfo: {},
   userInfovs1: {},
+  avatar: null
 };
 
 const userSlice = createSlice({
@@ -89,7 +93,35 @@ const userSlice = createSlice({
           action.payload?.message ||
           'Lấy thông tin người dùng không thành công';
       })
-
+        .addCase(updateAvatar.pending, state => {
+          state.isLoading = true;
+        })
+        .addCase(updateAvatar.fulfilled, (state, action) => {
+          state.isLoading = false;
+          state.isSuccess = true;
+          state.avatar = action.payload.avatar; 
+          console.log('Avatar updated successfully:', state.avatar); 
+        })
+        .addCase(updateAvatar.rejected, (state, action) => {
+          state.isLoading = false;
+          state.isError = true;
+          state.message = action.payload?.message || 'Cập nhật avatar không thành công';
+        })
+        .addCase(changePassword.pending, (state) => {
+          state.isLoading = true;
+        })
+        .addCase(changePassword.fulfilled, (state, action) => {
+          state.isLoading = false;
+          state.isSuccess = true;
+          state.message = 'Mật khẩu đã được thay đổi thành công!';
+          console.log('Password changed successfully');
+        })
+        .addCase(changePassword.rejected, (state, action) => {
+          state.isLoading = false;
+          state.isError = true;
+          state.message =
+            action.payload?.message || 'Đổi mật khẩu không thành công';
+        })
       // Gửi email đặt lại mật khẩu
       .addCase(resetPasswordRequest.pending, state => {
         state.isLoading = true;
@@ -149,8 +181,7 @@ const userSlice = createSlice({
         state.isError = true;
         state.message = action.payload?.message || 'Gửi mã xác thực không thành công';
       })
-     
-
+    
   },
 });
 

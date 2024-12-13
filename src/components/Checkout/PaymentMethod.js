@@ -1,8 +1,12 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import { useTheme } from '@react-navigation/native';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 const PaymentMethod = ({ methods, selectedMethod, onSelectMethod }) => {
+  //lấy trang thái theme
+  const {isDarkMode} = useTheme()
   useEffect(() => {
     // Chọn phương thức thanh toán đầu tiên mặc định nếu chưa có giá trị được chọn
     if (!selectedMethod && methods.length > 0) {
@@ -18,7 +22,7 @@ const PaymentMethod = ({ methods, selectedMethod, onSelectMethod }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Phương thức thanh toán</Text>
+      <Text style={[styles.title,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Phương thức thanh toán</Text>
       <View style={styles.pickerContainer}>
         {selectedMethodDetails?.image && (
           <Image

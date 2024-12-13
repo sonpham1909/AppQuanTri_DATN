@@ -14,10 +14,14 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import { addProductReview } from '../../redux/actions/actionsReview'; // Hành động để thêm đánh giá
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { fetchProductById, fetchProductReviews } from '../../redux/actions/actionProduct';
+import { useTheme } from '../../utils/ThemeContact';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 const AddReview = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  //lấy trạng thái theme
+  const isDarkMode = useTheme()
   const route = useRoute();
   const { productId, color, size, imageVariant } = route.params; // Nhận tất cả thông tin từ route.params
 
@@ -116,18 +120,18 @@ const AddReview = () => {
       <View style={styles.productInfoContainer}>
         <Image source={{ uri: imageVariant }} style={styles.productImage} />
         <View style={styles.productDetails}>
-          <Text style={styles.productText}>Màu sắc: {color}</Text>
-          <Text style={styles.productText}>Kích cỡ: {size}</Text>
+          <Text style={[styles.productText,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Màu sắc: {color}</Text>
+          <Text style={[styles.productText,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Kích cỡ: {size}</Text>
         </View>
       </View>
 
       {/* Chọn số sao đánh giá */}
-      <Text style={styles.ratingTitle}>Chọn điểm đánh giá:</Text>
+      <Text style={[styles.ratingTitle,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Chọn điểm đánh giá:</Text>
       {renderStars()}
 
       {/* Nhập bình luận */}
       <TextInput
-        style={[styles.input, styles.commentInput]}
+        style={[styles.input, styles.commentInput,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}
         placeholder="Nhập bình luận của bạn"
         multiline
         value={comment}
@@ -158,7 +162,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
   },
   title: {
     fontSize: 22,

@@ -21,9 +21,13 @@ import {fetchVariantsByProductId} from '../../redux/actions/actionsVariant';
 import renderStars from '../../components/Home/renderStars';
 import {fetchUserInfo} from '../../redux/actions/actionUser';
 import {addTocCart} from '../../redux/actions/actionCart';
+import { darkTheme,lightTheme } from '../../utils/theme';
+import { useTheme } from '@react-navigation/native';
 
 // Component chính của màn hình chi tiết sản phẩm
 const ProductDetailScreen = ({route, navigation}) => {
+  //Lấy trạng thái darkmode
+  const {isDarkMode} = useTheme()
   // Lấy sản phẩm từ tham số route
   const {product} = route.params;
 
@@ -252,7 +256,7 @@ const ProductDetailScreen = ({route, navigation}) => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.detailsContainer}>
-        <Text style={styles.productTitle}>{product.name}</Text>
+        <Text style={[styles.productTitle,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{product.name}</Text>
         {totalReviews > 0 && renderReviewSummary()}
         {renderImages()}
         {renderColorOptions()}
@@ -319,12 +323,12 @@ const ProductDetailScreen = ({route, navigation}) => {
           onViewableItemsChanged={onViewableItemsChanged}
           viewabilityConfig={viewabilityConfig}
         />
-        <Text style={styles.imageIndexText}>
+        <Text style={[styles.imageIndexText,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>
           {currentImageIndex + 1} / {allImages.length}
         </Text>
       </>
     ) : (
-      <Text>Không có ảnh sản phẩm nào để hiển thị.</Text>
+      <Text style={{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }}>Không có ảnh sản phẩm nào để hiển thị.</Text>
     );
   }
 
@@ -354,9 +358,9 @@ const ProductDetailScreen = ({route, navigation}) => {
           ))}
         </View>
         <View style={styles.row}>
-          <Text style={styles.sectionLabel}>Màu Sắc: </Text>
+          <Text style={[styles.sectionLabel,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Màu Sắc: </Text>
           {selectedColor && (
-            <Text style={styles.selectedColorName}>
+            <Text style={[styles.selectedColorName,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>
               {
                 variants.find(variant => variant.color_code === selectedColor)
                   ?.color
@@ -371,7 +375,7 @@ const ProductDetailScreen = ({route, navigation}) => {
     // Hàm render các tùy chọn kích cỡ sản phẩm
     return (
       <View style={styles.row}>
-        <Text style={styles.sectionLabel}>Kích Cỡ: </Text>
+        <Text style={[styles.sectionLabel,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Kích Cỡ: </Text>
         <View style={styles.sizeContainer}>
           {availableSizes.map((sizeObj, i) => (
             <TouchableOpacity
@@ -395,14 +399,14 @@ const ProductDetailScreen = ({route, navigation}) => {
     return (
       <View>
         <View style={styles.quantityRow}>
-          <Text style={styles.sectionLabel}>Số Lượng: </Text>
+          <Text style={[styles.sectionLabel,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Số Lượng: </Text>
           <View style={styles.quantityControls}>
             <TouchableOpacity
               onPress={() => setQuantity(Math.max(1, quantity - 1))}
               style={styles.quantityButton}>
               <Text style={styles.quantityButtonText}>-</Text>
             </TouchableOpacity>
-            <Text style={styles.quantityText}>{quantity}</Text>
+            <Text style={[styles.quantityText,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{quantity}</Text>
             <TouchableOpacity
               onPress={() =>
                 setQuantity(Math.min(maxQuantity, quantity + 1, 10))
@@ -412,7 +416,7 @@ const ProductDetailScreen = ({route, navigation}) => {
             </TouchableOpacity>
           </View>
         </View>
-        <Text style={styles.stockText}>Còn {maxQuantity} sản phẩm</Text>
+        <Text style={[styles.stockText,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Còn {maxQuantity} sản phẩm</Text>
       </View>
     );
   }
@@ -420,7 +424,7 @@ const ProductDetailScreen = ({route, navigation}) => {
   function renderPrice() {
     // Hàm render giá sản phẩm
     return (
-      <Text style={styles.price}>{`${(
+      <Text style={[styles.price,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{`${(
         product.price * quantity
       ).toLocaleString()} VND`}</Text>
     );
@@ -456,12 +460,12 @@ const ProductDetailScreen = ({route, navigation}) => {
     // Hàm render phần mô tả, chất liệu và chi tiết sản phẩm
     return (
       <View style={styles.section}>
-        <Text style={styles.sectionPainted}>Mô tả</Text>
+        <Text style={[styles.sectionPainted,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Mô tả</Text>
 
         <TouchableOpacity
           style={styles.sectionHeader}
           onPress={() => setIsCollapsedMaterial(!isCollapsedMaterial)}>
-          <Text style={styles.sectionLabel}>Chất liệu</Text>
+          <Text style={[styles.sectionLabel,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Chất liệu</Text>
           <MaterialCommunityIcons
             name={isCollapsedMaterial ? 'chevron-down' : 'chevron-up'}
             size={20}
@@ -469,7 +473,7 @@ const ProductDetailScreen = ({route, navigation}) => {
           />
         </TouchableOpacity>
         {!isCollapsedMaterial && (
-          <Text style={styles.sectionContent}>
+          <Text style={[styles.sectionContent,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>
             {product.material || 'Không có thông tin chất liệu'}
           </Text>
         )}
@@ -479,7 +483,7 @@ const ProductDetailScreen = ({route, navigation}) => {
         <TouchableOpacity
           style={styles.sectionHeader}
           onPress={() => setIsCollapsedDetails(!isCollapsedDetails)}>
-          <Text style={styles.sectionLabel}>Chi tiết</Text>
+          <Text style={[styles.sectionLabel,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Chi tiết</Text>
           <MaterialCommunityIcons
             name={isCollapsedDetails ? 'chevron-down' : 'chevron-up'}
             size={20}
@@ -487,7 +491,7 @@ const ProductDetailScreen = ({route, navigation}) => {
           />
         </TouchableOpacity>
         {!isCollapsedDetails && (
-          <Text style={styles.sectionContent}>
+          <Text style={[styles.sectionContent,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>
             {product.description || 'Không có thông tin chi tiết'}
           </Text>
         )}
@@ -502,7 +506,7 @@ const ProductDetailScreen = ({route, navigation}) => {
     return (
       <View style={styles.reviewSection1}>
         {renderStars(averageRating)}
-        <Text style={styles.reviewCount}>({totalReviews})</Text>
+        <Text style={[styles.reviewCount,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>({totalReviews})</Text>
       </View>
     );
   }
@@ -513,7 +517,7 @@ const ProductDetailScreen = ({route, navigation}) => {
 
     return (
       <>
-        <Text style={styles.sectionLabelReview}>Đánh giá</Text>
+        <Text style={[styles.sectionLabelReview,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Đánh giá</Text>
         <View style={styles.ratingRow}>
           <View style={styles.reviewSection}>
             {renderStars(averageRating)}
@@ -651,7 +655,7 @@ const ProductDetailScreen = ({route, navigation}) => {
 export default ProductDetailScreen;
 
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: '#fff'},
+  container: {flex: 1,},
   detailsContainer: {padding: 16},
   productTitle: {
     fontSize: 22,

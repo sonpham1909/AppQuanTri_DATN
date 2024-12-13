@@ -6,8 +6,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { searchProduct } from '../../redux/actions/actionProduct';
 import ProductList from '../../components/Home/ProductList';
 import ProductSearch from '../../components/Home/productSearch';
+import { useTheme } from '../../utils/ThemeContact';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 const SearchScreen = ({route,navigation}) => {
+  //lấy trạng thái theme
+  const {isDarkMode} = useTheme()
 
     const dispatch = useDispatch();
 
@@ -43,7 +47,7 @@ const SearchScreen = ({route,navigation}) => {
     return (
         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
           <ActivityIndicator size="large" color="#00A65E" />
-          <Text>Đang tải dữ liệu...</Text>
+          <Text style={{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }}>Đang tải dữ liệu...</Text>
         </View>
       );
   }
@@ -62,7 +66,7 @@ const SearchScreen = ({route,navigation}) => {
           />
         </TouchableOpacity>
         <TextInput
-          style={styles.searchInput}
+          style={[styles.searchInput,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}
           placeholder="Tìm kiếm sản phẩm..."
           value={searchKeyWord}
           onChangeText={setSearchText}
@@ -92,7 +96,7 @@ const SearchScreen = ({route,navigation}) => {
         ) : (
             <View style={{ justifyContent: 'center', alignItems: 'center' }}>
          
-          <Text>Không có sản phẩm bạn muốn tìm</Text>
+          <Text style={{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }}>Không có sản phẩm bạn muốn tìm</Text>
         </View>
         )
       }
@@ -106,7 +110,6 @@ export default SearchScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     padding:20,
     alignItems:'center'
     

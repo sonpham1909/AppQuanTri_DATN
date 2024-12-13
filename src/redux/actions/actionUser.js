@@ -66,6 +66,36 @@ export const fetchUserInfoVS1 = createAsyncThunk(
     }
   }
 );
+
+// Action cập nhật avatar người dùng
+export const updateAvatar = createAsyncThunk(
+  'user/updateAvatar',
+  async ({ userId, avatarData }, thunkAPI) => {
+    try {
+      const token = await tokenService.getToken();
+      const formData = new FormData();
+      formData.append('avatar', {
+        uri: avatarData.uri,
+        name: 'avatar.jpg', 
+        type: avatarData.type || 'image/jpeg', 
+      });  
+      const response = await axios.put(`${API_URL}/users/${userId}/avatar`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error('Lỗi khi cập nhật avatar:', error);
+      return thunkAPI.rejectWithValue(
+        error.response ? error.response.data.message : error.message
+      );
+    }
+  }
+);
+      
 export const resetPasswordRequest = createAsyncThunk(
   'v1/users/sendresetpasswordemail',
   async ({ email }, thunkAPI) => {
@@ -133,4 +163,28 @@ export const sendOTPtoEmail = createAsyncThunk(
     }
   }
 );
+// Action đổi mật khẩu
+export const changePassword = createAsyncThunk(
+  'user/updateUser',
+  async ({ userId, oldPassword, newPassword }, thunkAPI) => {
+    try {
+      const token = await tokenService.getToken();
+      const response = await axios.put(
+        `${API_URL}/users/${userId}/update_user`,
+        { oldPassword, password:newPassword },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
+      return response.data;
+    } catch (error) {
+      console.error('Lỗi khi đổi mật khẩu:', error);
+      return thunkAPI.rejectWithValue(
+        error.response ? error.response.data.message : error.message
+      );
+    }
+  }
+);
