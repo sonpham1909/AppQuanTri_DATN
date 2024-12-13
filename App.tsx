@@ -324,6 +324,7 @@ const theme = isDarkMode ? darkTheme : lightTheme;
               headerTitleStyle: {
                 fontWeight: 'bold', // Kiểu chữ tiêu đề
               },
+             
             }}
           />
           <Stack.Screen

@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Text, View, TextInput, Button, FlatList, StyleSheet, Image, TouchableOpacity, Modal } from 'react-native';
+import { Text, View, TextInput, Button, FlatList, StyleSheet, Image, TouchableOpacity, Modal, Alert } from 'react-native';
 import { fetchMessageById, fetchRepliesByMessage, createMessage } from '../../redux/actions/actionMessage';
 import { launchImageLibrary } from 'react-native-image-picker';
 import RNFS from 'react-native-fs';
 import ImageResizer from 'react-native-image-resizer';
+
 import { useTheme } from '@react-navigation/native';
 import { darkTheme,lightTheme } from '../../utils/theme';
+
+import { socket } from '../../services/sockerIo';
+
 const MessageComponent = () => {
   const dispatch = useDispatch();
   const { userMessages, messageReplies, isLoading, error } = useSelector(state => state.messageReplies);
@@ -15,6 +19,8 @@ const MessageComponent = () => {
   const [selectedImages, setSelectedImages] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [messageRecived, setMessageRecived] = useState({});
+  const [replies, setreplies] = useState({});
 
   //lấy trạng thái theme
   const isDarkMode = useTheme()
@@ -24,12 +30,35 @@ const MessageComponent = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    userMessages.forEach(message => {
+    userMessages.forEach(async(message)=> {
       if (message._id) {
-        dispatch(fetchRepliesByMessage(message._id));
+        await dispatch(fetchRepliesByMessage(message._id));
+        await setreplies(messageReplies);
+        console.log("Tin nhắn reply",replies);
+        
       }
     });
   }, [userMessages, dispatch]);
+
+  useEffect(() => {
+    const listenForMessages = () => {
+      socket.on('sendMessageToUsers', (data) => {
+        const { message_id } = data;
+        setreplies((prevReplies) => ({
+          ...prevReplies,
+          [message_id]: [...(prevReplies[message_id] || []), data],
+        }));
+        console.log('Received notification:', data);
+      });
+    };
+  
+    listenForMessages();
+  
+    return () => {
+      socket.off('sendMessageToUsers');
+    };
+  }, []);
+  
 
   const handleSelectImage = () => {
     const options = { mediaType: 'photo', quality: 1, selectionLimit: 5 };
@@ -102,9 +131,9 @@ const MessageComponent = () => {
         ))}
         <Text style={[styles.timestamp]}>{formatDate(item.createdAt)}</Text>
       </View>
-      {messageReplies[item._id]?.length > 0 && (
+      {replies[item._id]?.length > 0 && (
         <View style={styles.repliesContainer}>
-          {messageReplies[item._id].map(reply => (
+          {replies[item._id].map(reply => (
             <View key={reply._id} style={styles.replyContainer}>
               <Text style={[styles.reply,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{reply.content}</Text>
               {reply.img && reply.img.length > 0 && reply.img.map((img, index) => (

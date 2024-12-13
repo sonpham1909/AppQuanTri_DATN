@@ -297,7 +297,7 @@ const BottomTabNavigator = () => {
       <Tab.Screen
         name="Thông báo"
         component={Nofication}
-        options={{ title: 'Thông báo', headerTitleAlign: 'center' }}
+        options={{ title: 'Thông báo', headerTitleAlign: 'center', unmountOnBlur: false, }}
       />
       <Tab.Screen
         name="Cá nhân"

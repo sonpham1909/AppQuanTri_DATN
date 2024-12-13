@@ -9,6 +9,7 @@ const NotificationList = ({ notifications }) => {
         data={notifications}
         keyExtractor={(item) => item._id.toString()}
         renderItem={({ item }) => <NotificationItem item={item} />}
+
       />
     </View>
   );

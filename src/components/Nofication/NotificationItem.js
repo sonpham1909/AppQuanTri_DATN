@@ -1,11 +1,30 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
+
 import { useTheme } from '@react-navigation/native';
 import { darkTheme,lightTheme } from '../../utils/theme';
+import moment from 'moment'; // Sử dụng thư viện moment.js hoặc tự viết hàm
 
 const NotificationItem = ({ item }) => {
   //lấy trạng thái theme
   const {isDarkMode} = useTheme()
+
+
+
+  const formatTime = (time) => {
+    const now = new Date();
+    const createdAt = new Date(time);
+
+    const diffMs = now - createdAt; // Khoảng cách thời gian tính bằng ms
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMinutes / 60);
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffMinutes < 60) return `${diffMinutes} phút trước`;
+    if (diffHours < 24) return `${diffHours} giờ trước`;
+    return moment(createdAt).format('HH:mm DD/MM/YYYY'); // Định dạng thời gian cụ thể nếu quá 1 ngày
+  };
+
   return (
     <View style={styles.container}>
       {item.imgNotifi && item.imgNotifi.length > 0 ? (
@@ -14,8 +33,12 @@ const NotificationItem = ({ item }) => {
         <Image source={require('../../assets/images/icon_shoping.png')} style={styles.image} />
       )}
       <View style={styles.textContainer}>
+
         <Text style={[styles.title,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{item.title}</Text>
         <Text style={[styles.description,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{item.message}</Text>
+
+        <Text style={styles.title}>{item.title}</Text>
+       
         {item.status && (
           <Text style={item.status === 'unread' ? styles.newStatus : styles.defaultStatus}>
             {item.status}

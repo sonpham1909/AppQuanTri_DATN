@@ -67,6 +67,8 @@ const CheckoutScreen = () => {
     }, [dispatch]),
   );
 
+  const [loading, setLoading] = useState(false);
+
   const handleOrderPress = () => {
     if (!defaultAddress || !selectedPaymentMethod || !selectedShippingMethod) {
       Alert.alert('Thông báo', 'Vui lòng kiểm tra thông tin giao hàng và thanh toán.');
@@ -96,6 +98,8 @@ const CheckoutScreen = () => {
   };
   
   const confirmAndPlaceOrder = () => {
+    setLoading(true); // Bật loading khi bắt đầu đặt hàng
+    
     const orderData = {
       address_id: defaultAddress._id,
       shipping_method_id: selectedShippingMethod,
@@ -125,29 +129,32 @@ const CheckoutScreen = () => {
             .catch((err) => {
               console.error('MoMo payment initiation error:', err);
               Alert.alert('Lỗi', 'Không thể khởi tạo thanh toán MoMo. Vui lòng thử lại.');
-            });
+            })
+            .finally(() => setLoading(false)); // Tắt loading sau khi hoàn thành
         } else {
-          Alert.alert(
-            'Thành công',
-            'Đặt hàng thành công',
-            [
-              {
-                text: 'OK',
-                onPress: () => {
+          // Alert.alert(
+          //   'Thành công',
+          //   'Đặt hàng thành công',
+          //   [
+          //     {
+          //       text: 'OK',
+          //       onPress: () => {
                   dispatch(deleteAllCartItems());
                   navigation.navigate('Congrats');
-                },
-              },
-            ],
-          );
+          //       },
+          //     },
+          //   ],
+          // );
+          setLoading(false); // Tắt loading sau khi hoàn thành
         }
       })
       .catch((err) => {
         console.error('Order creation error:', err);
         Alert.alert('Lỗi', 'Đặt hàng không thành công. Vui lòng thử lại.');
+        setLoading(false); // Tắt loading khi có lỗi
       });
   };
-  
+        
   
   const shippingFee =
     shippingMethods.find(method => method._id === selectedShippingMethod)
@@ -167,6 +174,14 @@ const CheckoutScreen = () => {
     style: 'currency',
     currency: 'VND',
   }).format(totalAmount);
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text style={styles.loadingText}>Vui lòng chờ...</Text>
+      </View>
+    );
+  }
 
   if (shippingLoading || paymentLoading || cartLoading || momoLoading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
@@ -213,6 +228,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 15,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#000000',
+
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#fff',
   },
 });
 

@@ -52,7 +52,7 @@ const DeliveredOrders = () => {
   // Render từng sản phẩm đã mua
   const renderItem = ({item}) => {
     const hasReviewed = userReviews.some(
-      review => review.product_id === item.product_id,
+      review => review.product_id === item.product_id._id,
     );
 
     return (
