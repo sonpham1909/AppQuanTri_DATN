@@ -6,7 +6,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import RNFS from 'react-native-fs';
 import ImageResizer from 'react-native-image-resizer';
 import { socket } from '../../services/sockerIo';
-import tokenService from '../../services/tokenService';
+
 const MessageComponent = () => {
   const dispatch = useDispatch();
   const { userMessages, messageReplies, isLoading, error } = useSelector(state => state.messageReplies);
@@ -33,23 +33,25 @@ const MessageComponent = () => {
     });
   }, [userMessages, dispatch]);
 
-  useEffect(async() => {
-
+  useEffect(() => {
+    const listenForMessages = () => {
+      socket.on('sendMessageToUsers', (data) => {
+        const { message_id } = data;
+        setreplies((prevReplies) => ({
+          ...prevReplies,
+          [message_id]: [...(prevReplies[message_id] || []), data],
+        }));
+        console.log('Received notification:', data);
+      });
+    };
   
-    socket.on('sendMessageToUsers', (data) => {
-      const { message_id } = data;
-      setreplies((prevReplies) => ({
-        ...prevReplies,
-        [message_id]: [...(prevReplies[message_id] || []), data],
-      }));
-      console.log('Received notification:', data);
-    });
-
-    // Cleanup khi component bị unmount
+    listenForMessages();
+  
     return () => {
       socket.off('sendMessageToUsers');
     };
   }, []);
+  
 
   const handleSelectImage = () => {
     const options = { mediaType: 'photo', quality: 1, selectionLimit: 5 };

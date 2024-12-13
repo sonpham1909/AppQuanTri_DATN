@@ -7,7 +7,7 @@ import {
 
   resetPasswordRequest,
   resetPassword,
-  verifyOtpRequest
+  verifyOtpRequest,
 
   sendOTPtoEmail,
 
