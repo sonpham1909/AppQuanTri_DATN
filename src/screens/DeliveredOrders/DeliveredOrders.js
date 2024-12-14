@@ -25,6 +25,10 @@ const DeliveredOrders = () => {
   const {userReviews} = useSelector(state => state.reviewResponses);
 
   // Lấy dữ liệu khi component được mount lần đầu
+
+  console.log('Purchased Products:', purchasedProducts);
+  console.log('User Reviews:', userReviews);
+
   useEffect(() => {
     dispatch(fetchPurchasedProducts());
     dispatch(fetchUserReviews());
@@ -41,14 +45,16 @@ const DeliveredOrders = () => {
   // Hàm xử lý làm mới khi kéo
   const onRefresh = () => {
     setRefreshing(true);
-    Promise.all([dispatch(fetchPurchasedProducts()), dispatch(fetchUserReviews())])
-      .finally(() => setRefreshing(false));
+    Promise.all([
+      dispatch(fetchPurchasedProducts()),
+      dispatch(fetchUserReviews()),
+    ]).finally(() => setRefreshing(false));
   };
 
   // Render từng sản phẩm đã mua
   const renderItem = ({item}) => {
     const hasReviewed = userReviews.some(
-      review => review.product_id === item.product_id,
+      review => review.product_id === item.product_id._id,
     );
 
     return (

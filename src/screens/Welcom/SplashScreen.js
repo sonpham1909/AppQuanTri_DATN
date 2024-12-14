@@ -13,7 +13,7 @@ const SplashScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Image
-        source={require('../../assets/images/logo.png')} // Đảm bảo đường dẫn tới hình ảnh là đúng
+        source={require('../../assets/images/Stylelife.png')} // Đảm bảo đường dẫn tới hình ảnh là đúng
         style={styles.logo}
       />
     </View>
@@ -28,8 +28,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    width: 150, // Đặt kích thước cho logo
-    height: 150,
+    width: 130, // Đặt kích thước cho logo
+    height: 130,
+    borderRadius:5,
     resizeMode: 'contain',
   },
 });
