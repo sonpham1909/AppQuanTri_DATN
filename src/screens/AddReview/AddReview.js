@@ -11,11 +11,13 @@ import {
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { addProductReview } from '../../redux/actions/actionsReview'; // Hành động để thêm đánh giá
+import { addProductReview } from '../../redux/actions/actionsReview';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import { fetchProductById, fetchProductReviews } from '../../redux/actions/actionProduct';
 import { useTheme } from '../../utils/ThemeContact';
 import { darkTheme,lightTheme } from '../../utils/theme';
+
 
 const AddReview = () => {
   const dispatch = useDispatch();
@@ -23,18 +25,26 @@ const AddReview = () => {
   //lấy trạng thái theme
   const isDarkMode = useTheme()
   const route = useRoute();
-  const { productId, color, size, imageVariant } = route.params; // Nhận tất cả thông tin từ route.params
+  const { productId, color, size, imageVariant } = route.params;
 
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [selectedImages, setSelectedImages] = useState([]);
 
+  const prohibitedWords = [
+    'lồn', 'địt', 'mẹ', 'cặc', 'vãi', 'fuck', 'shit',
+    'đụ', 'dâm', 'súc vật', 'con cặc', 'con đĩ', 'khốn nạn', 
+    'vãi lúa', 'cứt', 'khoai', 'nổ', 'chó chết', 'đồ khốn', 
+    'đồ điên', 'bựa', 'hâm', 'gái gọi', 'bướm', 'cặc lửa', 
+    'địt mẹ', 'đụ má', 'chịch','thằng ngu','ngu',
+  ];
+  
   const handleImagePick = () => {
     launchImageLibrary({ mediaType: 'photo', selectionLimit: 0 }, response => {
       if (response.didCancel) {
-        console.log('User cancelled image picker');
+        console.log('Người dùng đã hủy chọn ảnh');
       } else if (response.errorMessage) {
-        console.error('ImagePicker Error: ', response.errorMessage);
+        console.error('Lỗi ImagePicker: ', response.errorMessage);
       } else {
         const newImages = response.assets.map(asset => ({ uri: asset.uri }));
         setSelectedImages(prevImages => [...prevImages, ...newImages]);
@@ -47,13 +57,15 @@ const AddReview = () => {
       alert('Vui lòng chọn điểm đánh giá!');
       return;
     }
-  
+
+    // Kiểm tra từ ngữ không phù hợp trong bình luận
+    const foundProhibitedWord = prohibitedWords.some(word => comment.toLowerCase().includes(word));
+    if (foundProhibitedWord) {
+      alert('Nội dung bình luận của bạn cần được chỉnh sửa để phù hợp với quy định. Vui lòng điều chỉnh lại bình luận.');
+      return;
+    }
+
     try {
-      // Upload từng ảnh và lấy các URL trả về từ backend
-    
-  console.log(productId);
-  
-   
       const formData = new FormData();
       formData.append('product_id', productId._id);
       formData.append('rating', rating);
@@ -61,21 +73,16 @@ const AddReview = () => {
       formData.append('color', color);
       formData.append('size', size);
       formData.append('image_variant', imageVariant);
-  
+
       // Thêm từng ảnh vào FormData
       selectedImages.forEach((image, index) => {
-        console.log(image);
-        
         formData.append('imageUrls', {
           uri: image.uri,
-          type: 'image/jpeg', // hoặc image/png, image/jpg
+          type: 'image/jpeg',
           name: `image_${index}.jpg`,
         });
       });
 
-      
-  
-  
       // Gửi đánh giá lên server
       await dispatch(addProductReview(formData))
         .unwrap()
@@ -85,18 +92,16 @@ const AddReview = () => {
           navigation.goBack(); // Quay lại màn hình trước
         })
         .catch(error => {
-          console.error('Error adding review:', error);
+          console.error('Lỗi khi thêm đánh giá:', error);
           alert('Lỗi khi thêm đánh giá, vui lòng thử lại.');
         });
 
-       
-  
     } catch (error) {
-      console.error('Error uploading images:', error);
+      console.error('Lỗi khi tải ảnh lên:', error);
       alert('Lỗi khi upload ảnh, vui lòng thử lại.');
     }
   };
-  
+
   const renderStars = () => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
@@ -115,7 +120,6 @@ const AddReview = () => {
 
   return (
     <ScrollView style={styles.container}>
-
       {/* Hiển thị thông tin sản phẩm */}
       <View style={styles.productInfoContainer}>
         <Image source={{ uri: imageVariant }} style={styles.productImage} />
@@ -162,12 +166,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
   },
   productInfoContainer: {
     flexDirection: 'row',
