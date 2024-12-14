@@ -30,14 +30,14 @@ const NotificationItem = ({ item }) => {
       {item.imgNotifi && item.imgNotifi.length > 0 ? (
         <Image source={{ uri: item.imgNotifi[0] }} style={styles.image} />
       ) : (
-        <Image source={require('../../assets/images/icon_shoping.png')} style={styles.image} />
+        <Image source={require('../../assets/images/logoSTL.png')} style={styles.image} />
       )}
       <View style={styles.textContainer}>
 
         <Text style={[styles.title,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{item.title}</Text>
         <Text style={[styles.description,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{item.message}</Text>
 
-        <Text style={styles.title}>{item.title}</Text>
+        <Text style={styles.description}>{formatTime(item.createdAt)}</Text>
        
         {item.status && (
           <Text style={item.status === 'unread' ? styles.newStatus : styles.defaultStatus}>

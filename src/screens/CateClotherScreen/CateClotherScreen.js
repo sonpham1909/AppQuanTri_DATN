@@ -183,7 +183,7 @@ const CateClotherScreen = ({route}) => {
         <Text style={[styles.categoryNameText,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{categoryName}</Text>
       </View>
 
-      <View style={styles.filterContainer}>
+      {/* <View style={styles.filterContainer}>
         <Text style={styles.filterLabel}>Bộ lọc</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <TouchableOpacity
@@ -236,7 +236,7 @@ const CateClotherScreen = ({route}) => {
             />
           </TouchableOpacity>
         </ScrollView>
-      </View>
+      </View> */}
 
 
       {renderFilters()}
