@@ -154,8 +154,7 @@ const MessageComponent = () => {
           onChangeText={setMessageContent}
         />
         <TouchableOpacity onPress={handleSelectImage}>
-          <Image
-            source={{ uri: 'https://png.pngtree.com/png-vector/20190223/ourmid/pngtree-vector-camera-icon-png-image_696326.jpg' }}
+          <Image source={{ uri: 'https://png.pngtree.com/png-vector/20190223/ourmid/pngtree-vector-camera-icon-png-image_696326.jpg' }}
             style={styles.cameraIcon}
           />
         </TouchableOpacity>

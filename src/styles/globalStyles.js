@@ -80,7 +80,6 @@ const globalStyles = StyleSheet.create({
   },
   ShippingAddressContainer: {
     flex: 1,
-    backgroundColor: colors.background,
   },
   ShippingAddressContent: {
     padding: spacing.medium,
@@ -144,7 +143,6 @@ const globalStyles = StyleSheet.create({
   
   containerSetting:{
     padding: 20,
-    backgroundColor: '#f8f8f8',
   },
   sectionSetting:{
     marginBottom: 10,
@@ -157,6 +155,7 @@ const globalStyles = StyleSheet.create({
     shadowRadius: 8,//độ lan
     elevation: 1,//chiều cao của phần tử so với nền bóng đổ
   },
+
   instructionText: {
     fontSize: 18, // Kích thước chữ
     color: '#333', // Màu chữ

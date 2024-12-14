@@ -88,7 +88,7 @@ const ReviewsScreen = ({navigation}) => {
   }
     
   if (!userReviews || userReviews.length === 0 && !productDetails || productDetails.length=== 0) {
-    return <StatusView emptyText="Không có nhan xet nào đã mua." />;
+    return <StatusView emptyText="Không có nhận xét nào." />;
   }
   if (reviewError || productError) {
     return <StatusView error={reviewError||productError} />;
@@ -111,7 +111,6 @@ export default ReviewsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f0f0',
     padding: 10,
     justifyContent: 'center',
   },

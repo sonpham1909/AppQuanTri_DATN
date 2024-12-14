@@ -20,11 +20,15 @@ import {
 } from '../../redux/actions/actionCart';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import StatusView from '../../components/StatusView';
+import { useTheme } from '../../utils/ThemeContact';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 const CartScreen = ({navigation}) => {
   const dispatch = useDispatch();
   const {cart, isLoading, error} = useSelector(state => state.cart);
 
+  //lấy trạng thái theme
+  const {isDarkMode} = useTheme()
   // useFocusEffect(
   //   useCallback(() => {
   //     dispatch(fetchCart());
@@ -88,7 +92,7 @@ const CartScreen = ({navigation}) => {
     return (
       <View style={styles.emptyContainer}>
         <MaterialCommunityIcons name="cart-off" size={64} color="#B0B0B0" />
-        <Text style={styles.emptyText}>Giỏ hàng của bạn đang trống</Text>
+        <Text style={[styles.emptyText,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Giỏ hàng của bạn đang trống</Text>
       </View>
     );
   }
@@ -121,7 +125,6 @@ const CartScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF',
   },
   emptyContainer: {
     flex: 1,

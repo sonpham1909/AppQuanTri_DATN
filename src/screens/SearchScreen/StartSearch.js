@@ -3,6 +3,8 @@ import { StyleSheet, View, TextInput, TouchableOpacity, Text, Alert } from 'reac
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { addSearch, deleteAllSearchTerm, deleteSearchTerm, fetchSearchHistories } from '../../redux/actions/actionSearch';
+import { useTheme } from '@react-navigation/native';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 const StartSearch = ({ navigation }) => {
     const [searchText, setSearchText] = useState('');
@@ -10,6 +12,9 @@ const StartSearch = ({ navigation }) => {
 
     const dispatch = useDispatch();
     const { searchHistories, isLoading, error } = useSelector(state => state.search);
+
+    //lấy trạng thái theme
+    const {isDarkMode} = useTheme()
 
     // Load giỏ hàng khi mở màn hình
     useEffect(() => {
@@ -132,16 +137,16 @@ const StartSearch = ({ navigation }) => {
                                     <MaterialCommunityIcons
                                         name="history"
                                         size={24}
-                                        color="black"
+                                        color={isDarkMode ? darkTheme.colors.text : lightTheme.colors.text}
                                     />
-                                    <Text style={styles.searchHisItemTitle}>{item.search_term}</Text>
+                                    <Text style={[styles.searchHisItemTitle,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{item.search_term}</Text>
                                 </View>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => handleRemoveSearch(item._id)}>
                                 <MaterialCommunityIcons
                                     name="close"
                                     size={24}
-                                    color="black"
+                                    color={isDarkMode ? darkTheme.colors.text : lightTheme.colors.text}
                                 />
                             </TouchableOpacity>
                         </View>
@@ -168,7 +173,6 @@ export default StartSearch;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
         paddingTop: 10,
     },
     header: {

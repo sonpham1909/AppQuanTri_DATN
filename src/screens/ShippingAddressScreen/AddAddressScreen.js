@@ -14,6 +14,7 @@ import { useDispatch } from 'react-redux';
 import { addAddress } from '../../redux/actions/actionAddress';
 import axios from 'axios';
 import tokenManager from '../../services/tokenService'; // Đường dẫn tới tệp token bạn đã cung cấp
+import { useTheme } from '../../utils/ThemeContact';
 
 const AddAddress = () => {
   const [fullName, setFullName] = useState('');
@@ -30,6 +31,9 @@ const AddAddress = () => {
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
+    //Lấy trạng thái chuyển đổi theme
+    const { isDarkMode, toggleTheme } = useTheme(); 
+
 
   // Hàm lấy token từ AsyncStorage và gọi API lấy danh sách thành phố
   useEffect(() => {
@@ -172,7 +176,7 @@ const AddAddress = () => {
 
         {/* Chọn thành phố */}
         <View style={styles.pickerContainerAddress}>
-          <Text style={styles.labelAddress}>Thành Phố</Text>
+          <Text style={[styles.labelAddress,isDarkMode ? styles.darkText : styles.lightText]}>Thành Phố</Text>
           <Picker
             selectedValue={city.id}
             onValueChange={(itemValue) => {
@@ -191,7 +195,7 @@ const AddAddress = () => {
 
         {/* Chọn quận/huyện */}
         <View style={styles.pickerContainerAddress}>
-          <Text style={styles.labelAddress}>Quận/Huyện</Text>
+          <Text style={[styles.labelAddress,isDarkMode ? styles.darkText : styles.lightText]}>Quận/Huyện</Text>
           <Picker
             selectedValue={district.id}
             onValueChange={(itemValue) => {
@@ -211,7 +215,7 @@ const AddAddress = () => {
 
         {/* Chọn xã/phường */}
         <View style={styles.pickerContainerAddress}>
-          <Text style={styles.labelAddress}>Xã/Phường</Text>
+          <Text style={[styles.labelAddress,isDarkMode ? styles.darkText : styles.lightText]}>Xã/Phường</Text>
           <Picker
             selectedValue={ward.id}
             onValueChange={(itemValue) => {
@@ -311,7 +315,11 @@ const styles = StyleSheet.create({
   containerAddress:{
     flexGrow: 1,
     padding: 16,
-    backgroundColor: '#FFF',
   },
- 
+  darkText: {
+    color: '#fff',
+  },
+  lightText: {
+    color: '#000',
+  },
 });

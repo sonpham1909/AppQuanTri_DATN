@@ -12,6 +12,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {fetchSubCategoriesByParent} from '../../redux/actions/actionCategory';
 import {useNavigation} from '@react-navigation/native'; // Import hook điều hướng
 import StatusView from '../../components/StatusView';
+import { useTheme } from '../../utils/ThemeContact';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 const CategoriesScreen = ({route}) => {
   const {category} = route.params; // Nhận dữ liệu danh mục cha từ route.params
@@ -19,6 +21,9 @@ const CategoriesScreen = ({route}) => {
   const {subCategories, isLoading,error} = useSelector(state => state.categories);
   
   const navigation = useNavigation(); // Hook điều hướng
+
+  //lấy trạng thái theme
+  const {isDarkMode} = useTheme()
 
   useEffect(() => {
     dispatch(fetchSubCategoriesByParent(category._id)); // Lấy danh mục con khi có category cha
@@ -49,7 +54,7 @@ const CategoriesScreen = ({route}) => {
         </TouchableOpacity>
 
         {/* Hiển thị tên danh mục cha ở giữa */}
-        <Text style={styles.categoryNameText}>{category.namecategory}</Text>
+        <Text style={[styles.categoryNameText,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{category.namecategory}</Text>
       </View>
 
       <FlatList
@@ -69,7 +74,6 @@ const CategoriesScreen = ({route}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
     padding: 16,
     justifyContent: 'center',
   },

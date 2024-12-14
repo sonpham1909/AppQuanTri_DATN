@@ -13,11 +13,15 @@ import {fetchPurchasedProducts} from '../../redux/actions/actionOder';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {fetchUserReviews} from '../../redux/actions/actionsReview';
 import StatusView from '../../components/StatusView';
+import { useTheme } from '../../utils/ThemeContact';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 const DeliveredOrders = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [refreshing, setRefreshing] = useState(false);
+  //lấy trạng thái theme
+  const isDarkMode = useTheme()
 
   const {purchasedProducts, isLoading, error} = useSelector(
     state => state.order,
@@ -60,14 +64,14 @@ const DeliveredOrders = () => {
           style={styles.productImage}
         />
         <View style={styles.productInfo}>
-          <Text style={styles.productName}>
+          <Text style={[styles.productName,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>
             {item.productName || 'Sản phẩm không xác định'}
           </Text>
           <Text style={styles.productPrice}>
             {item.productPrice || 'N/A Đ'}
           </Text>
-          <Text style={styles.productDetail}>Màu: {item.color}</Text>
-          <Text style={styles.productDetail}>Kích cỡ: {item.size}</Text>
+          <Text style={[styles.productDetail,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Màu: {item.color}</Text>
+          <Text style={[styles.productDetail,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Kích cỡ: {item.size}</Text>
         </View>
         {!hasReviewed && (
           <TouchableOpacity
@@ -116,7 +120,6 @@ export default DeliveredOrders;
 const styles = StyleSheet.create({
   container: {
     padding: 15,
-    backgroundColor: '#FFF',
   },
   productItem: {
     flexDirection: 'row',
@@ -125,7 +128,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#DDD',
     marginBottom: 10,
-    backgroundColor: '#F9F9F9',
     borderRadius: 8,
   },
   productImage: {

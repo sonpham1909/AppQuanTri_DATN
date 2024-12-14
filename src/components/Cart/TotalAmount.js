@@ -1,11 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useTheme } from '@react-navigation/native';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 const TotalAmount = ({ total }) => {
+  const {isDarkMode} = useTheme()
   return (
     <View style={styles.totalContainer}>
-      <Text style={styles.totalLabel}>Thành tiền:</Text>
-      <Text style={styles.totalAmount}>{total.toLocaleString()} VND</Text>
+      <Text style={[styles.totalLabel,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Thành tiền:</Text>
+      <Text style={[styles.totalAmount,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{total.toLocaleString()} VND</Text>
     </View>
   );
 };

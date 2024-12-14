@@ -9,6 +9,8 @@ import {
     fetchFavoriteList,
 } from '../../redux/actions/actionFavorite';
 import { fetchVariantsByProductId } from '../../redux/actions/actionsVariant';
+import { useTheme } from '@react-navigation/native';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 const SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'XXL']; // Thứ tự size
 
@@ -17,6 +19,9 @@ const ProductSearch = ({ navigation, title, products, horizontal, numCo }) => {
     const reviews = useSelector(state => state.products.reviews);
     const variants = useSelector(state => state.variants.variants);
     const favoriteList = useSelector(state => state.favorites.favoriteList);
+
+    //lấy trạng thái theme
+    const {isDarkMode} = useTheme()
 
     useEffect(() => {
         if (favoriteList.length === 0) {
@@ -41,7 +46,7 @@ const ProductSearch = ({ navigation, title, products, horizontal, numCo }) => {
     return (
         <View style={styles.productSection}>
             <View style={styles.header}>
-                <Text style={styles.title}>{title}</Text>
+                <Text style={[styles.title,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{title}</Text>
                 <TouchableOpacity
                     onPress={() =>
                         navigation.navigate('AllProductScreen', { category: products })
@@ -60,7 +65,7 @@ const ProductSearch = ({ navigation, title, products, horizontal, numCo }) => {
                 data={products}
                 keyExtractor={item => item._id}
                 numColumns={numCo}
-                columnWrapperStyle={{ justifyContent: 'space-between', margin: 10 }}
+                columnWrapperStyle={{ justifyContent: 'space-between',  }}
 
                 renderItem={({ item }) => {
                     const variantsItem = variants[item._id] || [];
@@ -157,7 +162,7 @@ const styles = {
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: 20,
-        marginHorizontal: 10,
+       
     },
     title: { fontSize: 20, fontWeight: 'bold', color: '#000000' },
     viewAll: { fontSize: 14, fontWeight: 'bold', color: '#00A65E' },
@@ -165,7 +170,7 @@ const styles = {
         backgroundColor: '#fff',
         borderRadius: 8,
         marginHorizontal:5,
-        width: 180,
+        width: 160,
         height: 300,
         borderWidth: 1,
         borderColor: '#e0e0e0',

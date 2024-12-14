@@ -1,8 +1,12 @@
 import React, { useEffect } from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import { useTheme } from '@react-navigation/native';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 const ShippingMethod = ({ methods, selectedMethod, onSelectMethod }) => {
+  //lấy trang thái theme
+  const {isDarkMode} = useTheme()
   useEffect(() => {
     if (methods.length > 0 && !selectedMethod) {
       onSelectMethod(methods[0]._id);
@@ -26,7 +30,7 @@ const ShippingMethod = ({ methods, selectedMethod, onSelectMethod }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Phương thức giao hàng</Text>
+        <Text style={[styles.title,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Phương thức giao hàng</Text>
       </View>
       <View style={styles.infoBox}>
         <View style={styles.pickerContainer}>
