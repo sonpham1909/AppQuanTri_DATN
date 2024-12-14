@@ -55,7 +55,7 @@ const AddReview = () => {
     // Kiểm tra từ ngữ không phù hợp trong bình luận
     const foundProhibitedWord = prohibitedWords.some(word => comment.toLowerCase().includes(word));
     if (foundProhibitedWord) {
-      alert('Bạn đã sử dụng từ ngữ bậy bạ. Vui lòng sửa lại bình luận của bạn.');
+      alert('Nội dung bình luận của bạn cần được chỉnh sửa để phù hợp với quy định. Vui lòng điều chỉnh lại bình luận.');
       return;
     }
 
