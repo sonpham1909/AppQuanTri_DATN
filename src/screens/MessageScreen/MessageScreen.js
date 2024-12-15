@@ -1,35 +1,64 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Text, View, TextInput, Button, FlatList, StyleSheet, Image, TouchableOpacity, Modal } from 'react-native';
 import { fetchMessageById, fetchRepliesByMessage, createMessage } from '../../redux/actions/actionMessage';
 import { launchImageLibrary } from 'react-native-image-picker';
 import RNFS from 'react-native-fs';
 import ImageResizer from 'react-native-image-resizer';
-import { useTheme } from '@react-navigation/native';
-import { darkTheme,lightTheme } from '../../utils/theme';
+import { socket } from '../../services/sockerIo';
+
 const MessageComponent = () => {
   const dispatch = useDispatch();
-  const { userMessages, messageReplies, isLoading, error } = useSelector(state => state.messageReplies);
+  const { userMessages, messageReplies } = useSelector(state => state.messageReplies);
+  
+  const flatListRef = useRef(null); // Thêm ref cho FlatList
 
   const [messageContent, setMessageContent] = useState('');
   const [selectedImages, setSelectedImages] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  //lấy trạng thái theme
-  const isDarkMode = useTheme()
-
   useEffect(() => {
     dispatch(fetchMessageById());
   }, [dispatch]);
 
   useEffect(() => {
-    userMessages.forEach(message => {
-      if (message._id) {
-        dispatch(fetchRepliesByMessage(message._id));
+    const fetchReplies = async () => {
+      for (const message of userMessages) {
+        if (message._id) {
+          await dispatch(fetchRepliesByMessage(message._id));
+        }
       }
-    });
+    };
+    fetchReplies();
   }, [userMessages, dispatch]);
+
+  useEffect(() => {
+    const listenForMessages = () => {
+      socket.on('sendMessageToUsers', (data) => {
+        const { message_id } = data;
+        dispatch(fetchRepliesByMessage(message_id));
+        // Cuộn đến tin nhắn mới nhất sau khi nhận phản hồi
+        if (flatListRef.current) {
+          flatListRef.current.scrollToEnd({ animated: true });
+        }
+      });
+    };
+
+    listenForMessages();
+    return () => socket.off('sendMessageToUsers');
+  }, []);
+
+  useEffect(() => {
+    // Tự động cuộn đến tin nhắn mới nhất và phản hồi khi có tin nhắn hoặc phản hồi mới
+    const scrollToEnd = () => {
+      if (flatListRef.current) {
+        flatListRef.current.scrollToEnd({ animated: true });
+      }
+    };
+
+    scrollToEnd();
+  }, [userMessages, messageReplies]); // Gọi khi userMessages hoặc messageReplies thay đổi
 
   const handleSelectImage = () => {
     const options = { mediaType: 'photo', quality: 1, selectionLimit: 5 };
@@ -40,7 +69,6 @@ const MessageComponent = () => {
         console.log('Image selection error: ', response.error);
       } else {
         setSelectedImages(response.assets.map(asset => asset.uri));
-        console.log('Selected images:', response.assets.map(asset => asset.uri));
       }
     });
   };
@@ -50,29 +78,28 @@ const MessageComponent = () => {
       try {
         const base64Images = await Promise.all(
           selectedImages.map(async (uri) => {
-            // Nén hình ảnh
             const resizedImage = await ImageResizer.createResizedImage(uri, 800, 600, 'JPEG', 80);
             const base64 = await RNFS.readFile(resizedImage.uri, 'base64');
             return `data:image/jpeg;base64,${base64}`;
           })
         );
-  
+
         const messageData = {
           content: messageContent.trim() || ' ',
           images: base64Images,
         };
-  
+
         await dispatch(createMessage(messageData));
         setMessageContent('');
         setSelectedImages([]);
       } catch (error) {
         console.error('Error sending message:', error);
-        alert('An error occurred while sending the message.');
       }
     } else {
       alert('Please enter a message or select images to send.');
     }
   };
+
   const handleImagePress = (imageUri) => {
     setSelectedImage(imageUri);
     setIsModalVisible(true);
@@ -83,54 +110,51 @@ const MessageComponent = () => {
     return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
   };
 
-  if (isLoading) return <Text>Loading...</Text>;
-  if (error) return <Text>Error: {error}</Text>;
-
   return (
     <View style={styles.container}>
-<FlatList
-  data={userMessages}
-  keyExtractor={item => item._id ? item._id.toString() : Math.random().toString()}
-  renderItem={({ item }) => (
-    <View>
-      <View style={[styles.messageContainer, item.isSentByUser ? styles.userMessage : styles.receivedMessage]}>
-        <Text style={[styles.message]}>{item.content}</Text>
-        {item.img && item.img.length > 0 && item.img.map((img, index) => (
-          <TouchableOpacity key={index} onPress={() => handleImagePress(img)}>
-            <Image source={{ uri: img }} style={styles.sentImage} onError={() => console.log('Image failed to load:', img)} />
-          </TouchableOpacity>
-        ))}
-        <Text style={[styles.timestamp]}>{formatDate(item.createdAt)}</Text>
-      </View>
-      {messageReplies[item._id]?.length > 0 && (
-        <View style={styles.repliesContainer}>
-          {messageReplies[item._id].map(reply => (
-            <View key={reply._id} style={styles.replyContainer}>
-              <Text style={[styles.reply]}>{reply.content}</Text>
-              {reply.img && reply.img.length > 0 && reply.img.map((img, index) => (
+      <FlatList
+        ref={flatListRef} // Thêm ref vào FlatList
+        data={userMessages}
+        keyExtractor={(item) => item._id ? item._id.toString() : Math.random().toString()}
+        renderItem={({ item }) => (
+          <View>
+            <View style={[styles.messageContainer, item.isSentByUser ? styles.userMessage : styles.receivedMessage]}>
+              <Text style={styles.message}>{item.content}</Text>
+              {item.img && item.img.length > 0 && item.img.map((img, index) => (
                 <TouchableOpacity key={index} onPress={() => handleImagePress(img)}>
-                  <Image source={{ uri: img }} style={styles.sentImage} onError={() => console.log('Image failed to load:', img)} />
+                  <Image source={{ uri: img }} style={styles.sentImage} />
                 </TouchableOpacity>
               ))}
-              <Text style={[styles.timestamp,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{formatDate(reply.createdAt)}</Text>
+              <Text style={styles.timestamp}>{formatDate(item.createdAt)}</Text>
             </View>
-          ))}
-        </View>
-      )}
-    </View>
-  )}
-/>
+            {messageReplies[item._id] && messageReplies[item._id].length > 0 && (
+              <View style={styles.repliesContainer}>
+                {messageReplies[item._id].map(reply => (
+                  <View key={reply._id} style={styles.replyContainer}>
+                    <Text style={styles.reply}>{reply.content}</Text>
+                    {reply.img && reply.img.length > 0 && reply.img.map((img, index) => (
+                      <TouchableOpacity key={index} onPress={() => handleImagePress(img)}>
+                        <Image source={{ uri: img }} style={styles.sentImage} />
+                      </TouchableOpacity>
+                    ))}
+                    <Text style={styles.timestamp}>{formatDate(reply.createdAt)}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
+          </View>
+        )}
+      />
 
       <View style={styles.inputContainer}>
         <TextInput
-          style={[styles.input,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}
-          placeholder="Nhập  nội dung tin nhắn..."
+          style={styles.input}
+          placeholder="Nhập nội dung tin nhắn..."
           value={messageContent}
           onChangeText={setMessageContent}
         />
         <TouchableOpacity onPress={handleSelectImage}>
-          <Image
-            source={{ uri: 'https://png.pngtree.com/png-vector/20190223/ourmid/pngtree-vector-camera-icon-png-image_696326.jpg' }}
+          <Image source={{ uri: 'https://png.pngtree.com/png-vector/20190223/ourmid/pngtree-vector-camera-icon-png-image_696326.jpg' }}
             style={styles.cameraIcon}
           />
         </TouchableOpacity>
@@ -161,6 +185,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
+    backgroundColor: '#f0f0f0',
   },
   messageContainer: {
     padding: 10,

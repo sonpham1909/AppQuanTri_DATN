@@ -26,3 +26,10 @@ export const fetchNotification = createAsyncThunk(
       }
     }
   );
+
+  export const addNotification = (notification) => {
+    return {
+      type: 'ADD_NOTIFICATION',
+      payload: notification,
+    };
+  };

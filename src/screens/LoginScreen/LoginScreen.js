@@ -31,7 +31,7 @@ const LoginScreen = ({ navigation }) => {
       return;
     }
 
-    dispatch(login({ username, password }))
+   await dispatch(login({ username, password }))
 
       .unwrap()
       .then(() => {
