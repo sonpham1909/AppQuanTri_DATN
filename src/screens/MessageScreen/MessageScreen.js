@@ -106,7 +106,7 @@ const MessageComponent = () => {
         <View style={styles.repliesContainer}>
           {messageReplies[item._id].map(reply => (
             <View key={reply._id} style={styles.replyContainer}>
-              <Text style={[styles.reply,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{reply.content}</Text>
+              <Text style={[styles.reply]}>{reply.content}</Text>
               {reply.img && reply.img.length > 0 && reply.img.map((img, index) => (
                 <TouchableOpacity key={index} onPress={() => handleImagePress(img)}>
                   <Image source={{ uri: img }} style={styles.sentImage} onError={() => console.log('Image failed to load:', img)} />

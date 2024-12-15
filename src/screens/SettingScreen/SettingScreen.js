@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { changePassword } from '../../redux/actions/actionUser'; 
 import { useTheme } from '../../utils/ThemeContact';
 import { lightTheme,darkTheme } from '../../utils/theme';
+import tokenService from '../../services/tokenService';
 
 const SettingScreen = ({route}) => {
   const navigation = useNavigation();
@@ -42,7 +43,8 @@ const SettingScreen = ({route}) => {
         { text: 'Hủy', style: 'cancel' },
         {
           text: 'Đồng ý',
-          onPress: () => {
+          onPress: async() => {
+            await tokenService.removeToken()
             console.log('User logged out');
             navigation.navigate('Login');
           },
