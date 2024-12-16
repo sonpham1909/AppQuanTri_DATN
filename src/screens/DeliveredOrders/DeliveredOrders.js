@@ -64,14 +64,14 @@ const DeliveredOrders = () => {
           style={styles.productImage}
         />
         <View style={styles.productInfo}>
-          <Text style={[styles.productName,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>
+          <Text style={[styles.productName,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.title }]}>
             {item.productName || 'Sản phẩm không xác định'}
           </Text>
           <Text style={styles.productPrice}>
             {item.productPrice || 'N/A Đ'}
           </Text>
-          <Text style={[styles.productDetail,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Màu: {item.color}</Text>
-          <Text style={[styles.productDetail,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Kích cỡ: {item.size}</Text>
+          <Text style={[styles.productDetail,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.title }]}>Màu: {item.color}</Text>
+          <Text style={[styles.productDetail,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.title }]}>Kích cỡ: {item.size}</Text>
         </View>
         {!hasReviewed && (
           <TouchableOpacity

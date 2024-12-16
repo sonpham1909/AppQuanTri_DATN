@@ -7,6 +7,7 @@ export const lightTheme = {
       text: '#909191',
       border: '#c7c7c7',
       notification: '#ff80ab', 
+      title:"#000000"
     },
   };
   
@@ -19,6 +20,7 @@ export const lightTheme = {
       text: '#ffff',
       border: '#272727',
       notification: '#ff80ab',
+      title:"#242424"
     },
   };
   
