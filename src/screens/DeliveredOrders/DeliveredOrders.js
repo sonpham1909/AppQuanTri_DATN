@@ -21,7 +21,7 @@ const DeliveredOrders = () => {
   const dispatch = useDispatch();
   const [refreshing, setRefreshing] = useState(false);
   //lấy trạng thái theme
-  const isDarkMode = useTheme()
+  const {isDarkMode} = useTheme()
 
   const {purchasedProducts, isLoading, error} = useSelector(
     state => state.order,

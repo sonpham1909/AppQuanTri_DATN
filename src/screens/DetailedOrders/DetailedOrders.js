@@ -8,11 +8,14 @@ import {
 } from '../../redux/actions/actionOder';
 import {useRoute} from '@react-navigation/native';
 import StatusView from '../../components/StatusView';
+import { useTheme } from '../../utils/ThemeContact';
+import { lightTheme,darkTheme } from '../../utils/theme';
 
 const DetailedOrders = () => {
   const dispatch = useDispatch();
   const route = useRoute();
   const {orderId} = route.params;
+  const {isDarkMode} = useTheme()
 
   const {
     orderDetails,
@@ -71,7 +74,7 @@ const DetailedOrders = () => {
             size={20}
             color="#00A65E"
           />
-          <Text style={styles.sectionTitle}>Hàng hóa</Text>
+          <Text style={[styles.sectionTitle,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Hàng hóa</Text>
         </View>
 
         {/* Danh sách sản phẩm */}
@@ -127,7 +130,7 @@ const DetailedOrders = () => {
             size={20}
             color="#00A65E"
           />
-          <Text style={styles.sectionTitle}>Khách hàng</Text>
+          <Text style={[styles.sectionTitle,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Khách hàng</Text>
         </View>
         <View style={styles.customerInfo}>
           <View style={styles.customerRow}>
@@ -136,13 +139,13 @@ const DetailedOrders = () => {
               size={20}
               color="#00A65E"
             />
-            <Text style={styles.customerText}>
+            <Text style={[styles.customerText,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>
               {orderDetails?.order?.recipientName || 'Không có tên người nhận'}
             </Text>
           </View>
-          <View style={styles.customerRow}>
+          <View style={[styles.customerRow,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>
             <MaterialCommunityIcons name="phone" size={20} color="#00A65E" />
-            <Text style={styles.customerText}>
+            <Text style={[styles.customerText,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>
               {orderDetails?.order?.recipientPhone || 'Không có số điện thoại'}
             </Text>
           </View>
@@ -152,7 +155,7 @@ const DetailedOrders = () => {
               size={20}
               color="#00A65E"
             />
-            <Text style={styles.customerText}>
+            <Text style={[styles.customerText,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>
               {formatAddress(orderDetails?.order?.addressDetail)}
             </Text>
           </View>
@@ -167,16 +170,16 @@ const DetailedOrders = () => {
             size={20}
             color="#00A65E"
           />
-          <Text style={styles.sectionTitle}>Thanh toán</Text>
+          <Text style={[styles.sectionTitle,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Thanh toán</Text>
         </View>
         <View style={styles.paymentInfo}>
-          <Text style={styles.paymentText}>
+          <Text style={[styles.paymentText,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>
             Method:{' '}
             {orderDetails?.order?.payment_method_id?.name || 'Chưa xác định'}
           </Text>
 
           {paymentStatus?.paymentMethod === 'MoMo' && (
-            <Text style={styles.paymentText}>
+            <Text style={[styles.paymentText,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>
               Trạng thái:{' '}
               {paymentStatus?.paymentStatus === 'paid'
                 ? 'Đã thanh toán'
