@@ -5,10 +5,14 @@ import NotificationList from '../../components/Nofication/NotificationList';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchNotification, addNotification } from '../../redux/actions/actionNotification'; // Thêm action addNotification
 import { useFocusEffect } from '@react-navigation/native';
+import { useTheme } from '../../utils/ThemeContact';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 const Notification = () => {
   const dispatch = useDispatch();
   const { isLoading, notification } = useSelector((state) => state.notification);
+  
+  const {isDarkMode} = useTheme()
 
   // Lấy danh sách thông báo từ Redux khi component mount
   useEffect(() => {
@@ -40,9 +44,9 @@ const Notification = () => {
   return (
     <View style={styles.container}>
       {isLoading ? (
-        <Text>Đang tải thông báo...</Text>
+        <Text style={{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }}>Đang tải thông báo...</Text>
       ) : notification.length === 0 ? (
-        <Text>Chưa có thông báo nào.</Text>
+        <Text style={{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }}>Chưa có thông báo nào.</Text>
       ) : (
         <NotificationList notifications={notification} />
       )}

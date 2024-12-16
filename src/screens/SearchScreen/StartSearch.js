@@ -3,7 +3,7 @@ import { StyleSheet, View, TextInput, TouchableOpacity, Text, Alert } from 'reac
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { addSearch, deleteAllSearchTerm, deleteSearchTerm, fetchSearchHistories } from '../../redux/actions/actionSearch';
-import { useTheme } from '@react-navigation/native';
+import { useTheme } from '../../utils/ThemeContact';
 import { darkTheme,lightTheme } from '../../utils/theme';
 
 const StartSearch = ({ navigation }) => {

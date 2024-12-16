@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { useTheme } from '@react-navigation/native';
+import { useTheme } from '../../utils/ThemeContact';
 import { darkTheme,lightTheme } from '../../utils/theme';
 
 const TotalAmount = ({ total }) => {

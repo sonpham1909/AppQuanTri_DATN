@@ -15,6 +15,7 @@ import { addAddress } from '../../redux/actions/actionAddress';
 import axios from 'axios';
 import tokenManager from '../../services/tokenService'; // Đường dẫn tới tệp token bạn đã cung cấp
 import { useTheme } from '../../utils/ThemeContact';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 const AddAddress = () => {
   const [fullName, setFullName] = useState('');
@@ -32,7 +33,7 @@ const AddAddress = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
     //Lấy trạng thái chuyển đổi theme
-    const { isDarkMode, toggleTheme } = useTheme(); 
+    const { isDarkMode } = useTheme(); 
 
 
   // Hàm lấy token từ AsyncStorage và gọi API lấy danh sách thành phố
@@ -185,7 +186,7 @@ const AddAddress = () => {
               setDistrict({ id: '', name: '' });
               setWard({ id: '', name: '' });
             }}
-            style={styles.pickerAddress}>
+            style={[styles.pickerAddress,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>
             <Picker.Item label="Chọn Thành phố" value="" />
             {cities.map((city) => (
               <Picker.Item key={city.province_id} label={city.province_name} value={city.province_id} />
@@ -203,7 +204,7 @@ const AddAddress = () => {
               setDistrict({ id: selectedDistrict.district_id, name: selectedDistrict.district_name });
               setWard({ id: '', name: '' });
             }}
-            style={styles.pickerAddress}>
+            style={[styles.pickerAddress,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>
             <Picker.Item label="Chọn Quận/Huyện" value="" />
             {districts
               .filter(district => district.province_id === city.id)
@@ -222,7 +223,7 @@ const AddAddress = () => {
               const selectedWard = wards.find(ward => ward.ward_id === itemValue);
               setWard({ id: selectedWard.ward_id, name: selectedWard.ward_name });
             }}
-            style={styles.pickerAddress}>
+            style={[styles.pickerAddress,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>
             <Picker.Item label="Chọn Xã/Phường" value="" />
             {wards
               .filter(ward => ward.district_id === district.id)

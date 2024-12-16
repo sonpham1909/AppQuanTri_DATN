@@ -1,7 +1,10 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { useTheme } from '../../utils/ThemeContact';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 const ActionButtons = ({ navigation }) => {
+  const {isDarkMode} = useTheme()
   return (
     <View style={styles.buttonContainer}>
       <TouchableOpacity
@@ -12,10 +15,10 @@ const ActionButtons = ({ navigation }) => {
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={styles.backHomeButton}
+        style={[styles.backHomeButton,{color: isDarkMode ? darkTheme.colors.border : lightTheme.colors.border}]}
         onPress={() => navigation.navigate('Trang chủ')} // Navigate to the home screen
       >
-        <Text style={styles.backHomeButtonText}>Trở lại trang chủ</Text>
+        <Text style={[styles.backHomeButtonText,{color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text}]}>Trở lại trang chủ</Text>
       </TouchableOpacity>
     </View>
   );
@@ -43,9 +46,7 @@ const styles = StyleSheet.create({
   backHomeButton: {
     width:315,
     alignItems:'center',
-
     borderWidth: 1,
-    borderColor: '#333',
     paddingVertical: 15,
     paddingHorizontal: 50,
     borderRadius: 8,
