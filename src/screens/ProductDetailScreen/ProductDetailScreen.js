@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, memo } from 'react';
 import {
   StyleSheet,
   Text,
@@ -23,6 +23,7 @@ import { fetchUserInfo } from '../../redux/actions/actionUser';
 import { addTocCart } from '../../redux/actions/actionCart';
 import { darkTheme, lightTheme } from '../../utils/theme';
 import { useTheme } from '@react-navigation/native';
+import ColorOptions from './RenderColor';
 
 // Component chính của màn hình chi tiết sản phẩm
 const ProductDetailScreen = ({ route, navigation }) => {
@@ -170,6 +171,9 @@ const ProductDetailScreen = ({ route, navigation }) => {
     const variant = variants.find(
       variant => variant.color_code === selectedColor,
     );
+
+    console.log(selectedSize);
+    
     const cartData = {
       productId: product._id,
       color: variant?.color,
@@ -215,6 +219,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
     setSelectedColor(variant.color_code);
     // Gọi updateAllImages với giá trị mới để cập nhật và cuộn đến đúng vị trí
     updateAllImages(variants, variant.color_code, product.imageUrls);
+    setSelectedSize(null);
   };
 
   // Xử lý khi người dùng chọn kích cỡ, cập nhật kích cỡ và số lượng tối đa
@@ -324,45 +329,18 @@ const ProductDetailScreen = ({ route, navigation }) => {
     );
   }
 
+  
   function renderColorOptions() {
-    // Hàm render các tùy chọn màu sắc sản phẩm
     return (
-      <View>
-
-
-        <View style={styles.colorContainer}>
-          {variants.map((variant, i) => (
-            <TouchableOpacity
-              key={i}
-              style={[
-                styles.colorCircleWrapper,
-                selectedColor === variant.color_code &&
-                styles.selectedColorWrapper,
-              ]}
-              onPress={() => handleColorSelect(variant)}>
-              <View
-                style={[
-                  styles.colorCircle,
-                  { backgroundColor: variant.color_code },
-                ]}
-              />
-            </TouchableOpacity>
-          ))}
-        </View>
-        <View style={styles.row}>
-          <Text style={[styles.sectionLabel,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Màu Sắc: </Text>
-          {selectedColor && (
-            <Text style={[styles.selectedColorName,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>
-              {
-                variants.find(variant => variant.color_code === selectedColor)
-                  ?.color
-              }
-            </Text>
-          )}
-        </View>
-      </View>
+      <ColorOptions
+        variants={variants}
+        selectedColor={selectedColor}
+        onColorSelect={handleColorSelect}
+        isDarkMode={isDarkMode}
+      />
     );
   }
+
   function renderSizeOptions() {
     // Hàm render các tùy chọn kích cỡ sản phẩm
     return (
