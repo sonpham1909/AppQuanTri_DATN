@@ -73,10 +73,13 @@ const ProductList = ({navigation, products}) => {
               }
               style={styles.productItem}>
               <View style={styles.imageContainer}>
-                <Image
+                {item.imageUrls?(<Image
                   source={{uri: item.imageUrls[0]}}
                   style={styles.productImage}
-                />
+                />):(<Text>
+                  Không có sản phẩm nào
+                </Text>)}
+                
                 <TouchableOpacity
                   style={styles.favoriteIcon}
                   onPress={() => handleToggleFavorite(item._id)}>

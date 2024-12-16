@@ -125,6 +125,8 @@ const ProductDetailScreen = ({ route, navigation }) => {
     }
   }, [variants, selectedColor, selectedSize, product.imageUrls]);
 
+ 
+
   // Các hàm trợ giúp để lấy kích cỡ cho màu sắc và cập nhật hình ảnh
   const getSizesForColor = (variants, color) => {
     return variants
@@ -545,11 +547,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
               getItemLayout={(data, index) => (
                 { length: 400, offset: 400 * index, index }
               )}
-              onViewableItemsChanged={useRef(({ viewableItems }) => {
-                if (viewableItems.length > 0) {
-                  setSelectedReviewImageIndex(viewableItems[0].index);
-                }
-              }).current}
+              onViewableItemsChanged={onViewableItemsChanged}
               viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
             />
 
