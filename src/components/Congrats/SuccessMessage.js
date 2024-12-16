@@ -1,12 +1,16 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
+import { useTheme } from '../../utils/ThemeContact';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 const SuccessMessage = () => {
   const checkmarkImage = require('../../assets/images/icon_checkmark.png'); // Ensure the path is correct
+
+  const {isDarkMode} = useTheme()
   
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Thành Công!</Text>
+      <Text style={[styles.title,{color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text}]}>Thành Công!</Text>
       <View >
         {checkmarkImage ? (
           <Image source={checkmarkImage}  />
@@ -14,7 +18,7 @@ const SuccessMessage = () => {
           <Text style={styles.iconFallback}>✔</Text> // Fallback in case image is not available
         )}
       </View>
-      <Text style={styles.message}>
+      <Text style={[styles.message,{color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text}]}>
         Đơn hàng của bạn sẽ được giao sớm. Cảm ơn bạn đã chọn ứng dụng của chúng tôi!
       </Text>
     </View>

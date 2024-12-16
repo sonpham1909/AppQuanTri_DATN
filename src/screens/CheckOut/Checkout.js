@@ -23,10 +23,14 @@ import {fetchCart, deleteAllCartItems} from '../../redux/actions/actionCart';
 import {fetchDefaultAddress} from '../../redux/actions/actionAddress';
 import {createOrder} from '../../redux/actions/actionOder';
 import {initiateMoMoPayment} from '../../redux/actions/actionPaymentMomo';
+import { useTheme } from '../../utils/ThemeContact';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 const CheckoutScreen = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+
+  const {isDarkMode} = useTheme()
 
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
   const [selectedShippingMethod, setSelectedShippingMethod] = useState(null);
@@ -178,7 +182,7 @@ const CheckoutScreen = () => {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0000ff" />
-        <Text style={styles.loadingText}>Vui lòng chờ...</Text>
+        <Text style={[styles.loadingText,{color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text}]}>Vui lòng chờ...</Text>
       </View>
     );
   }
