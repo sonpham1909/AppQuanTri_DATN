@@ -112,7 +112,7 @@ const CateClotherScreen = ({route}) => {
         <TouchableOpacity
           style={styles.filterButton}
           onPress={() => setSizeFilterVisible(true)}>
-          <Text>
+          <Text style={{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }}>
             {filterState[index]?.size?.length > 0
               ? renderTextWithEllipsis(filterState[index].size)
               : 'Kích cỡ'}
@@ -123,7 +123,7 @@ const CateClotherScreen = ({route}) => {
         <TouchableOpacity
           style={styles.filterButton}
           onPress={() => setColorFilterVisible(true)}>
-          <Text>
+          <Text style={{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }}>
             {filterState[index]?.color?.length > 0
               ? renderTextWithEllipsis(filterState[index].color)
               : 'Màu sắc'}
@@ -134,7 +134,7 @@ const CateClotherScreen = ({route}) => {
         <TouchableOpacity
           style={styles.filterButton}
           onPress={() => setPriceFilterVisible(true)}>
-          <Text>
+          <Text style = {{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }}>
             {filterState[index]?.minPrice != null &&
             filterState[index]?.maxPrice != null
               ? `Giá: ${filterState[
@@ -319,9 +319,7 @@ export default CateClotherScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
     padding: 5,
-    backgroundColor: '#fff',
 
   },
   backButton: {
