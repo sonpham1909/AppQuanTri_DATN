@@ -17,10 +17,11 @@ const ColorFilterModal = ({ visible, filterOptions, onClose, applyFilters, initi
 
   // Áp dụng bộ lọc và đóng modal
   const applyColorFilter = () => {
+    console.log('Selected Colors:', selectedColors);  // Debug selected colors
     applyFilters(selectedColors);
     onClose();
   };
-
+  
   // Reset lại bộ lọc
   const resetColorFilter = () => {
     setSelectedColors([]);

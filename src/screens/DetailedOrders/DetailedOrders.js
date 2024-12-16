@@ -15,7 +15,7 @@ const DetailedOrders = () => {
   const dispatch = useDispatch();
   const route = useRoute();
   const {orderId} = route.params;
-  const isDarkMode = useTheme()
+  const {isDarkMode} = useTheme()
 
   const {
     orderDetails,

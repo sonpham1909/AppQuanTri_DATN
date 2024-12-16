@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   StyleSheet,
   Text,
@@ -12,24 +12,25 @@ import {
   Modal,
   Animated,
 } from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
-import {fetchProductReviews} from '../../redux/actions/actionProduct';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchProductReviews } from '../../redux/actions/actionProduct';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {toggleFavorite} from '../../redux/actions/actionFavorite';
-import {fetchProductReviewResponses} from '../../redux/actions/actionsReview';
-import {fetchVariantsByProductId} from '../../redux/actions/actionsVariant';
+import { toggleFavorite } from '../../redux/actions/actionFavorite';
+import { fetchProductReviewResponses } from '../../redux/actions/actionsReview';
+import { fetchVariantsByProductId } from '../../redux/actions/actionsVariant';
 import renderStars from '../../components/Home/renderStars';
-import {fetchUserInfo} from '../../redux/actions/actionUser';
-import {addTocCart} from '../../redux/actions/actionCart';
-import { darkTheme,lightTheme } from '../../utils/theme';
+import { fetchUserInfo } from '../../redux/actions/actionUser';
+import { addTocCart } from '../../redux/actions/actionCart';
+import { darkTheme, lightTheme } from '../../utils/theme';
 import { useTheme } from '@react-navigation/native';
 
 // Component chính của màn hình chi tiết sản phẩm
-const ProductDetailScreen = ({route, navigation}) => {
-  //Lấy trạng thái darkmode
-  const {isDarkMode} = useTheme()
+const ProductDetailScreen = ({ route, navigation }) => {
+  // Lấy trạng thái darkmode
+  const { isDarkMode } = useTheme();
+
   // Lấy sản phẩm từ tham số route
-  const {product} = route.params;
+  const { product } = route.params;
 
   // Tạo dispatch để gửi action đến Redux store
   const dispatch = useDispatch();
@@ -39,12 +40,9 @@ const ProductDetailScreen = ({route, navigation}) => {
 
   // Lấy thông tin từ Redux store, bao gồm đánh giá, phản hồi đánh giá, danh sách yêu thích, biến thể sản phẩm, và thông tin người dùng
   const reviews = useSelector(state => state.products.reviews) || {};
-  const {reviewResponses, isLoading, error} =
-    useSelector(state => state.reviewResponses) || {};
+  const { reviewResponses, isLoading, error } = useSelector(state => state.reviewResponses) || {};
   const favoriteList = useSelector(state => state.favorites.favoriteList) || [];
-  const variants = useSelector(
-    state => state.variants.variants[product._id] || [],
-  );
+  const variants = useSelector(state => state.variants.variants[product._id] || []);
   const userInfo = useSelector(state => state.user.userInfo) || {};
   const [loading, setLoading] = useState(true);
 
@@ -107,11 +105,11 @@ const ProductDetailScreen = ({route, navigation}) => {
       if (!selectedColor) {
         setSelectedColor(variants[0].color_code);
       }
-  
+
       // Cập nhật danh sách kích cỡ khả dụng và hình ảnh ban đầu
       const sizesForColor = getSizesForColor(variants, selectedColor);
       setAvailableSizes(sizesForColor);
-  
+
       if (sizesForColor.length > 0) {
         setSelectedSize(selectedSize || sizesForColor[0].size);
         const selectedSizeObj = sizesForColor.find(
@@ -121,17 +119,16 @@ const ProductDetailScreen = ({route, navigation}) => {
       } else {
         setMaxQuantity(0);
       }
-  
+
       // Gọi updateAllImages để cập nhật tất cả ảnh
       updateAllImages(variants, selectedColor, product.imageUrls);
     }
-  }, [variants]);
-  
-  
+  }, [variants, selectedColor, selectedSize, product.imageUrls]);
+
+ 
 
   // Các hàm trợ giúp để lấy kích cỡ cho màu sắc và cập nhật hình ảnh
   const getSizesForColor = (variants, color) => {
-    // Trả về danh sách kích cỡ và số lượng cho màu sắc đã chọn
     return variants
       .filter(v => v.color_code === color)
       .flatMap(v => v.sizes)
@@ -142,19 +139,18 @@ const ProductDetailScreen = ({route, navigation}) => {
   };
 
   const updateAllImages = (variants, selectedColor, defaultImages) => {
-
     const sizesForColor = getSizesForColor(variants, selectedColor);
-      setAvailableSizes(sizesForColor);
-    // Đảm bảo variants và defaultImages luôn là mảng hợp lệ
-    const variantImages = Array.isArray(variants)
+    setAvailableSizes(sizesForColor);
+
+    const variantImages = variants
       ? variants.map(variant => variant.image).filter(Boolean)
       : [];
-    const productImages = Array.isArray(defaultImages) ? defaultImages : [];
-  
+    const productImages = defaultImages ? defaultImages : [];
+
     // Kết hợp các ảnh từ các biến thể và ảnh mặc định
     const newAllImages = [...variantImages, ...productImages].filter(Boolean);
     setAllImages(newAllImages);
-  
+
     // Tìm vị trí của ảnh biến thể tương ứng với màu đã chọn
     const selectedVariant = variants.find(variant => variant.color_code === selectedColor);
     if (selectedVariant && selectedVariant.image) {
@@ -165,14 +161,11 @@ const ProductDetailScreen = ({route, navigation}) => {
       }
     }
   };
-  
-  
-  
 
   // Xử lý khi người dùng muốn thêm hoặc bỏ sản phẩm khỏi danh sách yêu thích
   const handleToggleFavorite = () => dispatch(toggleFavorite(product._id));
 
-  //Thêm sản phẩm vào giỏ hàng
+  // Thêm sản phẩm vào giỏ hàng
   const handleAddToCart = () => {
     const variant = variants.find(
       variant => variant.color_code === selectedColor,
@@ -223,7 +216,6 @@ const ProductDetailScreen = ({route, navigation}) => {
     // Gọi updateAllImages với giá trị mới để cập nhật và cuộn đến đúng vị trí
     updateAllImages(variants, variant.color_code, product.imageUrls);
   };
-  
 
   // Xử lý khi người dùng chọn kích cỡ, cập nhật kích cỡ và số lượng tối đa
   const handleSizeSelect = sizeObj => {
@@ -234,7 +226,7 @@ const ProductDetailScreen = ({route, navigation}) => {
   };
 
   // Cập nhật chỉ mục của hình ảnh hiện tại khi người dùng cuộn qua danh sách hình ảnh
-  const onViewableItemsChanged = useRef(({viewableItems}) => {
+  const onViewableItemsChanged = useRef(({ viewableItems }) => {
     if (viewableItems.length > 0) {
       setCurrentImageIndex(viewableItems[0].index);
     }
@@ -245,7 +237,7 @@ const ProductDetailScreen = ({route, navigation}) => {
     itemVisiblePercentThreshold: 50,
   };
 
-  //xem ảnh review
+  // Xem ảnh review
   const handleImagePress = (images, index) => {
     setSelectedReviewImages(images);
     setSelectedReviewImageIndex(index);
@@ -555,11 +547,7 @@ const ProductDetailScreen = ({route, navigation}) => {
               getItemLayout={(data, index) => (
                 { length: 400, offset: 400 * index, index }
               )}
-              onViewableItemsChanged={useRef(({ viewableItems }) => {
-                if (viewableItems.length > 0) {
-                  setSelectedReviewImageIndex(viewableItems[0].index);
-                }
-              }).current}
+              onViewableItemsChanged={onViewableItemsChanged}
               viewabilityConfig={{ itemVisiblePercentThreshold: 50 }}
             />
 
