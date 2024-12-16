@@ -1,5 +1,5 @@
 // components/ProductList.js
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {FlatList, Image, Text, TouchableOpacity, View} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useDispatch, useSelector} from 'react-redux';
@@ -11,6 +11,7 @@ import {
 import {fetchVariantsByProductId} from '../../redux/actions/actionsVariant';
 import { useTheme } from '../../utils/ThemeContact';
 import { darkTheme,lightTheme } from '../../utils/theme';
+import { useFocusEffect } from '@react-navigation/native';
 
 const SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'XXL']; // Thứ tự size
 
@@ -32,6 +33,19 @@ const ProductList = ({navigation, title, products, horizontal, numCo}) => {
       dispatch(fetchVariantsByProductId(product._id)); // Gọi action để lấy các biến thể cho từng sản phẩm
     });
   }, [dispatch, products]);
+
+  
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(fetchFavoriteList());
+      products.forEach(product => {
+        dispatch(fetchProductReviews(product._id));
+        dispatch(fetchVariantsByProductId(product._id));
+      });
+
+    }, [dispatch,products]),
+  );
+
 
   const formatPrice = price =>
     price.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'});

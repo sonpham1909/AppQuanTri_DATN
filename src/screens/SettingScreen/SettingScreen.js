@@ -99,10 +99,7 @@ const SettingScreen = ({route}) => {
         </TouchableOpacity>
       </View>
 
-      <View style={[styles.section]}>
-        <Text style={styles.label}>Password</Text>
-        <Text style={styles.label1}>*************</Text>
-      </View>
+    
 
       <Text style={[styles.notificationHeader,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Thông Báo</Text>
 
@@ -281,7 +278,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   logoutButton: {
-    backgroundColor: '#FF3B30',
+    backgroundColor: '#4CAF50',
     borderRadius: 10,
     paddingVertical: 15,
     alignItems: 'center',

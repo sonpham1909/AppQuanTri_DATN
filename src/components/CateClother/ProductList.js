@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {FlatList, Image, Text, TouchableOpacity, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchProductReviews} from '../../redux/actions/actionProduct';
@@ -9,6 +9,7 @@ import {
 import {fetchVariantsByProductId} from '../../redux/actions/actionsVariant';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useFocusEffect } from '@react-navigation/native';
 
 const SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
@@ -27,6 +28,19 @@ const ProductList = ({navigation, products}) => {
       dispatch(fetchVariantsByProductId(product._id));
     });
   }, [dispatch, products]);
+
+  
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(fetchFavoriteList());
+      products.forEach(product => {
+        dispatch(fetchProductReviews(product._id));
+        dispatch(fetchVariantsByProductId(product._id));
+      });
+
+    }, [dispatch,products]),
+  );
+
 
   const formatPrice = price =>
     price.toLocaleString('vi-VN', {style: 'currency', currency: 'VND'});

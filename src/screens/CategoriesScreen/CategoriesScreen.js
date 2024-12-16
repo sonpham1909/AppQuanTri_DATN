@@ -33,11 +33,8 @@ const CategoriesScreen = ({route}) => {
     return <StatusView isLoading={true} />;
   }
 
-  if (!subCategories || subCategories.length === 0) {
-    return <StatusView emptyText="Không có danh muc con nao." />;
-  }
   if (error) {
-    return <StatusView error={error} />;
+    return <StatusView emptyText="Không có danh muc con nao." />;
   }
 
   return (

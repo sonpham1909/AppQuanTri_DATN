@@ -39,11 +39,7 @@ const NotificationItem = ({ item }) => {
 
         <Text style={styles.description}>{formatTime(item.createdAt)}</Text>
        
-        {item.status && (
-          <Text style={item.status === 'unread' ? styles.newStatus : styles.defaultStatus}>
-            {item.status}
-          </Text>
-        )}
+        
       </View>
       <View style={styles.separator}></View>
     </View>
