@@ -16,9 +16,11 @@ export const lightTheme = {
       primary: '#bb86fc',
       background: '#2C2C2C', // Bắt buộc
       card: '#1E1E1E', // Màu nền của header, bottom tabs, v.v.
-      text: '#ffff',
+      text: '#ffffffff',
       border: '#272727',
       notification: '#ff80ab',
+      textWhite:'#fffffff'
+
     },
   };
   

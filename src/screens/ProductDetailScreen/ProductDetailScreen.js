@@ -22,7 +22,7 @@ import renderStars from '../../components/Home/renderStars';
 import { fetchUserInfo } from '../../redux/actions/actionUser';
 import { addTocCart } from '../../redux/actions/actionCart';
 import { darkTheme, lightTheme } from '../../utils/theme';
-import { useTheme } from '@react-navigation/native';
+import { useTheme } from '../../utils/ThemeContact';
 
 // Component chính của màn hình chi tiết sản phẩm
 const ProductDetailScreen = ({ route, navigation }) => {

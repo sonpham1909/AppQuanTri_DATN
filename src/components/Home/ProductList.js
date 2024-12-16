@@ -9,7 +9,7 @@ import {
   fetchFavoriteList,
 } from '../../redux/actions/actionFavorite';
 import {fetchVariantsByProductId} from '../../redux/actions/actionsVariant';
-import { useTheme } from '@react-navigation/native';
+import { useTheme } from '../../utils/ThemeContact';
 import { darkTheme,lightTheme } from '../../utils/theme';
 
 const SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'XXL']; // Thứ tự size
@@ -42,7 +42,6 @@ const ProductList = ({navigation, title, products, horizontal, numCo}) => {
   const handleToggleFavorite = productId => {
     dispatch(toggleFavorite(productId));
   };
-
   return (
     <View style={styles.productSection}>
       <View style={styles.header}>
@@ -156,7 +155,7 @@ const styles = {
     marginBottom: 20,
     marginHorizontal: 10,
   },
-  title: {fontSize: 20, fontWeight: 'bold', color: '#000000'},
+  title: {fontSize: 20, fontWeight: 'bold',},
   viewAll: {fontSize: 14, fontWeight: 'bold', color: '#00A65E'},
   productItem: {
     backgroundColor: '#fff',

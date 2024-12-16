@@ -3,6 +3,8 @@ import { View, TextInput, Button, Text, StyleSheet, ActivityIndicator, Touchable
 import { useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { resetPassword } from '../../redux/actions/actionUser';
+import { useTheme } from '../../utils/ThemeContact';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 const ResetPasswordScreen = ({ route }) => {
   const { email, otp } = route.params;
@@ -14,6 +16,8 @@ const ResetPasswordScreen = ({ route }) => {
 
   const dispatch = useDispatch();
   const navigation = useNavigation();
+
+  const {isDarkMode} = useTheme()
 
   const handleSubmit = async () => {
     setError('');
@@ -61,10 +65,10 @@ const ResetPasswordScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Đặt lại mật khẩu</Text>
+      <Text style={[styles.title,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Đặt lại mật khẩu</Text>
 
-      {error && <Text style={styles.errorText}>{error}</Text>}
-      {success && <Text style={styles.successText}>{success}</Text>}
+      {error && <Text style={[styles.errorText,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{error}</Text>}
+      {success && <Text style={[styles.successText,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{success}</Text>}
 
       <TextInput
         style={styles.input}
@@ -101,7 +105,6 @@ const styles = StyleSheet.create({
     padding: 20,
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: '#F5F5F5',
   },
   title: {
     fontSize: 28,

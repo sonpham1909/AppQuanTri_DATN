@@ -230,7 +230,7 @@ const CateClotherScreen = ({ route }) => {
             style={styles.backIcon}
           />
         </TouchableOpacity>
-        <Text style={styles.categoryNameText}>{categoryName}</Text>
+        <Text style={[styles.categoryNameText,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{categoryName}</Text>
       </View>
 
       {/* Hiển thị bộ lọc */}
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
   filterContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginVertical: 16,
+    marginBottom:10,
     alignItems: 'center',
   },
   filterButton: {

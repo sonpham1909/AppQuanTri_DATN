@@ -9,7 +9,7 @@ import {
     fetchFavoriteList,
 } from '../../redux/actions/actionFavorite';
 import { fetchVariantsByProductId } from '../../redux/actions/actionsVariant';
-import { useTheme } from '@react-navigation/native';
+import { useTheme } from '../../utils/ThemeContact';
 import { darkTheme,lightTheme } from '../../utils/theme';
 
 const SIZE_ORDER = ['XS', 'S', 'M', 'L', 'XL', 'XXL']; // Thứ tự size

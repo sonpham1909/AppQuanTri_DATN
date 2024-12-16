@@ -1,12 +1,14 @@
 import React from 'react';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
-
+import { useTheme } from '../utils/ThemeContact';
+import { darkTheme,lightTheme } from '../utils/theme';
 const StatusView = ({ isLoading, error, emptyText }) => {
+  const {isDarkMode} = useTheme()
   if (isLoading) {
     return (
       <View style={styles.container}>
         <ActivityIndicator size="large" color="#00A65E" />
-        <Text style={styles.text}>Đang tải dữ liệu...</Text>
+        <Text style={[styles.text,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Đang tải dữ liệu...</Text>
       </View>
     );
   }
@@ -14,7 +16,7 @@ const StatusView = ({ isLoading, error, emptyText }) => {
   if (emptyText) {
     return (
       <View style={styles.container}>
-        <Text style={styles.text}>{emptyText}</Text>
+        <Text style={[styles.text,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>{emptyText}</Text>
       </View>
     );
   }
@@ -22,7 +24,7 @@ const StatusView = ({ isLoading, error, emptyText }) => {
   if (error) {
     return (
       <View style={styles.container}>
-        <Text style={styles.errorText}>Đã có lỗi xảy ra: {error}</Text>
+        <Text style={[styles.errorText,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}>Đã có lỗi xảy ra: {error}</Text>
       </View>
     );
   }

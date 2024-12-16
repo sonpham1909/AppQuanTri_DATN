@@ -23,7 +23,7 @@ const AddReview = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   //lấy trạng thái theme
-  const isDarkMode = useTheme()
+  const {isDarkMode} = useTheme()
   const route = useRoute();
   const { productId, color, size, imageVariant } = route.params;
 
@@ -137,6 +137,7 @@ const AddReview = () => {
       <TextInput
         style={[styles.input, styles.commentInput,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}
         placeholder="Nhập bình luận của bạn"
+        placeholderTextColor={ isDarkMode ? darkTheme.colors.text : lightTheme.colors.text}
         multiline
         value={comment}
         onChangeText={setComment}

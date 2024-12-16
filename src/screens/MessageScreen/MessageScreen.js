@@ -6,10 +6,14 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import RNFS from 'react-native-fs';
 import ImageResizer from 'react-native-image-resizer';
 import { socket } from '../../services/sockerIo';
+import { useTheme } from '../../utils/ThemeContact';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 const MessageComponent = () => {
   const dispatch = useDispatch();
   const { userMessages, messageReplies } = useSelector(state => state.messageReplies);
+
+  const {isDarkMode} = useTheme()
   
   const flatListRef = useRef(null); // Thêm ref cho FlatList
 
@@ -148,7 +152,7 @@ const MessageComponent = () => {
 
       <View style={styles.inputContainer}>
         <TextInput
-          style={styles.input}
+          style={[styles.input,{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }]}
           placeholder="Nhập nội dung tin nhắn..."
           value={messageContent}
           onChangeText={setMessageContent}
@@ -185,7 +189,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    backgroundColor: '#f0f0f0',
   },
   messageContainer: {
     padding: 10,
