@@ -21,6 +21,8 @@ import { fetchProductsBySubCategory } from '../../redux/actions/actionCategory';
 import { LogBox } from 'react-native';
 import { fetchProductsByVariant } from '../../redux/actions/actionProduct';
 import PriceFilterModal from '../../components/CateClother/PriceFilterModal'; // Import thêm PriceFilterModal
+import { useTheme } from '../../utils/ThemeContact';
+import { darkTheme,lightTheme } from '../../utils/theme';
 
 LogBox.ignoreLogs(['Warning: ...']); // Cảnh báo cụ thể
 LogBox.ignoreAllLogs(); // Nếu muốn bỏ qua tất cả các log
@@ -31,6 +33,8 @@ const MAX_DISPLAY_ITEMS = 1;
 const CateClotherScreen = ({ route }) => {
   // Các tham số nhận được từ route (dữ liệu từ màn hình trước đó)
   const { categoryName, subCategories, selectedTabIndex } = route.params;
+  
+  const {isDarkMode} = useTheme()
 
   // Khai báo các state quản lý dữ liệu và trạng thái UI
   const [index, setIndex] = useState(selectedTabIndex); // Quản lý tab hiện tại, mặc định là selectedTabIndex từ route
@@ -143,7 +147,7 @@ const CateClotherScreen = ({ route }) => {
         <TouchableOpacity
           style={styles.filterButton}
           onPress={() => setSizeFilterVisible(true)}>
-          <Text>
+          <Text style={{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }}>
             {filterState[index]?.size?.length > 0
               ? renderTextWithEllipsis(filterState[index].size)
               : 'Kích cỡ'}
@@ -155,7 +159,7 @@ const CateClotherScreen = ({ route }) => {
         <TouchableOpacity
           style={styles.filterButton}
           onPress={() => setColorFilterVisible(true)}>
-          <Text>
+          <Text style={{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }}>
             {filterState[index]?.color?.length > 0
               ? renderTextWithEllipsis(filterState[index].color)
               : 'Màu sắc'}
@@ -167,7 +171,7 @@ const CateClotherScreen = ({ route }) => {
         <TouchableOpacity
           style={styles.filterButton1}
           onPress={() => setPriceFilterVisible(true)}>
-          <Text>
+          <Text style = {{ color: isDarkMode ? darkTheme.colors.text : lightTheme.colors.text }}>
             {filterState[index]?.minPrice != null &&
               filterState[index]?.maxPrice != null
               ? `Giá: ${filterState[index].minPrice.toLocaleString(
@@ -302,7 +306,7 @@ export default CateClotherScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 5, backgroundColor: '#fff',
+    padding: 5,
   },
   backButton: {
     width: 30,
