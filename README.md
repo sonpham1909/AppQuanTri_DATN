@@ -43,7 +43,7 @@ Start the backend server:
 
 
 npm start
-The backend will run on http://localhost:5000 by default.
+The backend will run on http://localhost:3000 by default.
 
 Install the frontend dependencies:
 
